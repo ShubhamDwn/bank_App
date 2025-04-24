@@ -1,0 +1,103 @@
+<Shell
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:root="clr-namespace:bank_demo"
+    xmlns:pages="clr-namespace:bank_demo.Pages"
+    x:Class="bank_demo.AppShell"
+    Shell.FlyoutBehavior="Flyout"
+    x:Name="RootShell">
+
+
+    <!-- Optional: Add Logo/Image menu -->
+    <Shell.FlyoutHeader>
+        <Grid Padding="10" BackgroundColor="White">
+            <Image Source="menu.png" HeightRequest="150" HorizontalOptions="Center" />
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    
+        <!-- Login -->
+    <ShellContent Route="LoginPage"
+                  ContentTemplate="{DataTemplate root:LoginPage}"
+                  Shell.FlyoutBehavior="Disabled" />
+
+    <!-- Signup -->
+    <ShellContent Route="Signup"
+                  ContentTemplate="{DataTemplate root:SignupPage}"
+                  Shell.FlyoutBehavior="Disabled" />
+
+    <!-- Forgot Password -->
+    <ShellContent Route="ForgotPasswordPage"
+                  ContentTemplate="{DataTemplate root:ForgotPasswordPage}"
+                  Shell.FlyoutBehavior="Disabled" />
+
+    <!-- Home (Show Hamburger) -->
+    
+    <ShellContent Route="HomePage"
+                  ContentTemplate="{DataTemplate root:HomePage}"
+                  Shell.FlyoutBehavior="Disabled" />
+
+    <!-- About (Show Back Arrow) -->
+    <ShellContent Route="About"
+                  ContentTemplate="{DataTemplate root:About}"
+                  Shell.FlyoutBehavior="Disabled"
+                  Shell.NavBarIsVisible="True" />
+
+    <!-- Settings (Show Back Arrow) -->
+    <ShellContent Route="Settings"
+                  ContentTemplate="{DataTemplate root:Settings}"
+                  Shell.FlyoutBehavior="Disabled"
+                  Shell.NavBarIsVisible="True" />
+
+    <!-- My QR Code Page -->
+    <ShellContent Route="MyQRCodePage"
+              ContentTemplate="{DataTemplate pages:MyQRCodePage}"
+              Shell.FlyoutBehavior="Disabled"
+              Shell.NavBarIsVisible="True" />
+
+    <!-- Scan to Pay Page -->
+    <ShellContent Route="ScanToPayPage"
+              ContentTemplate="{DataTemplate pages:ScanToPayPage}"
+              Shell.FlyoutBehavior="Disabled"
+              Shell.NavBarIsVisible="True" />
+
+    <!-- Statement Page -->
+    <ShellContent Route="StatementPage"
+              ContentTemplate="{DataTemplate pages:StatementPage}"
+              Shell.FlyoutBehavior="Disabled"
+              Shell.NavBarIsVisible="True" />
+
+    <!-- History Page -->
+    <ShellContent Route="HistoryPage"
+              ContentTemplate="{DataTemplate pages:HistoryPage}"
+              Shell.FlyoutBehavior="Disabled" 
+              Shell.NavBarIsVisible="True"/>
+
+    <!-- Add Beneficiary Page -->
+    <ShellContent Route="AddBeneficiaryPage"
+              ContentTemplate="{DataTemplate pages:AddBeneficiaryPage}"
+              Shell.FlyoutBehavior="Disabled"
+              Shell.NavBarIsVisible="True" />
+
+    <!-- Payments Page -->
+    <ShellContent Route="PaymentsPage"
+              ContentTemplate="{DataTemplate pages:PaymentsPage}"
+              Shell.FlyoutBehavior="Disabled"
+              Shell.NavBarIsVisible="True" />
+
+
+    <!-- Flyout Menu Items (will show back arrow when navigated) -->
+    <FlyoutItem Title="Menu" Icon="menu.png">
+        <ShellContent
+        Title="Menu"
+        ContentTemplate="{DataTemplate root:MoreOptionsPage}"
+        Route="MoreOptionsPage" />
+    </FlyoutItem>
+
+
+
+
+
+
+
+</Shell>

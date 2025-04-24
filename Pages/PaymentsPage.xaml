@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:bank_demo.ViewModels.FeaturesPages"
+             x:Class="bank_demo.Pages.PaymentsPage"
+             x:DataType="vm:PaymentsViewModel"
+             Title="Payments"
+             BackgroundColor="White">
+
+    <ContentPage.BindingContext>
+        <vm:PaymentsViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Label Text="Choose Payment Method"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <!-- UPI Option -->
+            <Border BackgroundColor="#e3f2fd"
+                    Padding="15"
+                    Stroke="Gray"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10">
+                <VerticalStackLayout HorizontalOptions="Center">
+                    <Image Source="upi.png" WidthRequest="60" HeightRequest="60"/>
+                    <Label Text="UPI" FontSize="16" TextColor="Black" />
+                    <Button Text="Proceed with UPI"
+                            Command="{Binding UPICommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- NEFT Option -->
+            <Border BackgroundColor="#fce4ec"
+                    Padding="15"
+                    Stroke="Gray"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10">
+                <VerticalStackLayout HorizontalOptions="Center">
+                    <Image Source="neft.png" WidthRequest="60" HeightRequest="60"/>
+                    <Label Text="NEFT" FontSize="16" TextColor="Black" />
+                    <Button Text="Proceed with NEFT"
+                            Command="{Binding NEFTCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- IMPS Option -->
+            <Border BackgroundColor="#f1f8e9"
+                    Padding="15"
+                    Stroke="Gray"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10">
+                <VerticalStackLayout HorizontalOptions="Center">
+                    <Image Source="imps.png" WidthRequest="60" HeightRequest="60"/>
+                    <Label Text="IMPS" FontSize="16" TextColor="Black" />
+                    <Button Text="Proceed with IMPS"
+                            Command="{Binding IMPSCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

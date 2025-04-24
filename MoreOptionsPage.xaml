@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="bank_demo.MoreOptionsPage"
+             Title="Menu"
+             BackgroundColor="White">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Button Text="Profile"
+                    ImageSource="profile.png"
+                    Clicked="OnProfileClicked"
+                    HorizontalOptions="Fill" />
+
+            <Button Text="Transaction History"
+                    ImageSource="thistory.png"
+                    Clicked="OnTransactionHistoryClicked"
+                    HorizontalOptions="Fill" />
+
+            <Button Text="Beneficiary Status"
+                    ImageSource="benef.png"
+                    Clicked="OnBeneficiaryStatusClicked"
+                    HorizontalOptions="Fill" />
+
+            <Button Text="Contact Support"
+                    ImageSource="contact.png"
+                    Clicked="OnContactSupportClicked"
+                    HorizontalOptions="Fill" />
+
+            <Button Text="Security Settings"
+                    ImageSource="security.png"
+                    Clicked="OnSecuritySettingsClicked"
+                    HorizontalOptions="Fill" />
+
+            <Button Text="Terms &amp; Conditions"
+                    ImageSource="terms.png"
+                    Clicked="OnTermsClicked"
+                    HorizontalOptions="Fill" />
+
+            <Button Text="Logout"
+                    ImageSource="logout.png"
+                    Clicked="OnLogoutClicked"
+                    BackgroundColor="LightGray"
+                    TextColor="Red"
+                    HorizontalOptions="Fill" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

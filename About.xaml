@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bank_demo.About"
+             Title="About"
+             BackgroundColor="White">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <!-- Header Info Box -->
+        <Border BackgroundColor="#FFF3E0"
+                Stroke="Gray"
+                StrokeThickness="1"
+                Padding="15"
+                StrokeShape="RoundRectangle 10">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="About This App"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="#E65100"/>
+                <Label Text="This is a demo banking application built using .NET MAUI and MVVM architecture. It supports login, user dashboard, and navigation features."
+                       FontSize="16"
+                       TextColor="Black"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Placeholder for additional content -->
+        <Label Text="More information and credits will go here..."
+               FontSize="14"
+               TextColor="Gray"
+               HorizontalOptions="Center"/>
+
+    </VerticalStackLayout>
+</ContentPage>

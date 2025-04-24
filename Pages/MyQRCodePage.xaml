@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bank_demo.Pages.MyQRCodePage"
+             Title="My QR Code"
+             BackgroundColor="White">
+
+    <VerticalStackLayout Padding="20" Spacing="20" HorizontalOptions="Center">
+
+        <Label Text="Scan this QR to pay me"
+               FontSize="20"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+        <!-- Static QR Code Image -->
+        <Image Source="qrcode.png"
+               WidthRequest="200"
+               HeightRequest="200"
+               HorizontalOptions="Center" />
+
+        <!-- Optional: Display UPI ID or info -->
+        <Label Text="UPI ID: ashish@bank"
+               FontSize="16"
+               TextColor="Gray"
+               HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentPage>

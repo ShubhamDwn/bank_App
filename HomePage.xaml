@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+
+    <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:bank_demo.ViewModels"
+             xmlns:root="clr-namespace:bank_demo"
+             xmlns:pages="clr-namespace:bank_demo.Pages"
+             x:DataType="vm:HomeViewModel"
+             x:Class="bank_demo.HomePage"
+             BackgroundColor="White">
+
+
+    <ContentPage.Content>
+
+        <Grid>
+        <!-- Overlay -->
+        <BoxView x:Name="MenuOverlay"
+                 BackgroundColor="#80000000"
+                 IsVisible="False"
+                 InputTransparent="False">
+            
+        </BoxView>
+
+        <!-- Main Layout -->
+        <Grid RowDefinitions="Auto, *" Padding="10">
+            <!-- Header -->
+            <Grid ColumnDefinitions="*, Auto" Padding="0,10">
+                <Label Text="Home"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start" />
+
+                <Button x:Name="HamburgerButton"
+                        Text="☰"
+                        TextColor="Black"
+                        FontSize="24"
+                        BackgroundColor="Transparent"
+                        Clicked="OnHamburgerClicked"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End"/>
+            </Grid>
+
+            <!-- Content -->
+            <ScrollView Grid.Row="1" Padding="0,20,0,0">
+                <StackLayout>
+                    <Label Text="Welcome to your banking dashboard!"
+                           FontSize="18"
+                           HorizontalOptions="Center"/>
+
+                        <!-- Main Content -->
+                        <ScrollView Grid.Row="0">
+                            <VerticalStackLayout Padding="20" Spacing="20">
+
+                                <!-- User Card -->
+                                <Border BackgroundColor="#e0f7fa"
+                                Stroke="Gray"
+                                StrokeThickness="1"
+                                Padding="15"
+                                StrokeShape="RoundRectangle 10">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Label Text="{Binding CustomerName}"
+                                       FontSize="22"
+                                       FontAttributes="Bold"
+                                       TextColor="#006064"/>
+                                        <Label Text="{Binding SavingsBalance, StringFormat='Savings Balance: ₹{0:F2}'}"
+                                       FontSize="18"
+                                       TextColor="Green"
+                                       FontAttributes="Bold"/>
+
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- QR Code & Scan to Pay Icons Side-by-Side -->
+                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+
+                                    <!-- QR Code -->
+                                    <Border BackgroundColor="White"
+                                    Stroke="Gray"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10"
+                                    Margin="0,10,0,0">
+                                        <VerticalStackLayout HorizontalOptions="Center">
+                                            <Image Source="qrcode.png"
+                                       WidthRequest="70"
+                                       HeightRequest="80">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding QRCommand}" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Label Text="My QR Code"
+                                       FontSize="14"
+                                       TextColor="Gray"
+                                       HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+
+                                    <!-- Scan to Pay -->
+                                    <Border BackgroundColor="White"
+                                    Stroke="Gray"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10"
+                                    Margin="0,10,0,0">
+                                        <VerticalStackLayout HorizontalOptions="Center">
+                                            <Image Source="scantopay.png"
+                                   WidthRequest="80"
+                                   HeightRequest="80">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding ScanToPayCommand}" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Label Text="Scan to Pay"
+                                   FontSize="14"
+                                   TextColor="Gray"
+                                   HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+
+                                </HorizontalStackLayout>
+
+                                <!-- Statement & History Side-by-Side -->
+                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+                                    <!-- Statement -->
+                                    <Border BackgroundColor="White"
+                                Stroke="Gray"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                Padding="10"
+                                Margin="0,5,0,0">
+                                        <VerticalStackLayout HorizontalOptions="Center">
+                                            <Image Source="statement.png"
+                                       WidthRequest="80"
+                                       HeightRequest="80">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding StatementCommand}" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Label Text="Statement"
+                                       FontSize="14"
+                                       TextColor="Gray"
+                                       HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+
+                                    <!-- History -->
+                                    <Border BackgroundColor="White"
+                                    Stroke="Gray"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10">
+                                        <VerticalStackLayout HorizontalOptions="Center">
+                                            <Image Source="history.png"
+                                           WidthRequest="80"
+                                           HeightRequest="80">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding HistoryCommand}" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Label Text="History"
+                                           FontSize="14"
+                                           TextColor="Gray"
+                                           HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </HorizontalStackLayout>
+
+                                <!-- Add Beneficiary -->
+                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+                                    <Border BackgroundColor="White"
+                                    Stroke="Gray"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="5"
+                                    Margin="0,5,0,0">
+                                        <VerticalStackLayout HorizontalOptions="Center">
+                                            <Image Source="addbenef.png"
+                                           WidthRequest="80"
+                                           HeightRequest="80">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding AddBeneficiaryCommand}" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Label Text="Add Beneficiary"
+                                           FontSize="14"
+                                           TextColor="Gray"
+                                           HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+
+                                    <!-- Payments -->
+                                    <Border BackgroundColor="White"
+                                    Stroke="Gray"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10"
+                                    Margin="0,5,0,0">
+                                        <VerticalStackLayout HorizontalOptions="Center">
+                                            <Image Source="payment.png"
+                                           WidthRequest="80"
+                                           HeightRequest="80">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Label Text="Payments"
+                                           FontSize="14"
+                                           TextColor="Gray"
+                                           HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+
+                                </HorizontalStackLayout>
+
+
+                            </VerticalStackLayout>
+
+                        </ScrollView>
+
+
+
+                        <!-- Bottom Navigation -->
+                        <Grid Grid.Row="1" Padding="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- About -->
+                            <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                                <Image Source="about.png" WidthRequest="28" HeightRequest="28"/>
+                                <Label Text="About" FontSize="12" TextColor="Black" HorizontalTextAlignment="Center"/>
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding AboutCommand}" />
+                                </VerticalStackLayout.GestureRecognizers>
+                            </VerticalStackLayout>
+
+                            <!-- Home -->
+                            <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                                <Image Source="home.png" WidthRequest="28" HeightRequest="28"/>
+                                <Label Text="Home" FontSize="12" TextColor="Black" HorizontalTextAlignment="Center"/>
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding HomeCommand}" />
+                                </VerticalStackLayout.GestureRecognizers>
+                            </VerticalStackLayout>
+
+                            <!-- Settings -->
+                            <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                                <Image Source="settings.png" WidthRequest="28" HeightRequest="28"/>
+                                <Label Text="Settings" FontSize="12" TextColor="Black" HorizontalTextAlignment="Center"/>
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SettingsCommand}" />
+                                </VerticalStackLayout.GestureRecognizers>
+                            </VerticalStackLayout>
+                        </Grid>
+                    
+                        <!-- Add other content -->
+                 
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+
+        <!-- Drawer Menu -->
+            <Grid x:Name="MenuDrawer"
+              BackgroundColor="#F5F5F5"
+              WidthRequest="300"
+              TranslationX="-300"
+              IsVisible="False"
+              VerticalOptions="FillAndExpand"
+              HorizontalOptions="Start"
+              Padding="20">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Arrow Button to Close -->
+                
+                    <Button Text="←"
+                        TextColor="Black"
+                        FontAttributes="Bold"
+                        FontSize="30"
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="End"
+                        Clicked="OnDrawerArrowClicked"/>
+                
+
+                <!-- Menu Items -->
+                <StackLayout Grid.Row="1" Spacing="10">
+                    <Label Text="Menu"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       Margin="0,0,0,10"/>
+
+                    <Button Text="Profile" 
+                            Clicked="OnProfileClicked"/>
+                    <Button Text="Settings" 
+                            Clicked="OnSettingsClicked"/>
+                    <Button Text="Logout" 
+                            BackgroundColor="IndianRed"
+                            Clicked="OnLogoutClicked"/>
+                </StackLayout>
+            </Grid>
+        </Grid>
+</ContentPage.Content>
+</ContentPage>
