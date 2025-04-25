@@ -2,13 +2,16 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using bank_demo.Models;
+using bank_demo.Services;
+using Microsoft.Maui.Storage;
 
 namespace bank_demo.ViewModels.FeaturesPages;
 
 public class StatementViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
+    
+
     private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -89,10 +92,13 @@ public class StatementViewModel : INotifyPropertyChanged
     public ObservableCollection<TransactionModel> Transactions { get; set; } = new();
 
     public ICommand LoadStatementCommand { get; }
+    public ICommand ExportPdfCommand { get; }
 
     public StatementViewModel()
     {
         LoadStatementCommand = new Command(async () => await LoadStatementAsync());
+        LoadStatementCommand = new Command(async () => await LoadStatementAsync());
+        ExportPdfCommand = new Command(async () => await ExportToPdfAsync());
     }
 
     private async Task LoadStatementAsync()
@@ -145,6 +151,28 @@ public class StatementViewModel : INotifyPropertyChanged
         }
     }
 
+    public async Task ExportToPdfAsync()
+    {
+        try
+        {
+            var bytes = StatementPdfExporter.GeneratePdf(Transactions.ToList(), SelectedAccountType, FromDate, ToDate);
+
+            var fileName = $"Statement_{SelectedAccountType}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+            File.WriteAllBytes(filePath, bytes);
+
+            await Launcher.OpenAsync(new OpenFileRequest
+            {
+                File = new ReadOnlyFile(filePath)
+            });
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+
     private Task<List<TransactionModel>> GetMockDataAsync(string type, DateTime from, DateTime to)
     {
         return Task.FromResult(new List<TransactionModel>
@@ -153,4 +181,6 @@ public class StatementViewModel : INotifyPropertyChanged
             new() { Description = $"{type} Txn 2", Amount = -1200, Date = DateTime.Now.AddDays(-1) }
         });
     }
+
+
 }

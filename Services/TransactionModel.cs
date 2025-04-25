@@ -1,4 +1,4 @@
-namespace bank_demo.Models
+namespace bank_demo.Services
 {
     public class TransactionModel
     {

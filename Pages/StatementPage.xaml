@@ -36,6 +36,8 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
+            <Button Text="Export to PDF" Command="{Binding ExportPdfCommand}" />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
