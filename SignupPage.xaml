@@ -18,22 +18,86 @@
 
             <Label Text="Create an Account" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
 
-            <Entry Placeholder="Full Name" Text="{Binding Name}" Keyboard="Default"/>
-            <Entry Placeholder="Username" Text="{Binding Username}" Keyboard="Default"/>
-            <Entry Placeholder="Account Number" Text="{Binding AccountNumber}" Keyboard="Numeric"/>
-            <Entry Placeholder="Mobile Number" Text="{Binding MobileNumber}" Keyboard="Numeric"/>
-            <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email"/>
-            
-            <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True"/>
-            <Entry Placeholder="Confirm Password" Text="{Binding ConfirmPassword}" IsPassword="True"/>
+            <!-- Full Name Field -->
+            <Entry Placeholder="Full Name" 
+                   Text="{Binding FullName, Mode=TwoWay}" 
+                   IsEnabled="{Binding IsFullNameEnabled}" />
 
+            <!-- Account Number Field -->
+            <Entry Placeholder="Account Number" 
+                   Keyboard="Numeric" 
+                   Text="{Binding AccountNumber}" 
+                   IsEnabled="{Binding IsAccountNumberEnabled}" />
+
+            <!-- Mobile Number Field -->
+            <Entry x:Name="MobileEntry"
+                   Placeholder="Mobile Number"
+                   Keyboard="Telephone"
+                   Text="{Binding MobileNumber}"
+                   IsReadOnly="{Binding IsMobileVerified}" />
+
+            <HorizontalStackLayout>
+                <Button x:Name="SendOtpButton"
+                    Text="Send OTP"
+                    Command="{Binding SendMobileOtpCommand}"
+                    IsVisible="{Binding IsMobileOtpButtonVisible}" />
+                <Image Source="checkmark.png"
+                       HeightRequest="24"
+                       WidthRequest="24"
+                       IsVisible="{Binding IsMobileVerified}" />
+            </HorizontalStackLayout>
+
+            <!-- Email Field -->
+            <Entry x:Name="EmailEntry"
+               Placeholder="Email"
+               Keyboard="Email"
+               Text="{Binding Email}"
+               IsReadOnly="{Binding IsEmailVerified}" />
+
+                    <HorizontalStackLayout>
+                        <Button x:Name="SendEmailOtpButton"
+                                Text="Send OTP"
+                                Command="{Binding SendEmailOtpCommand}"
+                                IsVisible="{Binding IsEmailOtpButtonVisible}" />
+
+                        <Image Source="checkmark.png"
+                               HeightRequest="24"
+                               WidthRequest="24"
+                               IsVisible="{Binding IsEmailVerified}" />
+                    </HorizontalStackLayout>
+
+            <!-- Aadhaar Number Field -->
+            <Entry Placeholder="Aadhaar Number" 
+                   Keyboard="Numeric" 
+                   Text="{Binding AadhaarNumber}" 
+                   IsEnabled="{Binding IsAadhaarNumberEnabled}" />
+
+            <!-- Aadhaar Number Field -->
+            <Entry Placeholder="Username" 
+                   Keyboard="Text"
+                   IsTextPredictionEnabled="False"
+                   Text="{Binding Username}" />
+
+            <!-- Password Field -->
+            <Entry Placeholder="Password" 
+                   IsPassword="True" 
+                   Text="{Binding Password}" 
+                   IsEnabled="{Binding IsPasswordEnabled}" />
+
+            <!-- Confirm Password Field -->
+            <Entry Placeholder="Confirm Password" 
+                   IsPassword="True" 
+                   Text="{Binding ConfirmPassword}" 
+                   IsEnabled="{Binding IsConfirmPasswordEnabled}" />
+
+            <!-- Sign Up Button -->
             <Button Text="Sign Up"
                     Command="{Binding SignupCommand}"
                     BackgroundColor="Blue"
-                    TextColor="White"/>
-            
+                    TextColor="White"
+                    IsEnabled="{Binding IsSignUpEnabled}" />
 
-
+            <!-- Login Redirect Section -->
             <HorizontalStackLayout HorizontalOptions="Center">
                 <Label Text="Already have an account?" />
                 <Label Text="Login" TextColor="Blue">

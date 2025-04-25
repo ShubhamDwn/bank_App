@@ -88,20 +88,21 @@ namespace bank_demo.ViewModels
             });
         }
 
-        private async void LoadCustomerData(int customerId)
+        private async void LoadCustomerData(int AccountNumber)
         {
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                string query = "SELECT name, balance FROM customers WHERE customer_id = @id";
+                string query = "SELECT full_name FROM bankdb.users WHERE account_number = @AccountNumber";
                 using var cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@id", customerId);
+                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
                 using var reader = await cmd.ExecuteReaderAsync();
 
                 if (await reader.ReadAsync())
                 {
-                    CustomerName = reader.GetString("name");
-                    SavingsBalance = reader.GetDecimal("balance");
+                    CustomerName = reader.GetString("full_name");
+                    //SavingsBalance = reader.GetDecimal("balance");  
+                    SavingsBalance = 50000.00M;
                 }
             }
             catch (Exception ex)

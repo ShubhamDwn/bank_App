@@ -5,6 +5,8 @@ using Microsoft.Maui.Controls;
 using bank_demo.Services;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace bank_demo.ViewModels
 {
@@ -46,28 +48,44 @@ namespace bank_demo.ViewModels
             ForgotPasswordCommand = new Command(async () => await Shell.Current.GoToAsync("ForgotPasswordPage"));
 
         }
-
+        public static string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(bytes);
+        }
         private async Task LoginAsync()
         {
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                var cmd = new MySqlCommand("SELECT * FROM users WHERE username = @username AND password = @password", conn);
+
+                // Step 1: Check if user with provided username exists
+                var cmd = new MySqlCommand("SELECT * FROM users WHERE username = @username", conn);
                 cmd.Parameters.AddWithValue("@username", Username);
-                cmd.Parameters.AddWithValue("@password", Password);
 
                 using var reader = await cmd.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
+                if (!await reader.ReadAsync())
                 {
-                    // Assuming `customerId` is part of the returned data
-                    int customerId = reader.GetInt32("id"); // Replace "customerId" with the actual column name from your database
+                    await Application.Current.MainPage.DisplayAlert("Login Failed", "No user found with this username.", "OK");
+                    return;
+                }
 
-                    // Navigate to HomePage and pass the customerId as a query parameter
-                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={customerId}");
+                // Step 2: User found, get hashed password from DB
+                string storedHashedPassword = reader.GetString("password"); // hashed password in DB
+                int AccountNumber = reader.GetInt32("account_number"); // adjust based on your actual column name
+
+                // Step 3: Hash the entered password
+                string enteredHashedPassword = HashPassword(Password); // Make sure HashHelper.HashPassword exists
+
+                // Step 4: Compare stored and entered hashes
+                if (storedHashedPassword == enteredHashedPassword)
+                {
+                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={AccountNumber}");
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Login Failed", "Invalid username or password.", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Login Failed", "Invalid password.", "OK");
                 }
             }
             catch (Exception ex)
@@ -75,6 +93,7 @@ namespace bank_demo.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
         }
+
 
         private async Task SignUpAsync()
         {
