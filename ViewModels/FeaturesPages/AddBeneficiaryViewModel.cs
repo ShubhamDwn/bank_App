@@ -1,14 +1,17 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using bank_demo.Services; // Assuming DBHelper is here
 using MySql.Data.MySqlClient;
+using System.Threading.Tasks;
+using bank_demo.Services; // Assuming DBHelper is here
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
     public class AddBeneficiaryViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        
 
         private int _accountNumber;
         public int AccountNumber
@@ -64,13 +67,14 @@ namespace bank_demo.ViewModels.FeaturesPages
         public AddBeneficiaryViewModel(int accountNumber)
         {
             AccountNumber = accountNumber;
+            Console.WriteLine("Function called");
             AddBeneficiaryCommand = new Command(async () => await AddBeneficiaryAsync());
         }
 
-        private async System.Threading.Tasks.Task AddBeneficiaryAsync()
+
+        private async Task AddBeneficiaryAsync()
         {
             // --- VALIDATIONS ---
-
             if (string.IsNullOrWhiteSpace(BankName) ||
                 string.IsNullOrWhiteSpace(IFSCCode) ||
                 string.IsNullOrWhiteSpace(Branch) ||

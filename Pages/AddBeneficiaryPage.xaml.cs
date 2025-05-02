@@ -1,11 +1,10 @@
-using bank_demo.ViewModels.FeaturesPages;  // Ensure this is added to the top
+using bank_demo.ViewModels.FeaturesPages;
 
 namespace bank_demo.Pages
 {
     [QueryProperty(nameof(AccountNumber), "account_number")]
     public partial class AddBeneficiaryPage : ContentPage
     {
-        // Declare the AccountNumber property
         private int _accountNumber;
 
         public int AccountNumber
@@ -14,14 +13,15 @@ namespace bank_demo.Pages
             set
             {
                 _accountNumber = value;
-                BindingContext = new AddBeneficiaryViewModel(_accountNumber); // Pass AccountNumber to ViewModel
+                Console.WriteLine("account number is set");
+                BindingContext = new AddBeneficiaryViewModel(_accountNumber); // Set the BindingContext when AccountNumber is set
             }
         }
 
         public AddBeneficiaryPage()
         {
+            Console.WriteLine("xaml.cs called");
             InitializeComponent();
         }
     }
-
 }

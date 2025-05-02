@@ -42,6 +42,8 @@ namespace bank_demo.ViewModels
         {
             LoadCustomerData(customerId);
 
+            
+
             AboutCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync("About");
@@ -80,7 +82,7 @@ namespace bank_demo.ViewModels
             AddBeneficiaryCommand = new Command(async () =>
             {
                 // Pass the account number as a query parameter
-                await Shell.Current.GoToAsync($"///AddBeneficiaryPage?AccountNumber={customerId}");
+                await Shell.Current.GoToAsync($"AddBeneficiaryPage?AccountNumber={customerId}");
             });
 
             PaymentsCommand = new Command(async () =>

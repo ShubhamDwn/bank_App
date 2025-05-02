@@ -67,6 +67,12 @@ namespace bank_demo
             await DisplayAlert("Settings", "Settings page not yet implemented.", "OK");
         }
 
+        private async void OnNewHomePageClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("NewHomePage");
+        }
+      
+
         private async void OnLogoutClicked(object sender, EventArgs e)
         {
             bool confirm = await DisplayAlert("Logout", "Are you sure you want to logout?", "Yes", "No");

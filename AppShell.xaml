@@ -15,8 +15,14 @@
         </Grid>
     </Shell.FlyoutHeader>
 
-    
-        <!-- Login -->
+
+    <ShellContent Route="NewHomePage"
+              ContentTemplate="{DataTemplate root:NewHomePage}"
+              Shell.FlyoutBehavior="Disabled" />
+
+
+
+    <!-- Login -->
     <ShellContent Route="LoginPage"
                   ContentTemplate="{DataTemplate root:LoginPage}"
                   Shell.FlyoutBehavior="Disabled" />
