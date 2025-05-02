@@ -79,7 +79,8 @@ namespace bank_demo.ViewModels
 
             AddBeneficiaryCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync(nameof(AddBeneficiaryPage));
+                // Pass the account number as a query parameter
+                await Shell.Current.GoToAsync($"///AddBeneficiaryPage?AccountNumber={customerId}");
             });
 
             PaymentsCommand = new Command(async () =>

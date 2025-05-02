@@ -1,12 +1,27 @@
-using bank_demo.ViewModels.FeaturesPages;
+using bank_demo.ViewModels.FeaturesPages;  // Ensure this is added to the top
 
-namespace bank_demo.Pages;
-
-public partial class AddBeneficiaryPage : ContentPage
+namespace bank_demo.Pages
 {
-    public AddBeneficiaryPage()
+    [QueryProperty(nameof(AccountNumber), "account_number")]
+    public partial class AddBeneficiaryPage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = new AddBeneficiaryViewModel();
+        // Declare the AccountNumber property
+        private int _accountNumber;
+
+        public int AccountNumber
+        {
+            get => _accountNumber;
+            set
+            {
+                _accountNumber = value;
+                BindingContext = new AddBeneficiaryViewModel(_accountNumber); // Pass AccountNumber to ViewModel
+            }
+        }
+
+        public AddBeneficiaryPage()
+        {
+            InitializeComponent();
+        }
     }
+
 }

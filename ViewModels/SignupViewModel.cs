@@ -205,9 +205,7 @@ namespace bank_demo.ViewModels
             return true;
         }
 
-        private async 
-        Task
-ShowAlert(string message) =>
+        private async Task ShowAlert(string message) =>
             await Application.Current.MainPage.DisplayAlert("Validation Error", message, "OK");
 
         public event PropertyChangedEventHandler PropertyChanged;

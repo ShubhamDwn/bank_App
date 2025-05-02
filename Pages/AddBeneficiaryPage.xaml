@@ -1,37 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:bank_demo.ViewModels.FeaturesPages"
              x:Class="bank_demo.Pages.AddBeneficiaryPage"
              Title="Add Beneficiary"
-             BackgroundColor="White">
+             x:DataType="viewModels:AddBeneficiaryViewModel">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
 
-            <Label Text="Add New Beneficiary"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
+            <!-- Bank Name -->
+            <Entry 
+                Placeholder="Bank Name" 
+                Keyboard="Text"
+                Text="{Binding BankName}" />
 
-            <Entry x:Name="BeneficiaryNameEntry"
-                   Placeholder="Beneficiary Name"
-                   FontSize="16" />
+            <!-- IFSC Code -->
+            <Entry 
+                Placeholder="IFSC Code" 
+                Keyboard="Text"
+                Text="{Binding IFSCCode}" />
 
-            <Entry x:Name="AccountNumberEntry"
-                   Placeholder="Account Number"
-                   Keyboard="Numeric"
-                   FontSize="16" />
+            <!-- Beneficiary Account Number -->
+            <Entry 
+                Placeholder="Beneficiary Account Number" 
+                Keyboard="Numeric"
+                Text="{Binding BeneficiaryAccountNumberText}" />
 
-            <Entry x:Name="IFSCEntry"
-                   Placeholder="IFSC Code"
-                   FontSize="16" />
+            <!-- Confirm Beneficiary Account Number -->
+            <Entry 
+                Placeholder="Confirm Account Number"
+                Keyboard="Numeric"
+                Text="{Binding ConfirmAccountNumberText}" />
 
-            <Button Text="Add Beneficiary"
-                    Command="{Binding AddBeneficiaryCommand}"
-                    BackgroundColor="#2196F3"
-                    TextColor="White"
-                    CornerRadius="8"
-                    FontSize="16"/>
+            <!-- Branch -->
+            <Entry 
+                Placeholder="Branch" 
+                Keyboard="Text"
+                Text="{Binding Branch}" />
+
+            <!-- Nickname (Optional) -->
+            <Entry 
+                Placeholder="Nickname (Optional)" 
+                Keyboard="Text"
+                Text="{Binding Nickname}" />
+
+            <!-- Add Beneficiary Button -->
+            <Button 
+                Text="Add Beneficiary"
+                Command="{Binding AddBeneficiaryCommand}"
+                HorizontalOptions="Center" />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
