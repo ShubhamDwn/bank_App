@@ -16,9 +16,7 @@
     </Shell.FlyoutHeader>
 
 
-    <ShellContent Route="NewHomePage"
-              ContentTemplate="{DataTemplate root:NewHomePage}"
-              Shell.FlyoutBehavior="Disabled" />
+
 
 
 
@@ -84,6 +82,12 @@
               ContentTemplate="{DataTemplate pages:AddBeneficiaryPage}"
               Shell.FlyoutBehavior="Disabled"
               Shell.NavBarIsVisible="True" />
+
+    <!-- Beneficiary Status Page -->
+    <ShellContent Route="BeneficiaryStatusPage"
+              ContentTemplate="{DataTemplate pages:BeneficiaryStatusPage}"
+              Shell.FlyoutBehavior="Disabled" />
+
 
     <!-- Payments Page -->
     <ShellContent Route="PaymentsPage"

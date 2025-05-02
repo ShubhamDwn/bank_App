@@ -71,7 +71,17 @@ namespace bank_demo
         {
             await Shell.Current.GoToAsync("NewHomePage");
         }
-      
+
+        private async void OnBenfeciaryClicked(object sender, EventArgs e)
+        {
+            // Access the instance's _customerId
+            int account_number = this._customerId;
+
+            // Navigate to the BeneficiaryStatusPage and pass the account_number
+            await Shell.Current.GoToAsync($"BeneficiaryStatusPage?account_number={account_number}");
+        }
+
+
 
         private async void OnLogoutClicked(object sender, EventArgs e)
         {

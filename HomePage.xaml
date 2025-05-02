@@ -206,7 +206,9 @@
                 <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10"/>
                 <Button Text="Profile" Clicked="OnProfileClicked"/>
                 <Button Text="Settings" Clicked="OnSettingsClicked"/>
+                <Button Text="Benfeciary Ststus" Clicked="OnBenfeciaryClicked"/>
                 <Button Text="Logout" BackgroundColor="IndianRed" TextColor="White" Clicked="OnLogoutClicked"/>
+
             </StackLayout>
         </Grid>
     </Grid>

@@ -46,6 +46,7 @@
                 Text="{Binding Nickname}" />
 
             <!-- Add Beneficiary Button -->
+           
             <Button 
                 Text="Add Beneficiary"
                 Command="{Binding AddBeneficiaryCommand}"

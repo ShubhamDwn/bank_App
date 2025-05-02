@@ -134,7 +134,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 await insertCmd.ExecuteNonQueryAsync();
 
                 await Shell.Current.DisplayAlert("Success", "Beneficiary added successfully!", "OK");
-                await Shell.Current.GoToAsync(".."); // Go back to previous page
+                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?account_number={AccountNumber}");  
             }
             catch (Exception ex)
             {

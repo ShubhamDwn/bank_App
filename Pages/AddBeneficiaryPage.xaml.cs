@@ -13,14 +13,13 @@ namespace bank_demo.Pages
             set
             {
                 _accountNumber = value;
-                Console.WriteLine("account number is set");
                 BindingContext = new AddBeneficiaryViewModel(_accountNumber); // Set the BindingContext when AccountNumber is set
             }
         }
 
         public AddBeneficiaryPage()
         {
-            Console.WriteLine("xaml.cs called");
+
             InitializeComponent();
         }
     }
