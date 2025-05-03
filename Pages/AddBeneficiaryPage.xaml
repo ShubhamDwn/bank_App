@@ -11,6 +11,11 @@
 
             <!-- Bank Name -->
             <Entry 
+                Placeholder="Full Name" 
+                Keyboard="Text"
+                Text="{Binding Name}" />
+            
+            <Entry 
                 Placeholder="Bank Name" 
                 Keyboard="Text"
                 Text="{Binding BankName}" />

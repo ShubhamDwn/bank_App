@@ -1,6 +1,6 @@
 ﻿using bank_demo.Models;
 using bank_demo.Services;
-using MySql.Data.MySqlClient;
+using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
@@ -37,11 +37,11 @@ namespace bank_demo.ViewModels.FeaturesPages
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                string query = @"SELECT BankName, IFSCCode, BeneficiaryAccountNumber, Bank_Branch, BeneficiaryNickname
+                string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
                                  FROM bankdb.beneficiaries 
-                                 WHERE account_number = @AccountNumber";
+                                 WHERE LoginedAccountNumber = @AccountNumber";
 
-                using var cmd = new MySqlCommand(query, conn);
+                using var cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
 
                 using var reader = await cmd.ExecuteReaderAsync();
@@ -51,10 +51,11 @@ namespace bank_demo.ViewModels.FeaturesPages
                 {
                     Beneficiaries.Add(new Beneficiary
                     {
-                        BankName = reader.GetString("BankName"),
-                        IFSCCode = reader.GetString("IFSCCode"),
+                        Name = reader.GetString("BeneficiaryName"),
+                        BankName = reader.GetString("BeneficiaryBankName"),
+                        IFSCCode = reader.GetString("BeneficiaryIFSCCode"),
                         BeneficiaryAccountNumber = reader.GetInt32("BeneficiaryAccountNumber"),
-                        Branch = reader.GetString("Bank_Branch"),
+                        Branch = reader.GetString("BeneficiaryBankBranch"),
                         Nickname = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname")
                     });
                 }

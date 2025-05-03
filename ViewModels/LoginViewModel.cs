@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using bank_demo.Services;
-using MySql.Data.MySqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
@@ -61,7 +61,7 @@ namespace bank_demo.ViewModels
                 using var conn = await DBHelper.GetConnectionAsync();
 
                 // Step 1: Check if user with provided username exists
-                var cmd = new MySqlCommand("SELECT * FROM users WHERE username = @username", conn);
+                var cmd = new SqlCommand("SELECT * FROM users WHERE Username = @username", conn);
                 cmd.Parameters.AddWithValue("@username", Username);
 
                 using var reader = await cmd.ExecuteReaderAsync();
@@ -72,8 +72,8 @@ namespace bank_demo.ViewModels
                 }
 
                 // Step 2: User found, get hashed password from DB
-                string storedHashedPassword = reader.GetString("password"); // hashed password in DB
-                int AccountNumber = reader.GetInt32("account_number"); // adjust based on your actual column name
+                string storedHashedPassword = reader.GetString("Password"); // hashed password in DB
+                int AccountNumber = reader.GetInt32("AccountNumber"); // adjust based on your actual column name
 
                 // Step 3: Hash the entered password
                 string enteredHashedPassword = HashPassword(Password); // Make sure HashHelper.HashPassword exists

@@ -28,6 +28,7 @@
             <HorizontalStackLayout Spacing="10">
                 <Image Source="user_icon.png" HeightRequest="24" WidthRequest="24"/>
                 <Entry Placeholder="Enter Username"
+                       TextColor="Black"
                        Text="{Binding Username}"
                        WidthRequest="250" VerticalOptions="Center"/>
             </HorizontalStackLayout>
@@ -43,6 +44,7 @@
                 <Image Source="lock_icon.png" HeightRequest="24" WidthRequest="24"/>
                 <Entry Placeholder="Enter Password"
                        IsPassword="True"
+                       TextColor="Black"
                        Text="{Binding Password}"
                        WidthRequest="250" VerticalOptions="Center"/>
             </HorizontalStackLayout>

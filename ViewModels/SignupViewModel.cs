@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using MySql.Data.MySqlClient;
+using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -117,7 +117,7 @@ namespace bank_demo.ViewModels
                 using var conn = await Services.DBHelper.GetConnectionAsync();
 
                 // Check if Username already exists
-                var checkUsernameCmd = new MySqlCommand("SELECT COUNT(*) FROM users WHERE username = @username", conn);
+                var checkUsernameCmd = new SqlCommand("SELECT COUNT(*) FROM users WHERE Username = @username", conn);
                 checkUsernameCmd.Parameters.AddWithValue("@username", Username);
                 var existingUsername = Convert.ToInt32(await checkUsernameCmd.ExecuteScalarAsync());
 
@@ -128,7 +128,7 @@ namespace bank_demo.ViewModels
                 }
 
                 // Check if Email already exists
-                var checkEmailCmd = new MySqlCommand("SELECT COUNT(*) FROM users WHERE email = @email", conn);
+                var checkEmailCmd = new SqlCommand("SELECT COUNT(*) FROM users WHERE Email = @email", conn);
                 checkEmailCmd.Parameters.AddWithValue("@email", Email);
                 var existingEmail = Convert.ToInt32(await checkEmailCmd.ExecuteScalarAsync());
 
@@ -139,7 +139,7 @@ namespace bank_demo.ViewModels
                 }
 
                 // Check if Account Number already exists
-                var checkAccountNumberCmd = new MySqlCommand("SELECT COUNT(*) FROM users WHERE account_number = @accountNumber", conn);
+                var checkAccountNumberCmd = new SqlCommand("SELECT COUNT(*) FROM users WHERE LoginedAccountNumber = @accountNumber", conn);
                 checkAccountNumberCmd.Parameters.AddWithValue("@accountNumber", AccountNumber);
                 var existingAccountNumber = Convert.ToInt32(await checkAccountNumberCmd.ExecuteScalarAsync());
 
@@ -152,7 +152,7 @@ namespace bank_demo.ViewModels
                 // If no issues, proceed to the next steps
 
 
-                var cmd = new MySqlCommand("INSERT INTO users (username, full_name, account_number, mobile_number, aadhaar_number, email, password) " +
+                var cmd = new SqlCommand("INSERT INTO users (Username, FullName, LoginedAccountNumber, MobileNumber, AadhaarNumber, Email, Password) " +
                                            "VALUES (@username, @fullName, @accountNumber, @mobileNumber, @aadhaarNumber, @email, @password)", conn);
 
                 cmd.Parameters.AddWithValue("@username", Username);

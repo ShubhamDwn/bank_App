@@ -1,23 +1,32 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using MySql.Data.MySqlClient;
+using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
-using bank_demo.Services; // Assuming DBHelper is here
+using bank_demo.Services;
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
     public class AddBeneficiaryViewModel : INotifyPropertyChanged
     {
+#pragma warning disable CS8612 // Nullability of reference types in type doesn't match implicitly implemented member.
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS8612 // Nullability of reference types in type doesn't match implicitly implemented member.
 
-        
+
 
         private int _accountNumber;
         public int AccountNumber
         {
             get => _accountNumber;
             set { _accountNumber = value; OnPropertyChanged(); }
+        }
+
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set { _name = value; OnPropertyChanged(); }
         }
 
         private string _bankName;
@@ -64,7 +73,9 @@ namespace bank_demo.ViewModels.FeaturesPages
 
         public ICommand AddBeneficiaryCommand { get; }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public AddBeneficiaryViewModel(int accountNumber)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
             AccountNumber = accountNumber;
             Console.WriteLine("Function called");
@@ -103,14 +114,16 @@ namespace bank_demo.ViewModels.FeaturesPages
 
                 // Check for duplicates first
                 string checkQuery = @"SELECT COUNT(*) FROM bankdb.beneficiaries 
-                                      WHERE account_number = @AccountNumber 
+                                      WHERE LoginedAccountNumber = @AccountNumber 
                                       AND BeneficiaryAccountNumber = @BeneficiaryAccountNumber";
 
-                using var checkCmd = new MySqlCommand(checkQuery, conn);
+                using var checkCmd = new SqlCommand(checkQuery, conn);
                 checkCmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
                 checkCmd.Parameters.AddWithValue("@BeneficiaryAccountNumber", beneficiaryAccountNumber);
 
+#pragma warning disable CS8605 // Unboxing a possibly null value.
                 var result = (long)await checkCmd.ExecuteScalarAsync();
+#pragma warning restore CS8605 // Unboxing a possibly null value.
                 if (result > 0)
                 {
                     await Shell.Current.DisplayAlert("Error", "Beneficiary already exists for this account.", "OK");
@@ -119,17 +132,18 @@ namespace bank_demo.ViewModels.FeaturesPages
 
                 // Insert beneficiary
                 string insertQuery = @"INSERT INTO bankdb.beneficiaries
-                    (account_number, BankName, IFSCCode, BeneficiaryAccountNumber, Bank_Branch, BeneficiaryNickname)
+                    (LoginedAccountNumber, BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname)
                     VALUES
-                    (@AccountNumber, @BankName, @IFSCCode, @BeneficiaryAccountNumber, @Branch, @Nickname)";
+                    (@AccountNumber,@Name, @BankName, @IFSCCode, @BeneficiaryAccountNumber, @Branch, @Nickname)";
 
-                using var insertCmd = new MySqlCommand(insertQuery, conn);
+                using var insertCmd = new SqlCommand(insertQuery, conn);
                 insertCmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                insertCmd.Parameters.AddWithValue("@Name", Name);
                 insertCmd.Parameters.AddWithValue("@BankName", BankName);
                 insertCmd.Parameters.AddWithValue("@IFSCCode", IFSCCode);
                 insertCmd.Parameters.AddWithValue("@BeneficiaryAccountNumber", beneficiaryAccountNumber);
                 insertCmd.Parameters.AddWithValue("@Branch", Branch);
-                insertCmd.Parameters.AddWithValue("@Nickname", Nickname ?? ""); // Allow NULL or empty nickname
+                insertCmd.Parameters.AddWithValue("@Nickname", Nickname ?? "");
 
                 await insertCmd.ExecuteNonQueryAsync();
 

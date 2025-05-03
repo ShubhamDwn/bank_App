@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using bank_demo.Pages;
-using MySql.Data.MySqlClient;
+using Microsoft.Data.SqlClient;
 using bank_demo.Services; // Assuming DBHelper is here
 using System.Data;
 
@@ -10,7 +10,9 @@ namespace bank_demo.ViewModels
 {
     public class HomeViewModel : INotifyPropertyChanged
     {
+#pragma warning disable CS8612 // Nullability of reference types in type doesn't match implicitly implemented member.
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS8612 // Nullability of reference types in type doesn't match implicitly implemented member.
         void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -38,7 +40,9 @@ namespace bank_demo.ViewModels
         public ICommand AddBeneficiaryCommand { get; }
         public ICommand PaymentsCommand { get; }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public HomeViewModel(int customerId)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
             LoadCustomerData(customerId);
 
@@ -96,14 +100,14 @@ namespace bank_demo.ViewModels
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                string query = "SELECT full_name FROM bankdb.users WHERE account_number = @AccountNumber";
-                using var cmd = new MySqlCommand(query, conn);
+                string query = "SELECT FullName FROM bankdb.users WHERE AccountNumber = @AccountNumber";
+                using var cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
                 using var reader = await cmd.ExecuteReaderAsync();
 
                 if (await reader.ReadAsync())
                 {
-                    CustomerName = reader.GetString("full_name");
+                    CustomerName = reader.GetString("FullName");
                     //SavingsBalance = reader.GetDecimal("balance");  
                     SavingsBalance = 50000.00M;
                 }

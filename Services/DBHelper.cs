@@ -1,22 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
 
 namespace bank_demo.Services
 {
     public static class DBHelper
     {
-        private const string connectionString = "server=10.0.2.2;port=3306;user=root;password=root;database=bankdb;";
-
-        public static async Task<MySqlConnection> GetConnectionAsync()
+        // Local SQL Server connection string
+        private const string connectionString = "Server=MSI-GP66-LEOPAR;Database=bankdb;Integrated Security=True;TrustServerCertificate=True;";
+        // This method gets the connection asynchronously
+        public static async Task<SqlConnection> GetConnectionAsync()
         {
-            var conn = new MySqlConnection(connectionString);
-            await conn.OpenAsync();
+            var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync(); // Open the connection asynchronously
             return conn;
         }
-    }
 
+        // Method to execute a query
+        public static async Task ExecuteQueryAsync(string query)
+        {
+            using (var conn = await GetConnectionAsync())
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    await cmd.ExecuteNonQueryAsync(); // Execute the query asynchronously
+                }
+            }
+        }
+    }
 }
