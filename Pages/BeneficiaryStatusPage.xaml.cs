@@ -13,9 +13,12 @@ namespace bank_demo.Pages
             set
             {
                 _accountNumber = value;
+                Console.WriteLine($"[DEBUG] Account number received via QueryProperty: {_accountNumber}");
+
                 if (_accountNumber > 0)
                 {
-                    BindingContext = new BeneficiaryStatusPageViewModel(_accountNumber);
+                    var viewModel = new BeneficiaryStatusPageViewModel(_accountNumber);
+                    BindingContext = viewModel;
                 }
             }
         }
