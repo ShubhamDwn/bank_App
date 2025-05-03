@@ -133,6 +133,33 @@
                             <Label Text="Payments" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
+
+
+                    <!-- Second Row: Fund Transfer / Payments -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
+                                <Image Source="fund.png" WidthRequest="50" HeightRequest="50">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding FundTransferCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="Fund Transfer" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Investment -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
+                                <Image Source="invest.png" WidthRequest="50" HeightRequest="50">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="Investment" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
             </ScrollView>
 
@@ -206,7 +233,7 @@
                 <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10"/>
                 <Button Text="Profile" Clicked="OnProfileClicked"/>
                 <Button Text="Settings" Clicked="OnSettingsClicked"/>
-                <Button Text="Benfeciary Ststus" Clicked="OnBenfeciaryClicked"/>
+                <Button Text="Benfeciary Status" Clicked="OnBenfeciaryClicked"/>
                 <Button Text="Logout" BackgroundColor="IndianRed" TextColor="White" Clicked="OnLogoutClicked"/>
 
             </StackLayout>
