@@ -113,7 +113,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 using var conn = await DBHelper.GetConnectionAsync();
 
                 // Check for duplicates first
-                string checkQuery = @"SELECT COUNT(*) FROM bankdb.beneficiaries 
+                string checkQuery = @"SELECT COUNT(*) FROM beneficiaries 
                                       WHERE LoginedAccountNumber = @AccountNumber 
                                       AND BeneficiaryAccountNumber = @BeneficiaryAccountNumber";
 
@@ -122,7 +122,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 checkCmd.Parameters.AddWithValue("@BeneficiaryAccountNumber", beneficiaryAccountNumber);
 
 #pragma warning disable CS8605 // Unboxing a possibly null value.
-                var result = (long)await checkCmd.ExecuteScalarAsync();
+                var result = (int)(await checkCmd.ExecuteScalarAsync() ?? 0);
 #pragma warning restore CS8605 // Unboxing a possibly null value.
                 if (result > 0)
                 {
@@ -131,7 +131,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 }
 
                 // Insert beneficiary
-                string insertQuery = @"INSERT INTO bankdb.beneficiaries
+                string insertQuery = @"INSERT INTO beneficiaries
                     (LoginedAccountNumber, BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname)
                     VALUES
                     (@AccountNumber,@Name, @BankName, @IFSCCode, @BeneficiaryAccountNumber, @Branch, @Nickname)";

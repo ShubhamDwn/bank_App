@@ -7,7 +7,8 @@ namespace bank_demo.Services
     public static class DBHelper
     {
         // Local SQL Server connection string
-        private const string connectionString = "Server=MSI-GP66-LEOPAR;Database=bankdb;Integrated Security=True;TrustServerCertificate=True;";
+        private const string connectionString = "Server=10.0.2.2,1433;Database=bankdb;User=appuser;Password=root;TrustServerCertificate=True;";
+
         // This method gets the connection asynchronously
         public static async Task<SqlConnection> GetConnectionAsync()
         {

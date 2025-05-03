@@ -4,14 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using bank_demo.Services;
 using Microsoft.Data.SqlClient;
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace bank_demo.ViewModels
 {
-    
-
     public class LoginViewModel : INotifyPropertyChanged
     {
         private string _username;
@@ -40,48 +37,50 @@ namespace bank_demo.ViewModels
         public ICommand SignUpCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
 
-
         public LoginViewModel()
         {
             LoginCommand = new Command(async () => await LoginAsync());
             SignUpCommand = new Command(async () => await SignUpAsync());
-            ForgotPasswordCommand = new Command(async () => await Shell.Current.GoToAsync("ForgotPasswordPage"));
-
+            ForgotPasswordCommand = new Command(async () => await ForgotPasswordAsync());
         }
+
         public static string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
             byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(bytes);
         }
+
         private async Task LoginAsync()
         {
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
+                if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Username and password cannot be empty.", "OK");
+                    return;
+                }
 
-                // Step 1: Check if user with provided username exists
+                using var conn = await DBHelper.GetConnectionAsync();
                 var cmd = new SqlCommand("SELECT * FROM users WHERE Username = @username", conn);
                 cmd.Parameters.AddWithValue("@username", Username);
 
                 using var reader = await cmd.ExecuteReaderAsync();
+
                 if (!await reader.ReadAsync())
                 {
                     await Application.Current.MainPage.DisplayAlert("Login Failed", "No user found with this username.", "OK");
                     return;
                 }
 
-                // Step 2: User found, get hashed password from DB
-                string storedHashedPassword = reader.GetString("Password"); // hashed password in DB
-                int AccountNumber = reader.GetInt32("AccountNumber"); // adjust based on your actual column name
+                string storedHashedPassword = reader["Password"].ToString();
+                int accountNumber = Convert.ToInt32(reader["LoginedAccountNumber"]);
 
-                // Step 3: Hash the entered password
-                string enteredHashedPassword = HashPassword(Password); // Make sure HashHelper.HashPassword exists
+                string enteredHashedPassword = HashPassword(Password);
 
-                // Step 4: Compare stored and entered hashes
                 if (storedHashedPassword == enteredHashedPassword)
                 {
-                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={AccountNumber}");
+                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={accountNumber}");
                 }
                 else
                 {
@@ -94,12 +93,10 @@ namespace bank_demo.ViewModels
             }
         }
 
-
         private async Task SignUpAsync()
         {
-            await Shell.Current.GoToAsync("Signup"); 
+            await Shell.Current.GoToAsync("Signup");
         }
-
 
         private async Task ForgotPasswordAsync()
         {
@@ -113,10 +110,8 @@ namespace bank_demo.ViewModels
             if (string.IsNullOrWhiteSpace(email))
                 return;
 
-            // Simulate email validation logic
             if (email.ToLower().Contains("@") && email.ToLower().Contains("."))
             {
-                // Simulate sending reset email
                 await Application.Current.MainPage.DisplayAlert(
                     "Reset Link Sent",
                     $"A password reset link has been sent to {email}.",
@@ -130,7 +125,6 @@ namespace bank_demo.ViewModels
                     "OK");
             }
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>

@@ -100,7 +100,7 @@ namespace bank_demo.ViewModels
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                string query = "SELECT FullName FROM bankdb.users WHERE AccountNumber = @AccountNumber";
+                string query = "SELECT FullName FROM users WHERE LoginedAccountNumber = @AccountNumber";
                 using var cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
                 using var reader = await cmd.ExecuteReaderAsync();

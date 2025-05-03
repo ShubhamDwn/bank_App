@@ -38,7 +38,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             {
                 using var conn = await DBHelper.GetConnectionAsync();
                 string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
-                                 FROM bankdb.beneficiaries 
+                                 FROM beneficiaries 
                                  WHERE LoginedAccountNumber = @AccountNumber";
 
                 using var cmd = new SqlCommand(query, conn);

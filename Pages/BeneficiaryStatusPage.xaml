@@ -24,15 +24,9 @@
                                HasShadow="True">
 
                             <VerticalStackLayout Spacing="5">
-                                <Label Text="{Binding BankName}" FontAttributes="Bold" FontSize="18"/>
-                                <Label Text="IFSC Code: " FontSize="14"/>
-                                <Label Text="{Binding IFSCCode}" FontSize="14" />
-                                <Label Text="Account Number: " FontSize="14"/>
-                                <Label Text="{Binding BeneficiaryAccountNumber}" FontSize="14"/>
-                                <Label Text="Branch: " FontSize="14"/>
-                                <Label Text="{Binding Branch}" FontSize="14"/>
-                                <Label Text="Nickname: " FontSize="14"/>
-                                <Label Text="{Binding Nickname}" FontSize="14"/>
+                                <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="18"
+                                       TextColor="Black"/>
+                                <Label Text="{Binding BankName}" FontSize="14" />
                             </VerticalStackLayout>
 
                         </Frame>
