@@ -22,6 +22,10 @@ namespace bank_demo.Pages
                 }
             }
         }
+        private async void OnAddBeneficiaryClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync($"AddBeneficiaryPage?account_number={AccountNumber}"); 
+        }
 
         public BeneficiaryStatusPage()
         {

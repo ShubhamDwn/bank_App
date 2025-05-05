@@ -119,8 +119,10 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="Add Beneficiary" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Add/Manage" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Beneficiary" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
+
 
                         <VerticalStackLayout HorizontalOptions="Center">
                             <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
