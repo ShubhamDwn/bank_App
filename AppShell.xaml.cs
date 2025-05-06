@@ -22,7 +22,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(HistoryPage), typeof(HistoryPage));
         Routing.RegisterRoute(nameof(AddBeneficiaryPage), typeof(AddBeneficiaryPage));
         Routing.RegisterRoute(nameof(PaymentsPage), typeof(PaymentsPage));
-
+        Routing.RegisterRoute(nameof(BeneficiaryDetailPage), typeof(BeneficiaryDetailPage));
         Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
         Routing.RegisterRoute(nameof(TransactionHistoryPage), typeof(TransactionHistoryPage));
         Routing.RegisterRoute(nameof(BeneficiaryStatusPage), typeof(BeneficiaryStatusPage));

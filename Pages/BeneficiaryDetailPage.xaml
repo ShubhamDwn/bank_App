@@ -1,12 +1,53 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="bank_demo.Pages.BeneficiaryDetailPage"
-             Title="BeneficiaryDetailPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Beneficiary Details">
+
+    <Grid RowDefinitions="*,Auto" Padding="10">
+
+        <!-- Beneficiary Details -->
+        <CollectionView Grid.Row="0" ItemsSource="{Binding Beneficiaries}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="10" Padding="20">
+                        <Label Text="{Binding Name}" FontSize="25" Padding="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Account Number:" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="{Binding BeneficiaryAccountNumber}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+
+                        <Label Text="Bank:" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="{Binding BankName}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+
+                        <Label Text="Branch:" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="{Binding Branch}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+
+                        <Label Text="IFSC Code:" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="{Binding IFSCCode}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+
+                        <Label Text="Nickname:" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="{Binding Nickname}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Buttons at the bottom -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="15" Padding="10" HorizontalOptions="Center">
+            <Button Text="Delete"
+                    BackgroundColor="DarkRed"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    WidthRequest="150"
+                    HeightRequest="50"
+                    CornerRadius="10"/>
+            <Button Text="Payment"
+                    BackgroundColor="DarkGreen"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    WidthRequest="150"
+                    HeightRequest="50"
+                    CornerRadius="10"/>
+        </HorizontalStackLayout>
+
+    </Grid>
 </ContentPage>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="ThisPage"
              x:Class="bank_demo.Pages.BeneficiaryStatusPage"
-             Title="Your Beneficiaries">
+             Title="My Beneficiaries">
 
     <Grid RowDefinitions="*,Auto" Padding="20">
         <!-- Scrollable content -->
@@ -13,13 +14,19 @@
                        FontAttributes="Bold"
                        HorizontalOptions="Center" />
 
-                <CollectionView ItemsSource="{Binding Beneficiaries}">
+                <CollectionView ItemsSource="{Binding Beneficiaries}"
+                SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Border Stroke="Gray"
                                     StrokeShape="RoundRectangle 10"
                                     Padding="15"
                                     Margin="5">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.SelectBeneficiaryCommand}"
+                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+
                                 <VerticalStackLayout Spacing="5">
                                     <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold"/>
                                     <Label Text="{Binding BankName}" FontSize="14"/>
@@ -28,6 +35,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
             </VerticalStackLayout>
         </ScrollView>
 

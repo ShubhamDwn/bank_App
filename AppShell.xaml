@@ -88,6 +88,10 @@
               ContentTemplate="{DataTemplate pages:BeneficiaryStatusPage}"
               Shell.FlyoutBehavior="Disabled" />
 
+    <!-- Beneficiary Detail Page -->
+    <ShellContent Route="beneficiarydetailpage"
+                  ContentTemplate="{DataTemplate pages:BeneficiaryDetailPage}"
+                  Shell.FlyoutBehavior="Disabled" />
 
     <!-- Payments Page -->
     <ShellContent Route="PaymentsPage"

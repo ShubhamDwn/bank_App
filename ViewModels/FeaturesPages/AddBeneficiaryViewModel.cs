@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Microsoft.Data.SqlClient;
-using System.Threading.Tasks;
 using bank_demo.Services;
 
 namespace bank_demo.ViewModels.FeaturesPages
@@ -148,7 +147,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 await insertCmd.ExecuteNonQueryAsync();
 
                 await Shell.Current.DisplayAlert("Success", "Beneficiary added successfully!", "OK");
-                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?account_number={AccountNumber}");  
+                await Shell.Current.GoToAsync($"BeneficiaryDetailPage?account_number={AccountNumber}&beneficiary_account_number={beneficiaryAccountNumber}");
             }
             catch (Exception ex)
             {
