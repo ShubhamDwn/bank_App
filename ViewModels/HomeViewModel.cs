@@ -5,6 +5,7 @@ using bank_demo.Pages;
 using Microsoft.Data.SqlClient;
 using bank_demo.Services; // Assuming DBHelper is here
 using System.Data;
+using bank_demo.Pages.Fund_Transfer;
 
 namespace bank_demo.ViewModels 
 {
@@ -39,6 +40,7 @@ namespace bank_demo.ViewModels
         public ICommand HistoryCommand { get; }
         public ICommand AddBeneficiaryCommand { get; }
         public ICommand PaymentsCommand { get; }
+        public ICommand FundTransferCommand { get; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public HomeViewModel(int customerId)
@@ -93,6 +95,12 @@ namespace bank_demo.ViewModels
             PaymentsCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync(nameof(PaymentsPage));
+            });
+
+            FundTransferCommand = new Command(async () =>
+            {
+                // Pass the account number as a query parameter
+                await Shell.Current.GoToAsync($"FundTransferPage?account_number={customerId}");
             });
         }
 

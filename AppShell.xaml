@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:root="clr-namespace:bank_demo"
     xmlns:pages="clr-namespace:bank_demo.Pages"
+    xmlns:fund="clr-namespace:bank_demo.Pages.Fund_Transfer"
     x:Class="bank_demo.AppShell"
     Shell.FlyoutBehavior="Flyout"
     x:Name="RootShell">
@@ -14,10 +15,6 @@
             <Image Source="menu.png" HeightRequest="150" HorizontalOptions="Center" />
         </Grid>
     </Shell.FlyoutHeader>
-
-
-
-
 
 
     <!-- Login -->
@@ -100,6 +97,10 @@
               Shell.NavBarIsVisible="True" />
 
 
+
+
+
+
     <!-- Flyout Menu Items (will show back arrow when navigated) -->
     <FlyoutItem Title="Menu" Icon="menu.png">
         <ShellContent
@@ -107,11 +108,5 @@
         ContentTemplate="{DataTemplate root:MoreOptionsPage}"
         Route="MoreOptionsPage" />
     </FlyoutItem>
-
-
-
-
-
-
 
 </Shell>

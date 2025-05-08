@@ -68,6 +68,8 @@
                 </Label.GestureRecognizers>
             </Label>
         </HorizontalStackLayout>
+        
+        
 
         <!-- Login Button -->
         <Button Text="Login"

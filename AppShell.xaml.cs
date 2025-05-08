@@ -1,4 +1,6 @@
 ﻿using bank_demo.Pages;
+using bank_demo.Pages.Fund_Transfer;
+
 
 namespace bank_demo;
 
@@ -29,6 +31,8 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(ContactSupportPage), typeof(ContactSupportPage));
         Routing.RegisterRoute(nameof(SecuritySettingsPage), typeof(SecuritySettingsPage));
         Routing.RegisterRoute(nameof(TermsPage), typeof(TermsPage));
+        Routing.RegisterRoute(nameof(FundTransferPage), typeof(FundTransferPage));
+
 
 
 
