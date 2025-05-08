@@ -59,7 +59,8 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                         Branch = reader.GetString("BeneficiaryBankBranch"),
                         Nickname = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname")
                     });
-                }
+                } 
+
             }
             catch (Exception ex)
             {
