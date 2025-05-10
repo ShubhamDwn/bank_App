@@ -74,7 +74,7 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
         {
             if (selected == null) return;
 
-            await Shell.Current.GoToAsync($"BeneficiaryDetailPage?account_number={AccountNumber}&beneficiary_account_number={selected.BeneficiaryAccountNumber}");
+            await Shell.Current.GoToAsync($"EnterAmountPage?account_number={AccountNumber}&beneficiary_account_number={selected.BeneficiaryAccountNumber}");
         }
 
 
