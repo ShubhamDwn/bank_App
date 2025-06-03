@@ -1,17 +1,16 @@
-0+<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:bank_demo.ViewModels.FeaturesPages.FundTransfer"
              x:Class="bank_demo.Pages.Fund_Transfer.EnterAmountPage"
              Title="Enter Amount">
 
-    
     <VerticalStackLayout Padding="20" Spacing="15">
-        
+
         <Label Text="Beneficiary:" FontAttributes="Bold" />
         <Label Text="{Binding BeneficiaryName}" />
 
-        <Label Text="BankName:" FontAttributes="Bold" />
+        <Label Text="Bank Name:" FontAttributes="Bold" />
         <Label Text="{Binding BankName}" />
 
         <Label Text="Amount:" />
@@ -20,33 +19,22 @@
         <Label Text="Remarks:" />
         <Entry Text="{Binding Remarks}" />
 
-        <Label Text="Transfer Option:" />
-        <Label Text="Transfer Mode" FontAttributes="Bold" />
-
+        <Label Text="Transfer Mode:" FontAttributes="Bold" />
         <Grid>
             <Picker ItemsSource="{Binding TransferOptions}"
-            SelectedItem="{Binding SelectedTransferOption}"
-            
-            HorizontalOptions="FillAndExpand"
-            Margin="0" />
+                    SelectedItem="{Binding SelectedTransferOption}"
+                    HorizontalOptions="FillAndExpand"
+                    Margin="0" />
 
-            <!-- Visual down arrow overlay (no IsHitTestVisible needed) -->
             <Image Source="down_arrow.png"
-           HeightRequest="20"
-           WidthRequest="20"
-           HorizontalOptions="End"
-           VerticalOptions="Center"
-           Margin="0,0,10,0" />
+                   HeightRequest="20"
+                   WidthRequest="20"
+                   HorizontalOptions="End"
+                   VerticalOptions="Center"
+                   Margin="0,0,10,0" />
         </Grid>
-
-
-
 
         <Button Text="Submit" Command="{Binding ProceedCommand}" />
 
-        
-
     </VerticalStackLayout>
-    
-
 </ContentPage>

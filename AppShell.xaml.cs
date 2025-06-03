@@ -32,6 +32,8 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(SecuritySettingsPage), typeof(SecuritySettingsPage));
         Routing.RegisterRoute(nameof(TermsPage), typeof(TermsPage));
         Routing.RegisterRoute(nameof(FundTransferPage), typeof(FundTransferPage));
+        Routing.RegisterRoute(nameof(EnterAmountPage), typeof(EnterAmountPage));
+
 
 
 

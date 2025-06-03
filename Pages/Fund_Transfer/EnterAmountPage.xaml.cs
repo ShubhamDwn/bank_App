@@ -48,11 +48,6 @@ public partial class EnterAmountPage : ContentPage
     {
         InitializeComponent();
     }
-
-    private void InitializeComponent()
-    {
-        throw new NotImplementedException();
-    }
 }
 
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Windows.Input; // MAUI-compatible input
 using Microsoft.Data.SqlClient;
-using bank_demo.Pages.Fund_Transfer;
 using bank_demo.Services;
 using Microsoft.Maui.ApplicationModel.DataTransfer;
 
@@ -25,6 +24,9 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             get => _beneficiaryAccountNumber;
             set { _beneficiaryAccountNumber = value; OnPropertyChanged(); }
         }
+
+        public string BeneficiaryName => Beneficiaries.FirstOrDefault()?.Name ?? "";
+        public string BankName => Beneficiaries.FirstOrDefault()?.BankName ?? "";
 
         private string _amount;
         public string Amount
@@ -93,6 +95,9 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                         Nickname = reader["BeneficiaryNickname"]?.ToString() ?? ""
                     });
                 }
+
+                OnPropertyChanged(nameof(BeneficiaryName));
+                OnPropertyChanged(nameof(BankName));
             }
             catch (Exception ex)
             {
@@ -132,8 +137,6 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
 
             if (confirm)
             {
-                // TODO: Add database logic to save the transaction
-
                 bool share = await Shell.Current.DisplayAlert("Success", "Transfer Initiated", "Share", "OK");
 
                 if (share)
@@ -144,9 +147,6 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                         Text = summary
                     });
                 }
-
-                // Optional: Navigate back or to another page
-                // await Shell.Current.GoToAsync(nameof(FundTransferPage));
             }
         }
     }
