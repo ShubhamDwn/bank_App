@@ -4,8 +4,7 @@
              x:Class="bank_demo.LoginPage"
              xmlns:viewModels="clr-namespace:bank_demo.ViewModels"
              Shell.FlyoutBehavior="Disabled"
-             Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             Shell.NavBarIsVisible="False">
 
     <ContentPage.BindingContext>
         <viewModels:LoginViewModel />
@@ -20,7 +19,7 @@
                HorizontalOptions="Center"/>
 
         <!-- Username Field -->
-        <Border Stroke="Gray" StrokeThickness="2" BackgroundColor="White"
+        <Border Stroke="Gray" StrokeThickness="2" 
                 HeightRequest="50" WidthRequest="300" Padding="5">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10"/>
@@ -28,14 +27,13 @@
             <HorizontalStackLayout Spacing="10">
                 <Image Source="user_icon.png" HeightRequest="24" WidthRequest="24"/>
                 <Entry Placeholder="Enter Username"
-                       TextColor="Black"
                        Text="{Binding Username}"
                        WidthRequest="250" VerticalOptions="Center"/>
             </HorizontalStackLayout>
         </Border>
 
         <!-- Password Field -->
-        <Border Stroke="Gray" StrokeThickness="2" BackgroundColor="White"
+        <Border Stroke="Gray" StrokeThickness="2"
                 HeightRequest="50" WidthRequest="300" Padding="5">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10"/>
@@ -44,7 +42,6 @@
                 <Image Source="lock_icon.png" HeightRequest="24" WidthRequest="24"/>
                 <Entry Placeholder="Enter Password"
                        IsPassword="True"
-                       TextColor="Black"
                        Text="{Binding Password}"
                        WidthRequest="250" VerticalOptions="Center"/>
             </HorizontalStackLayout>

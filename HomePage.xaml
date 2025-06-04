@@ -72,7 +72,7 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="My QR Code" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="My QR Code" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout HorizontalOptions="Center">
@@ -83,7 +83,7 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="Scan to Pay" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Scan to Pay" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout HorizontalOptions="Center">
@@ -94,7 +94,7 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="Statement" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Statement" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
 
@@ -108,7 +108,7 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="History" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="History" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout HorizontalOptions="Center">
@@ -119,8 +119,8 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="Add/Manage" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
-                            <Label Text="Beneficiary" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Add/Manage" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Beneficiary" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
 
 
@@ -132,7 +132,7 @@
                                     </Image.GestureRecognizers>
                                 </Image>
                             </Border>
-                            <Label Text="Payments" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="Payments" FontSize="15" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
 

@@ -104,19 +104,19 @@ namespace bank_demo.ViewModels
             });
         }
 
-        private async void LoadCustomerData(int AccountNumber)
+        private async void LoadCustomerData(int CustomerID)
         {
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                string query = "SELECT FullName FROM users WHERE LoginedAccountNumber = @AccountNumber";
+                string query = "SELECT FirstName,MiddleName,SurName FROM Customer WHERE CustomerId = @CustomerID";
                 using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                cmd.Parameters.AddWithValue("@CustomerId", CustomerID);
                 using var reader = await cmd.ExecuteReaderAsync();
 
                 if (await reader.ReadAsync())
                 {
-                    CustomerName = reader.GetString("FullName");
+                    CustomerName = reader.GetString("FirstName")+ reader.GetString("MiddleName")+reader.GetString("SurName");
                     //SavingsBalance = reader.GetDecimal("balance");  
                     SavingsBalance = 50000.00M;
                 }

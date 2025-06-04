@@ -4,117 +4,24 @@
              xmlns:vm="clr-namespace:bank_demo.ViewModels"
              x:Class="bank_demo.SignupPage"
              x:DataType="vm:SignupViewModel"
-             Shell.FlyoutBehavior="Disabled"
-             Shell.NavBarIsVisible="True"
-             BackgroundColor="White"
-             Title="Sign Up">
-
-    <ContentPage.BindingContext>
-        <vm:SignupViewModel />
-    </ContentPage.BindingContext>
+             Title="Signup">
 
     <ScrollView>
-        <VerticalStackLayout Padding="30" Spacing="20">
+        <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label Text="Create an Account" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <Label Text="Aadhaar Number" />
+            <Entry Text="{Binding Aadhaar}" Keyboard="Numeric" MaxLength="12"/>
 
-            <!-- Full Name Field -->
-            <Entry Placeholder="Full Name" 
-                   Text="{Binding FullName, Mode=TwoWay}" 
-                   TextColor="Black"
-                   IsEnabled="{Binding IsFullNameEnabled}" />
+            <Label Text="Username" />
+            <Entry Text="{Binding Username}" />
 
-            <!-- Account Number Field -->
-            <Entry Placeholder="Account Number" 
-                   Keyboard="Numeric" 
-                   TextColor="Black"
-                   Text="{Binding AccountNumber}" 
-                   IsEnabled="{Binding IsAccountNumberEnabled}" />
+            <Label Text="Password" />
+            <Entry Text="{Binding Password}" IsPassword="True" />
 
-            <!-- Mobile Number Field -->
-            <Entry x:Name="MobileEntry"
-                   Placeholder="Mobile Number"
-                   TextColor="Black"
-                   Keyboard="Telephone"
-                   Text="{Binding MobileNumber}"
-                   IsReadOnly="{Binding IsMobileVerified}" />
+            <Label Text="Confirm Password" />
+            <Entry Text="{Binding ConfirmPassword}" IsPassword="True" />
 
-            <HorizontalStackLayout>
-                <Button x:Name="SendOtpButton"
-                    Text="Send OTP"
-                    TextColor="Black"
-                    Command="{Binding SendMobileOtpCommand}"
-                    IsVisible="{Binding IsMobileOtpButtonVisible}" />
-                <Image Source="checkmark.png"
-                       HeightRequest="24"
-                       WidthRequest="24"
-                       IsVisible="{Binding IsMobileVerified}" />
-            </HorizontalStackLayout>
-
-            <!-- Email Field -->
-            <Entry x:Name="EmailEntry"
-               Placeholder="Email"
-               Keyboard="Email"
-               TextColor="Black"
-               Text="{Binding Email}"
-               IsReadOnly="{Binding IsEmailVerified}" />
-
-                    <HorizontalStackLayout>
-                        <Button x:Name="SendEmailOtpButton"
-                                Text="Send OTP"
-                                Command="{Binding SendEmailOtpCommand}"
-                                IsVisible="{Binding IsEmailOtpButtonVisible}" />
-
-                        <Image Source="checkmark.png"
-                               HeightRequest="24"
-                               WidthRequest="24"
-                               IsVisible="{Binding IsEmailVerified}" />
-                    </HorizontalStackLayout>
-
-            <!-- Aadhaar Number Field -->
-            <Entry Placeholder="Aadhaar Number" 
-                   Keyboard="Numeric" 
-                   TextColor="Black"
-                   Text="{Binding AadhaarNumber}" 
-                   IsEnabled="{Binding IsAadhaarNumberEnabled}" />
-
-            <!-- Aadhaar Number Field -->
-            <Entry Placeholder="Username" 
-                   Keyboard="Text"
-                   TextColor="Black"
-                   IsTextPredictionEnabled="False"
-                   Text="{Binding Username}" />
-
-            <!-- Password Field -->
-            <Entry Placeholder="Password" 
-                   IsPassword="True" 
-                   TextColor="Black"
-                   Text="{Binding Password}" 
-                   IsEnabled="{Binding IsPasswordEnabled}" />
-
-            <!-- Confirm Password Field -->
-            <Entry Placeholder="Confirm Password" 
-                   IsPassword="True" 
-                   TextColor="Black"
-                   Text="{Binding ConfirmPassword}" 
-                   IsEnabled="{Binding IsConfirmPasswordEnabled}" />
-
-            <!-- Sign Up Button -->
-            <Button Text="Sign Up"
-                    Command="{Binding SignupCommand}"
-                    BackgroundColor="Blue"
-                    TextColor="White"
-                    IsEnabled="{Binding IsSignUpEnabled}" />
-
-            <!-- Login Redirect Section -->
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Label Text="Already have an account?" />
-                <Label Text="Login" TextColor="Blue">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-            </HorizontalStackLayout>
+            <Button Text="Signup" Command="{Binding SignupCommand}" />
 
         </VerticalStackLayout>
     </ScrollView>

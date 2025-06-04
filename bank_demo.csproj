@@ -69,6 +69,9 @@
 		<PackageReference Include="QRCoder" Version="1.6.0" />
 		<PackageReference Include="QuestPDF" Version="2025.4.0" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="ZXing" Version="2.1.1" />
+		<PackageReference Include="ZXing.Net" Version="0.16.10" />
+		<PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>

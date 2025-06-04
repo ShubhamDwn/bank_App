@@ -37,18 +37,12 @@ namespace bank_demo.ViewModels
         public ICommand SignUpCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
 
+
         public LoginViewModel()
         {
             LoginCommand = new Command(async () => await LoginAsync());
             SignUpCommand = new Command(async () => await SignUpAsync());
             ForgotPasswordCommand = new Command(async () => await ForgotPasswordAsync());
-        }
-
-        public static string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
         }
 
         private async Task LoginAsync()
@@ -62,7 +56,7 @@ namespace bank_demo.ViewModels
                 }
 
                 using var conn = await DBHelper.GetConnectionAsync();
-                var cmd = new SqlCommand("SELECT * FROM users WHERE Username = @username", conn);
+                var cmd = new SqlCommand("SELECT UserPassword,CustomerId FROM Customer WHERE UserName = @username", conn);
                 cmd.Parameters.AddWithValue("@username", Username);
 
                 using var reader = await cmd.ExecuteReaderAsync();
@@ -73,14 +67,17 @@ namespace bank_demo.ViewModels
                     return;
                 }
 
-                string storedHashedPassword = reader["Password"].ToString();
-                int accountNumber = Convert.ToInt32(reader["LoginedAccountNumber"]);
+                string storedHashedPassword = reader["UserPassword"].ToString();
+                int CustomerId = Convert.ToInt32(reader["CustomerID"]);
 
-                string enteredHashedPassword = HashPassword(Password);
+                string enteredHashedPassword = SecurityHelper.HashPassword(Password);
+
+                await Application.Current.MainPage.DisplayAlert("Debug", $"Entered: {enteredHashedPassword}\nStored: {storedHashedPassword}", "OK");
+
 
                 if (storedHashedPassword == enteredHashedPassword)
                 {
-                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={accountNumber}");
+                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={CustomerId}");
                 }
                 else
                 {
@@ -100,31 +97,9 @@ namespace bank_demo.ViewModels
 
         private async Task ForgotPasswordAsync()
         {
-            string email = await Application.Current.MainPage.DisplayPromptAsync(
-                "Forgot Password",
-                "Enter your email to reset your password:",
-                "Send",
-                "Cancel",
-                placeholder: "example@email.com");
-
-            if (string.IsNullOrWhiteSpace(email))
-                return;
-
-            if (email.ToLower().Contains("@") && email.ToLower().Contains("."))
-            {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Reset Link Sent",
-                    $"A password reset link has been sent to {email}.",
-                    "OK");
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Invalid Email",
-                    "Please enter a valid email address.",
-                    "OK");
-            }
+            await Shell.Current.GoToAsync("ForgotPasswordPage");
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>

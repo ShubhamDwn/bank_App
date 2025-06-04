@@ -14,10 +14,10 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
-            <Label Text="Choose Payment Method"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
+            <Label Text="Recharge And Payments" 
+                   FontSize="23"
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" TextColor="#478ed1"/>
 
             <!-- UPI Option -->
             <Border BackgroundColor="#e3f2fd"
@@ -26,26 +26,68 @@
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 10">
                 <VerticalStackLayout HorizontalOptions="Center">
-                    <Image Source="upi.png" WidthRequest="60" HeightRequest="60"/>
-                    <Label Text="UPI" FontSize="16" TextColor="Black" />
-                    <Button Text="Proceed with UPI"
-                            Command="{Binding UPICommand}" />
+                    <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Spacing="35" >
+
+                        <!-- QR Code -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="qrcode.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding QRCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="QR Code" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!--Contactpage-->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" BackgroundColor="SkyBlue" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="contactpay.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ContactCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="Contact" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- UPI ID -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="upi.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding QRCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="UPI ID" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
                 </VerticalStackLayout>
             </Border>
 
-            <!-- NEFT Option -->
-            <Border BackgroundColor="#fce4ec"
-                    Padding="15"
-                    Stroke="Gray"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 10">
-                <VerticalStackLayout HorizontalOptions="Center">
-                    <Image Source="neft.png" WidthRequest="60" HeightRequest="60"/>
-                    <Label Text="NEFT" FontSize="16" TextColor="Black" />
-                    <Button Text="Proceed with NEFT"
-                            Command="{Binding NEFTCommand}" />
-                </VerticalStackLayout>
-            </Border>
+
+
 
             <!-- IMPS Option -->
             <Border BackgroundColor="#f1f8e9"
@@ -54,10 +96,139 @@
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 10">
                 <VerticalStackLayout HorizontalOptions="Center">
-                    <Image Source="imps.png" WidthRequest="60" HeightRequest="60"/>
-                    <Label Text="IMPS" FontSize="16" TextColor="Black" />
-                    <Button Text="Proceed with IMPS"
-                            Command="{Binding IMPSCommand}" />
+
+                    <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Spacing="35" >
+                        <!-- DTH -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" BackgroundColor="SkyBlue" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="dth.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding DTHRechargeCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="DTH" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+
+
+                        <!-- HomeRent -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="homerent.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding QRCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="Home Rent" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- LPG -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="lpg.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding BookLPGCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="LPG" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="#DFD8F7"
+           Padding="15"
+           Stroke="Gray"
+           StrokeThickness="1"
+           StrokeShape="RoundRectangle 10">
+                <VerticalStackLayout HorizontalOptions="Center">
+
+                    <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Spacing="35" >
+                        <!-- Mobile Recharge -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" BackgroundColor="SkyBlue" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="mobile.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding MobileRechargeCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label Text="Mobile" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                                <Label Text="Recharge" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                            </StackLayout>
+                        </VerticalStackLayout>
+
+
+
+                        <!-- Electricity -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="bulb.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding QRCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="Electricity" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- FasTag -->
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Border Stroke="Gray" StrokeThickness="0.1" StrokeShape="RoundRectangle 50" Padding="10" WidthRequest="70" HeightRequest="70">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#ac99ea" Offset="0.1" />
+                                        <GradientStop Color="#478ed1" Offset="3.6" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Image Source="toll.png" WidthRequest="45" HeightRequest="45">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding FastagCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label Text="FASTag" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                                <Label Text="Recharge" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                            </StackLayout>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
