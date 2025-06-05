@@ -44,8 +44,8 @@ namespace bank_demo.ViewModels.FeaturesPages
                         IFSCCode = reader["IFSC"].ToString() ?? "",
                         BranchName = reader["BranchName"].ToString() ?? "",
                         BeneficiaryNickName = reader["BeneficiaryNickName"].ToString() ?? "",
-                        AccountNumber = _customerId, // current user
-                        BeneficiaryAccountNumber = Convert.ToInt32(reader["AccountNumber"])
+                        CustomerId = _customerId, // current user
+                        AccountNumber = Convert.ToInt32(reader["AccountNumber"])
                     };
 
                     Beneficiaries.Add(beneficiary);
@@ -61,7 +61,7 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             if (selected == null) return;
 
-            await Shell.Current.GoToAsync($"BeneficiaryDetailPage?accountNumber={selected.AccountNumber}&beneficiaryAccountNumber={selected.BeneficiaryAccountNumber}");
+            await Shell.Current.GoToAsync($"BeneficiaryDetailPage?CustomerId={selected.CustomerId}&AccountNumber={selected.AccountNumber}");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

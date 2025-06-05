@@ -6,26 +6,27 @@
     <Grid RowDefinitions="*,Auto" Padding="10">
 
         <!-- Beneficiary Details -->
-        <CollectionView Grid.Row="0" ItemsSource="{Binding Beneficiaries}">
+        <CollectionView Grid.Row="0" ItemsSource="{Binding Beneficiaries}" SelectedItem="{Binding SelectedBeneficiary}"
+                SelectionMode="Single">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <VerticalStackLayout Spacing="10" Padding="20">
-                        <Label Text="{Binding Name}" FontSize="25" Padding="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding BeneficiaryName}" FontSize="25" Padding="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
 
                         <Label Text="Account Number:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding BeneficiaryAccountNumber}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                        <Label Text="{Binding AccountNumber}" FontSize="25" Padding="5" FontAttributes="Bold"/>
 
                         <Label Text="Bank:" FontSize="15" FontAttributes="Bold" />
                         <Label Text="{Binding BankName}" FontSize="25" Padding="5" FontAttributes="Bold"/>
 
                         <Label Text="Branch:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding Branch}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                        <Label Text="{Binding BranchName}" FontSize="25" Padding="5" FontAttributes="Bold"/>
 
                         <Label Text="IFSC Code:" FontSize="15" FontAttributes="Bold" />
                         <Label Text="{Binding IFSCCode}" FontSize="25" Padding="5" FontAttributes="Bold"/>
 
                         <Label Text="Nickname:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding Nickname}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                        <Label Text="{Binding BeneficiaryNickname}" FontSize="25" Padding="5" FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
@@ -39,14 +40,16 @@
                     FontAttributes="Bold"
                     WidthRequest="150"
                     HeightRequest="50"
-                    CornerRadius="10"/>
+                    CornerRadius="10"
+                    Command="{Binding DeleteCommand}"/>
             <Button Text="Payment"
                     BackgroundColor="DarkGreen"
                     TextColor="White"
                     FontAttributes="Bold"
                     WidthRequest="150"
                     HeightRequest="50"
-                    CornerRadius="10"/>
+                    CornerRadius="10"
+                    Command="{Binding PaymentCommand}"/>
         </HorizontalStackLayout>
 
     </Grid>

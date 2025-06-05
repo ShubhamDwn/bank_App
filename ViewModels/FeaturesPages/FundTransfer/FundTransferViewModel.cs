@@ -12,22 +12,22 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
     {
         public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
 
-        private int _accountNumber;
-        public int AccountNumber
+        private int _customerId;
+        public int CustomerId
         {
-            get => _accountNumber;
+            get => _customerId;
             set
             {
-                _accountNumber = value;
+                _customerId = value;
                 OnPropertyChanged();
             }
         }
 
         public Command LoadBeneficiariesCommand { get; }
 
-        public FundTransferViewModel(int accountNumber)
+        public FundTransferViewModel(int customerId)
         {
-            AccountNumber = accountNumber;
+            CustomerId = customerId;
             LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
             LoadBeneficiariesCommand.Execute(null);
             SelectBeneficiaryCommand = new Command<Beneficiary>(OnBeneficiarySelected);
@@ -39,11 +39,11 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             {
                 using var conn = await DBHelper.GetConnectionAsync();
                 string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
-                                 FROM beneficiaries 
-                                 WHERE LoginedAccountNumber = @AccountNumber";
+                                 FROM BeneficiaryDetail 
+                                 WHERE CustomerId = @CustomerId";
 
                 using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
 
                 using var reader = await cmd.ExecuteReaderAsync();
 
@@ -55,9 +55,10 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                         BeneficiaryName = reader.GetString("BeneficiaryName"),
                         BankName = reader.GetString("BeneficiaryBankName"),
                         IFSCCode = reader.GetString("BeneficiaryIFSCCode"),
-                        BeneficiaryAccountNumber = reader.GetInt32("BeneficiaryAccountNumber"),
+                        AccountNumber = reader.GetInt32("AccountNumber"),
                         BranchName = reader.GetString("BeneficiaryBankBranch"),
-                        BeneficiaryNickName = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname")
+                        BeneficiaryNickName = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname"),
+                        CustomerId = CustomerId // ✅ This line fixes the error
                     });
                 } 
 
@@ -74,7 +75,7 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
         {
             if (selected == null) return;
 
-            await Shell.Current.GoToAsync($"EnterAmountPage?account_number={AccountNumber}&beneficiary_account_number={selected.BeneficiaryAccountNumber}");
+            await Shell.Current.GoToAsync($"EnterAmountPage?account_number={CustomerId}&beneficiary_account_number={selected.AccountNumber}");
         }
 
 

@@ -11,7 +11,7 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
         public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
 
         private int _accountNumber;
-        private int _beneficiaryAccountNumber;
+        private int _customerId;
 
         public int AccountNumber
         {
@@ -19,10 +19,10 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             set { _accountNumber = value; OnPropertyChanged(); }
         }
 
-        public int BeneficiaryAccountNumber
+        public int CustomerId
         {
-            get => _beneficiaryAccountNumber;
-            set { _beneficiaryAccountNumber = value; OnPropertyChanged(); }
+            get => _customerId;
+            set { _customerId = value; OnPropertyChanged(); }
         }
 
         public string BeneficiaryName => Beneficiaries.FirstOrDefault()?.BeneficiaryName ?? "";
@@ -54,10 +54,10 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
         public ICommand LoadBeneficiariesCommand { get; }
         public ICommand ProceedCommand { get; }
 
-        public EnterAmountViewModel(int accountNumber, int beneficiaryAccountNumber)
+        public EnterAmountViewModel(int accountNumber, int customerId)
         {
             AccountNumber = accountNumber;
-            BeneficiaryAccountNumber = beneficiaryAccountNumber;
+            CustomerId = customerId;
 
             LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
             LoadBeneficiariesCommand.Execute(null);
@@ -73,12 +73,12 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                 using var conn = await DBHelper.GetConnectionAsync();
                 string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, 
                                         BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
-                                 FROM beneficiaries 
-                                 WHERE LoginedAccountNumber = @AccountNumber AND BeneficiaryAccountNumber = @BeneficiaryAccountNumber";
+                                 FROM BeneficiaryDetail 
+                                 WHERE CustomerId = @CustomerId AND AccountNumber = @AccountNumber";
 
                 using var cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-                cmd.Parameters.AddWithValue("@BeneficiaryAccountNumber", BeneficiaryAccountNumber);
+                cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
 
                 using var reader = await cmd.ExecuteReaderAsync();
 
@@ -90,9 +90,10 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                         BeneficiaryName = reader["BeneficiaryName"].ToString(),
                         BankName = reader["BeneficiaryBankName"].ToString(),
                         IFSCCode = reader["BeneficiaryIFSCCode"].ToString(),
-                        BeneficiaryAccountNumber = Convert.ToInt32(reader["BeneficiaryAccountNumber"]),
+                        AccountNumber = Convert.ToInt32(reader["AccountNumber"]),
                         BranchName = reader["BeneficiaryBankBranch"].ToString(),
-                        BeneficiaryNickName = reader["BeneficiaryNickname"]?.ToString() ?? ""
+                        BeneficiaryNickName = reader["BeneficiaryNickname"]?.ToString() ?? "",
+                        CustomerId = CustomerId
                     });
                 }
 

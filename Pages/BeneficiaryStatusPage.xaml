@@ -28,7 +28,7 @@
                                 </Border.GestureRecognizers>
 
                                 <VerticalStackLayout Spacing="5">
-                                    <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold"/>
+                                    <Label Text="{Binding BeneficiaryName}" FontSize="15" FontAttributes="Bold"/>
                                     <Label Text="{Binding BankName}" FontSize="14"/>
                                 </VerticalStackLayout>
                             </Border>
