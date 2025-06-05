@@ -2,29 +2,29 @@ using bank_demo.ViewModels.FeaturesPages;
 using bank_demo.Services;
 namespace bank_demo.Pages
 {
-    [QueryProperty(nameof(AccountNumber), "account_number")]
+    [QueryProperty(nameof(CustomerId), "CustomerId")]
     public partial class BeneficiaryStatusPage : ContentPage
     {
-        private int _accountNumber;
+        private int _customerId;
 
-        public int AccountNumber
+        public int CustomerId
         {
-            get => _accountNumber;
+            get => _customerId;
             set
             {
-                _accountNumber = value;
-                Console.WriteLine($"[DEBUG] Account number received via QueryProperty: {_accountNumber}");
+                _customerId = value;
+                Console.WriteLine($"[DEBUG] Account number received via QueryProperty: {_customerId}");
 
-                if (_accountNumber > 0)
+                if (_customerId > 0)
                 {
-                    var viewModel = new BeneficiaryStatusPageViewModel(_accountNumber);
+                    var viewModel = new BeneficiaryStatusViewModel(_customerId);
                     BindingContext = viewModel;
                 }
             }
         }
         private async void OnAddBeneficiaryClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync($"AddBeneficiaryPage?account_number={AccountNumber}"); 
+            await Shell.Current.GoToAsync($"AddBeneficiaryPage?CustomerId={CustomerId}"); 
         }
 
         public BeneficiaryStatusPage()

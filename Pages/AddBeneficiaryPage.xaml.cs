@@ -2,18 +2,18 @@ using bank_demo.ViewModels.FeaturesPages;
 
 namespace bank_demo.Pages
 {
-    [QueryProperty(nameof(AccountNumber), "account_number")]
+    [QueryProperty(nameof(CustomerId), "CustomerId")]
     public partial class AddBeneficiaryPage : ContentPage
     {
-        private int _accountNumber;
+        private int _customerId;
 
-        public int AccountNumber
+        public int CustomerId
         {
-            get => _accountNumber;
+            get => _customerId;
             set
             {
-                _accountNumber = value;
-                BindingContext = new AddBeneficiaryViewModel(_accountNumber); // Set the BindingContext when AccountNumber is set
+                _customerId = value;
+                BindingContext = new AddBeneficiaryViewModel(_customerId); // Set the BindingContext when AccountNumber is set
             }
         }
 

@@ -60,12 +60,12 @@ namespace bank_demo.ViewModels.FeaturesPages
                 {
                     Beneficiaries.Add(new Beneficiary
                     {
-                        Name = reader["BeneficiaryName"].ToString(),
+                        BeneficiaryName = reader["BeneficiaryName"].ToString(),
                         BankName = reader["BeneficiaryBankName"].ToString(),
                         IFSCCode = reader["BeneficiaryIFSCCode"].ToString(),
                         BeneficiaryAccountNumber = Convert.ToInt32(reader["BeneficiaryAccountNumber"]),
-                        Branch = reader["BeneficiaryBankBranch"].ToString(),
-                        Nickname = reader["BeneficiaryNickname"]?.ToString() ?? ""
+                        BranchName = reader["BeneficiaryBankBranch"].ToString(),
+                        BeneficiaryNickName = reader["BeneficiaryNickname"]?.ToString() ?? ""
                     });
                 }
             }

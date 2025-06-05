@@ -25,7 +25,7 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             set { _beneficiaryAccountNumber = value; OnPropertyChanged(); }
         }
 
-        public string BeneficiaryName => Beneficiaries.FirstOrDefault()?.Name ?? "";
+        public string BeneficiaryName => Beneficiaries.FirstOrDefault()?.BeneficiaryName ?? "";
         public string BankName => Beneficiaries.FirstOrDefault()?.BankName ?? "";
 
         private string _amount;
@@ -87,12 +87,12 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                 {
                     Beneficiaries.Add(new Beneficiary
                     {
-                        Name = reader["BeneficiaryName"].ToString(),
+                        BeneficiaryName = reader["BeneficiaryName"].ToString(),
                         BankName = reader["BeneficiaryBankName"].ToString(),
                         IFSCCode = reader["BeneficiaryIFSCCode"].ToString(),
                         BeneficiaryAccountNumber = Convert.ToInt32(reader["BeneficiaryAccountNumber"]),
-                        Branch = reader["BeneficiaryBankBranch"].ToString(),
-                        Nickname = reader["BeneficiaryNickname"]?.ToString() ?? ""
+                        BranchName = reader["BeneficiaryBankBranch"].ToString(),
+                        BeneficiaryNickName = reader["BeneficiaryNickname"]?.ToString() ?? ""
                     });
                 }
 
@@ -125,7 +125,7 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             string summary =
                 $"🧾 Bank Transfer Receipt\n" +
                 $"-----------------------------\n" +
-                $"👤 Beneficiary: {beneficiary.Name}\n" +
+                $"👤 Beneficiary: {beneficiary.BeneficiaryName}\n" +
                 $"🏦 Bank Name: {beneficiary.BankName}\n" +
                 $"💰 Amount: ₹{Amount}\n" +
                 $"✏️ Remarks: {Remarks}\n" +

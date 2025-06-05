@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:bank_demo.ViewModels"
              x:Class="bank_demo.HomePage"
              x:DataType="vm:HomeViewModel"
-             BackgroundImageSource="background.png">
+             Background="White">
 
     <Grid>
 
@@ -25,7 +25,8 @@
 
             <!-- Header -->
             <Grid ColumnDefinitions="*,Auto" Padding="10">
-                <Label Text="Home"
+                <Label Text="Welcome"
+                       TextColor="Black"
                        FontSize="24"
                        FontAttributes="Bold"
                        VerticalOptions="Center" />
@@ -232,7 +233,7 @@
 
             <!-- Drawer Options -->
             <StackLayout Grid.Row="1" Spacing="10">
-                <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10"/>
+                <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10" TextColor="Black"/>
                 <Button Text="Profile" Clicked="OnProfileClicked"/>
                 <Button Text="Settings" Clicked="OnSettingsClicked"/>
                 <Button Text="Benfeciary Status" Clicked="OnBenfeciaryClicked"/>

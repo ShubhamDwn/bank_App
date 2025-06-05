@@ -89,7 +89,7 @@ namespace bank_demo.ViewModels
             {
                 // Pass the account number as a query parameter
                 
-                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?account_number={customerId}");
+                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?CustomerId={customerId}");
             });
 
             PaymentsCommand = new Command(async () =>

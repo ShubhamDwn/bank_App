@@ -52,12 +52,12 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
                 {
                     Beneficiaries.Add(new Beneficiary
                     {
-                        Name = reader.GetString("BeneficiaryName"),
+                        BeneficiaryName = reader.GetString("BeneficiaryName"),
                         BankName = reader.GetString("BeneficiaryBankName"),
                         IFSCCode = reader.GetString("BeneficiaryIFSCCode"),
                         BeneficiaryAccountNumber = reader.GetInt32("BeneficiaryAccountNumber"),
-                        Branch = reader.GetString("BeneficiaryBankBranch"),
-                        Nickname = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname")
+                        BranchName = reader.GetString("BeneficiaryBankBranch"),
+                        BeneficiaryNickName = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname")
                     });
                 } 
 

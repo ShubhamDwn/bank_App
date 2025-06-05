@@ -1,85 +1,71 @@
-﻿using bank_demo.Services;
-using Microsoft.Data.SqlClient;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Microsoft.Maui.Controls;
+using Microsoft.Data.SqlClient;
+using bank_demo.Services;
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
-    public class BeneficiaryStatusPageViewModel : INotifyPropertyChanged
+    public class BeneficiaryStatusViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
+        public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new ObservableCollection<Beneficiary>();
+        public ICommand SelectBeneficiaryCommand { get; }
 
-        private int _accountNumber;
-        public int AccountNumber
+        private int _customerId;
+
+        public BeneficiaryStatusViewModel(int customerId)
         {
-            get => _accountNumber;
-            set
-            {
-                _accountNumber = value;
-                OnPropertyChanged();
-            }
+            _customerId = customerId;
+            SelectBeneficiaryCommand = new Command<Beneficiary>(OnSelectBeneficiary);
+            LoadBeneficiaries();
         }
 
-        public Command LoadBeneficiariesCommand { get; }
-
-        public BeneficiaryStatusPageViewModel(int accountNumber)
-        {
-            AccountNumber = accountNumber;
-            LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
-            LoadBeneficiariesCommand.Execute(null);
-            SelectBeneficiaryCommand = new Command<Beneficiary>(OnBeneficiarySelected);
-        }
-
-        private async Task LoadBeneficiariesAsync()
+        private async void LoadBeneficiaries()
         {
             try
             {
                 using var conn = await DBHelper.GetConnectionAsync();
-                string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
-                                 FROM beneficiaries 
-                                 WHERE LoginedAccountNumber = @AccountNumber";
+                string query = @"SELECT BeneficiaryName, BankName, IFSC, AccountNumber, BranchName, BeneficiaryNickName 
+                                 FROM BeneficiaryDetail 
+                                 WHERE CustomerId = @CustomerId AND IsRegister = 1 AND Status = 1";
 
                 using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                cmd.Parameters.AddWithValue("@CustomerId", _customerId);
 
                 using var reader = await cmd.ExecuteReaderAsync();
-
-                Beneficiaries.Clear();
                 while (await reader.ReadAsync())
                 {
-                    Beneficiaries.Add(new Beneficiary
+                    var beneficiary = new Beneficiary
                     {
-                        Name = reader.GetString("BeneficiaryName"),
-                        BankName = reader.GetString("BeneficiaryBankName"),
-                        IFSCCode = reader.GetString("BeneficiaryIFSCCode"),
-                        BeneficiaryAccountNumber = reader.GetInt32("BeneficiaryAccountNumber"),
-                        Branch = reader.GetString("BeneficiaryBankBranch"),
-                        Nickname = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname")
-                    });
+                        BeneficiaryName = reader["BeneficiaryName"].ToString() ?? "",
+                        BankName = reader["BankName"].ToString() ?? "",
+                        IFSCCode = reader["IFSC"].ToString() ?? "",
+                        BranchName = reader["BranchName"].ToString() ?? "",
+                        BeneficiaryNickName = reader["BeneficiaryNickName"].ToString() ?? "",
+                        AccountNumber = _customerId, // current user
+                        BeneficiaryAccountNumber = Convert.ToInt32(reader["AccountNumber"])
+                    };
+
+                    Beneficiaries.Add(beneficiary);
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Unable to load beneficiaries: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {ex.Message}", "OK");
             }
         }
 
-        public ICommand SelectBeneficiaryCommand { get; }
-
-        private async void OnBeneficiarySelected(Beneficiary selected)
+        private async void OnSelectBeneficiary(Beneficiary selected)
         {
             if (selected == null) return;
 
-            await Shell.Current.GoToAsync($"BeneficiaryDetailPage?account_number={AccountNumber}&beneficiary_account_number={selected.BeneficiaryAccountNumber}");
+            await Shell.Current.GoToAsync($"BeneficiaryDetailPage?accountNumber={selected.AccountNumber}&beneficiaryAccountNumber={selected.BeneficiaryAccountNumber}");
         }
 
-
-
         public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

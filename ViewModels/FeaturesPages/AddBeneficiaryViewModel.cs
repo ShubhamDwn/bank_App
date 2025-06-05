@@ -8,24 +8,57 @@ namespace bank_demo.ViewModels.FeaturesPages
 {
     public class AddBeneficiaryViewModel : INotifyPropertyChanged
     {
-#pragma warning disable CS8612 // Nullability of reference types in type doesn't match implicitly implemented member.
         public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore CS8612 // Nullability of reference types in type doesn't match implicitly implemented member.
 
+        public int CustomerId { get; set; }
 
+        private string _beneficiaryName;
+        public string BeneficiaryName
+        {
+            get => _beneficiaryName;
+            set { _beneficiaryName = value; OnPropertyChanged(); }
+        }
 
-        private int _accountNumber;
-        public int AccountNumber
+        private string _beneficiaryNickName;
+        public string BeneficiaryNickName
+        {
+            get => _beneficiaryNickName;
+            set { _beneficiaryNickName = value; OnPropertyChanged(); }
+        }
+
+        private string _accountNumber;
+        public string AccountNumber
         {
             get => _accountNumber;
             set { _accountNumber = value; OnPropertyChanged(); }
         }
 
-        private string _name;
-        public string Name
+        private string _confirmAccountNumber;
+        public string ConfirmAccountNumber
         {
-            get => _name;
-            set { _name = value; OnPropertyChanged(); }
+            get => _confirmAccountNumber;
+            set { _confirmAccountNumber = value; OnPropertyChanged(); }
+        }
+
+        private string _ifsc;
+        public string IFSC
+        {
+            get => _ifsc;
+            set { _ifsc = value; OnPropertyChanged(); }
+        }
+
+        private string _mobileNo;
+        public string MobileNo
+        {
+            get => _mobileNo;
+            set { _mobileNo = value; OnPropertyChanged(); }
+        }
+
+        private string _email;
+        public string Email
+        {
+            get => _email;
+            set { _email = value; OnPropertyChanged(); }
         }
 
         private string _bankName;
@@ -35,75 +68,27 @@ namespace bank_demo.ViewModels.FeaturesPages
             set { _bankName = value; OnPropertyChanged(); }
         }
 
-        private string _ifscCode;
-        public string IFSCCode
+        private string _branchName;
+        public string BranchName
         {
-            get => _ifscCode;
-            set { _ifscCode = value; OnPropertyChanged(); }
+            get => _branchName;
+            set { _branchName = value; OnPropertyChanged(); }
         }
 
-        private string _branch;
-        public string Branch
+        public ICommand AddCommand { get;}
+
+        public AddBeneficiaryViewModel(int customerId)
         {
-            get => _branch;
-            set { _branch = value; OnPropertyChanged(); }
+            CustomerId = customerId;
+            AddCommand = new Command(async () => await AddAsync());
         }
 
-        private string _nickname;
-        public string Nickname
+        private async Task AddAsync()
         {
-            get => _nickname;
-            set { _nickname = value; OnPropertyChanged(); }
-        }
-
-        private string _beneficiaryAccountNumberText;
-        public string BeneficiaryAccountNumberText
-        {
-            get => _beneficiaryAccountNumberText;
-            set { _beneficiaryAccountNumberText = value; OnPropertyChanged(); }
-        }
-
-        private string _confirmAccountNumberText;
-        public string ConfirmAccountNumberText
-        {
-            get => _confirmAccountNumberText;
-            set { _confirmAccountNumberText = value; OnPropertyChanged(); }
-        }
-
-        public ICommand AddBeneficiaryCommand { get; }
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        public AddBeneficiaryViewModel(int accountNumber)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        {
-            AccountNumber = accountNumber;
-            Console.WriteLine("Function called");
-            AddBeneficiaryCommand = new Command(async () => await AddBeneficiaryAsync());
-        }
-
-
-        private async Task AddBeneficiaryAsync()
-        {
-            // --- VALIDATIONS ---
-            if (string.IsNullOrWhiteSpace(BankName) ||
-                string.IsNullOrWhiteSpace(IFSCCode) ||
-                string.IsNullOrWhiteSpace(Branch) ||
-                string.IsNullOrWhiteSpace(BeneficiaryAccountNumberText) ||
-                string.IsNullOrWhiteSpace(ConfirmAccountNumberText))
+            if (string.IsNullOrWhiteSpace(AccountNumber) || string.IsNullOrWhiteSpace(ConfirmAccountNumber) ||
+                AccountNumber != ConfirmAccountNumber)
             {
-                await Shell.Current.DisplayAlert("Validation Error", "All fields are required except Nickname.", "OK");
-                return;
-            }
-
-            if (BeneficiaryAccountNumberText != ConfirmAccountNumberText)
-            {
-                await Shell.Current.DisplayAlert("Validation Error", "Beneficiary Account numbers do not match.", "OK");
-                return;
-            }
-
-            if (!int.TryParse(BeneficiaryAccountNumberText, out int beneficiaryAccountNumber))
-            {
-                await Shell.Current.DisplayAlert("Validation Error", "Beneficiary Account Number must be a valid number.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Account numbers do not match or are empty.", "OK");
                 return;
             }
 
@@ -111,53 +96,47 @@ namespace bank_demo.ViewModels.FeaturesPages
             {
                 using var conn = await DBHelper.GetConnectionAsync();
 
-                // Check for duplicates first
-                string checkQuery = @"SELECT COUNT(*) FROM beneficiaries 
-                                      WHERE LoginedAccountNumber = @AccountNumber 
-                                      AND BeneficiaryAccountNumber = @BeneficiaryAccountNumber";
-
+                string checkQuery = @"SELECT COUNT(*) FROM BeneficiaryDetail 
+                                      WHERE CustomerId = @CustomerId AND AccountNumber = @AccountNumber";
                 using var checkCmd = new SqlCommand(checkQuery, conn);
+                checkCmd.Parameters.AddWithValue("@CustomerId", CustomerId);
                 checkCmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-                checkCmd.Parameters.AddWithValue("@BeneficiaryAccountNumber", beneficiaryAccountNumber);
 
-#pragma warning disable CS8605 // Unboxing a possibly null value.
-                var result = (int)(await checkCmd.ExecuteScalarAsync() ?? 0);
-#pragma warning restore CS8605 // Unboxing a possibly null value.
-                if (result > 0)
+                var exists = (int)(await checkCmd.ExecuteScalarAsync() ?? 0);
+                if (exists > 0)
                 {
-                    await Shell.Current.DisplayAlert("Error", "Beneficiary already exists for this account.", "OK");
+                    await Shell.Current.DisplayAlert("Duplicate", "This beneficiary is already added.", "OK");
                     return;
                 }
 
-                // Insert beneficiary
-                string insertQuery = @"INSERT INTO beneficiaries
-                    (LoginedAccountNumber, BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname)
-                    VALUES
-                    (@AccountNumber,@Name, @BankName, @IFSCCode, @BeneficiaryAccountNumber, @Branch, @Nickname)";
+                string insertQuery = @"
+                    INSERT INTO BeneficiaryDetail (CustomerId, BenificiaryCode, BeneficiaryName, BeneficiaryNickName, AccountNumber, IFSC, MobileNo, Email, BankName, BranchName, IsRegister, RegistrationDate, RegistrationStatus, Status, SysDate)
+                    VALUES (@CustomerId, @BeneficiaryCode, @BeneficiaryName, @BeneficiaryNickName, @AccountNumber, @IFSC, @MobileNo, @Email, @BankName, @BranchName, 1, GETDATE(), 'Registered', 1, GETDATE())";
 
                 using var insertCmd = new SqlCommand(insertQuery, conn);
+                insertCmd.Parameters.AddWithValue("@CustomerId", CustomerId);
+                insertCmd.Parameters.AddWithValue("@BeneficiaryCode", AccountNumber+IFSC);
+                insertCmd.Parameters.AddWithValue("@BeneficiaryName", BeneficiaryName);
+                insertCmd.Parameters.AddWithValue("@BeneficiaryNickName", BeneficiaryNickName ?? "");
                 insertCmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-                insertCmd.Parameters.AddWithValue("@Name", Name);
+                insertCmd.Parameters.AddWithValue("@IFSC", IFSC);
+                insertCmd.Parameters.AddWithValue("@MobileNo", MobileNo);
+                insertCmd.Parameters.AddWithValue("@Email", Email);
                 insertCmd.Parameters.AddWithValue("@BankName", BankName);
-                insertCmd.Parameters.AddWithValue("@IFSCCode", IFSCCode);
-                insertCmd.Parameters.AddWithValue("@BeneficiaryAccountNumber", beneficiaryAccountNumber);
-                insertCmd.Parameters.AddWithValue("@Branch", Branch);
-                insertCmd.Parameters.AddWithValue("@Nickname", Nickname ?? "");
+                insertCmd.Parameters.AddWithValue("@BranchName", BranchName);
 
                 await insertCmd.ExecuteNonQueryAsync();
 
                 await Shell.Current.DisplayAlert("Success", "Beneficiary added successfully!", "OK");
-                await Shell.Current.GoToAsync($"BeneficiaryDetailPage?account_number={AccountNumber}&beneficiary_account_number={beneficiaryAccountNumber}");
+                await Shell.Current.GoToAsync(".."); // or a detail page
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Failed to add beneficiary: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", "Failed: " + ex.Message, "OK");
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        private void OnPropertyChanged([CallerMemberName] string propName = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

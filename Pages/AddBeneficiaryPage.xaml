@@ -9,52 +9,64 @@
     <ScrollView Padding="20">
         <VerticalStackLayout Spacing="15">
 
-            <!-- Bank Name -->
+            <!-- Beneficiary Full Name -->
             <Entry 
                 Placeholder="Full Name" 
                 Keyboard="Text"
-                Text="{Binding Name}" />
-            
-            <Entry 
-                Placeholder="Bank Name" 
-                Keyboard="Text"
-                Text="{Binding BankName}" />
+                Text="{Binding BeneficiaryName}" />
 
-            <!-- IFSC Code -->
+            <!-- Nickname -->
             <Entry 
-                Placeholder="IFSC Code" 
+                Placeholder="Nickname (Optional)" 
                 Keyboard="Text"
-                Text="{Binding IFSCCode}" />
+                Text="{Binding BeneficiaryNickName}" />
 
             <!-- Beneficiary Account Number -->
             <Entry 
                 Placeholder="Beneficiary Account Number" 
                 Keyboard="Numeric"
-                Text="{Binding BeneficiaryAccountNumberText}" />
+                Text="{Binding AccountNumber}" />
 
-            <!-- Confirm Beneficiary Account Number -->
+            <!-- Confirm Account Number -->
             <Entry 
                 Placeholder="Confirm Account Number"
                 Keyboard="Numeric"
-                Text="{Binding ConfirmAccountNumberText}" />
+                Text="{Binding ConfirmAccountNumber}" />
 
-            <!-- Branch -->
+            <!-- IFSC Code -->
             <Entry 
-                Placeholder="Branch" 
+                Placeholder="IFSC Code" 
                 Keyboard="Text"
-                Text="{Binding Branch}" />
+                Text="{Binding IFSC}" />
 
-            <!-- Nickname (Optional) -->
+            <!-- Mobile Number -->
             <Entry 
-                Placeholder="Nickname (Optional)" 
+                Placeholder="Mobile Number" 
+                Keyboard="Telephone"
+                Text="{Binding MobileNo}" />
+
+            <!-- Email -->
+            <Entry 
+                Placeholder="Email" 
+                Keyboard="Email"
+                Text="{Binding Email}" />
+
+            <!-- Bank Name -->
+            <Entry 
+                Placeholder="Bank Name" 
                 Keyboard="Text"
-                Text="{Binding Nickname}" />
+                Text="{Binding BankName}" />
+
+            <!-- Branch Name -->
+            <Entry 
+                Placeholder="Branch Name" 
+                Keyboard="Text"
+                Text="{Binding BranchName}" />
 
             <!-- Add Beneficiary Button -->
-           
             <Button 
                 Text="Add Beneficiary"
-                Command="{Binding AddBeneficiaryCommand}"
+                Command="{Binding AddCommand}"
                 HorizontalOptions="Center" />
 
         </VerticalStackLayout>
