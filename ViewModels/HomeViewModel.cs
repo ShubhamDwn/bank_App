@@ -77,7 +77,7 @@ namespace bank_demo.ViewModels
 
             StatementCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync(nameof(StatementPage));
+                await Shell.Current.GoToAsync($"StatementPage?CustomerId={customerId}");
             });
 
             HistoryCommand = new Command(async () =>

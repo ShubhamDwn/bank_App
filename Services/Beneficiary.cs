@@ -10,5 +10,4 @@
         public required string BeneficiaryNickName { get; set; }
         public int AccountNumber { get; set; }
     }
-
 }

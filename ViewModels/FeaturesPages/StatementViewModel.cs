@@ -10,12 +10,12 @@ namespace bank_demo.ViewModels.FeaturesPages;
 public class StatementViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
-    
-
     private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    public List<string> AccountTypes { get; } = new() { "Savings", "Loan", "FD" };
+    // Make AccountTypes ObservableCollection to update UI dynamically
+    public ObservableCollection<string> AccountTypes { get; } = new();
+
     public List<string> TimePeriodOptions { get; } = new() { "Last Week", "Last 1 Month", "Last 3 Months", "Last 1 Year", "Custom" };
 
     private string _selectedAccountType;
@@ -28,6 +28,8 @@ public class StatementViewModel : INotifyPropertyChanged
             {
                 _selectedAccountType = value;
                 OnPropertyChanged();
+                // You can optionally load transactions automatically on selection here
+                // _ = LoadStatementAsync();
             }
         }
     }
@@ -93,62 +95,101 @@ public class StatementViewModel : INotifyPropertyChanged
 
     public ICommand LoadStatementCommand { get; }
     public ICommand ExportPdfCommand { get; }
+    public ICommand LoadAccountTypesCommand { get; }
 
-    public StatementViewModel()
+    private readonly int _customerId; // ✅ use only this
+
+    public StatementViewModel(int customerId)
     {
-        LoadStatementCommand = new Command(async () => await LoadStatementAsync());
+        _customerId = customerId; // ✅ set this
+        LoadAccountTypesCommand = new Command(async () => await LoadAccountTypesAsync());
         LoadStatementCommand = new Command(async () => await LoadStatementAsync());
         ExportPdfCommand = new Command(async () => await ExportToPdfAsync());
+
+        _ = LoadAccountTypesAsync();
     }
 
-    private async Task LoadStatementAsync()
+    private bool _isLoading;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            _isLoading = value;
+            OnPropertyChanged();
+        }
+    }
+
+
+    public async Task LoadAccountTypesAsync()
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(SelectedAccountType) || string.IsNullOrWhiteSpace(SelectedTimePeriod))
-            {
-                await Shell.Current.DisplayAlert("Validation", "Please select both Account Type and Time Period", "OK");
-                return;
-            }
+            IsLoading = true;
+            var accountTypes = await DBHelper.GetAccountTypesAsync(_customerId);
+            AccountTypes.Clear();
+            foreach (var type in accountTypes)
+                AccountTypes.Add(type);
 
-            DateTime start = FromDate;
-            DateTime end = ToDate;
-
-            switch (SelectedTimePeriod)
-            {
-                case "Last Week":
-                    start = DateTime.Now.AddDays(-7);
-                    end = DateTime.Now;
-                    break;
-                case "Last 1 Month":
-                    start = DateTime.Now.AddMonths(-1);
-                    end = DateTime.Now;
-                    break;
-                case "Last 3 Months":
-                    start = DateTime.Now.AddMonths(-3);
-                    end = DateTime.Now;
-                    break;
-                case "Last 1 Year":
-                    start = DateTime.Now.AddYears(-1);
-                    end = DateTime.Now;
-                    break;
-            }
-
-            if (end > DateTime.Now)
-            {
-                await Shell.Current.DisplayAlert("Validation", "To date cannot be in the future.", "OK");
-                return;
-            }
-
-            Transactions.Clear();
-            var fetchedData = await GetMockDataAsync(SelectedAccountType, start, end);
-            foreach (var txn in fetchedData)
-                Transactions.Add(txn);
+            if (AccountTypes.Count > 0)
+                SelectedAccountType = AccountTypes[0];
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Error", $"Failed to load accounts: {ex.Message}", "OK");
         }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+
+    private async Task LoadStatementAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedAccountType) || string.IsNullOrWhiteSpace(SelectedTimePeriod))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Please select both Account Type and Time Period", "OK");
+            return;
+        }
+
+        DateTime start = FromDate;
+        DateTime end = ToDate;
+
+        switch (SelectedTimePeriod)
+        {
+            case "Last Week":
+                start = DateTime.Now.AddDays(-7);
+                end = DateTime.Now;
+                break;
+            case "Last 1 Month":
+                start = DateTime.Now.AddMonths(-1);
+                end = DateTime.Now;
+                break;
+            case "Last 3 Months":
+                start = DateTime.Now.AddMonths(-3);
+                end = DateTime.Now;
+                break;
+            case "Last 1 Year":
+                start = DateTime.Now.AddYears(-1);
+                end = DateTime.Now;
+                break;
+        }
+
+        if (end > DateTime.Now)
+        {
+            await Shell.Current.DisplayAlert("Validation", "To date cannot be in the future.", "OK");
+            return;
+        }
+
+        Transactions.Clear();
+
+        // Replace this with actual call to your transactions retrieval based on SelectedAccountType, date range, etc.
+        var fetchedData = await DBHelper.GetTransactionsAsync(_customerId, SelectedAccountType, start, end);
+
+        foreach (var txn in fetchedData)
+            Transactions.Add(txn);
     }
 
     public async Task ExportToPdfAsync()
@@ -170,16 +211,6 @@ public class StatementViewModel : INotifyPropertyChanged
         {
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
-    }
-
-
-    private Task<List<TransactionModel>> GetMockDataAsync(string type, DateTime from, DateTime to)
-    {
-        return Task.FromResult(new List<TransactionModel>
-        {
-            new() { Description = $"{type} Txn 1", Amount = 2500, Date = DateTime.Now.AddDays(-3) },
-            new() { Description = $"{type} Txn 2", Amount = -1200, Date = DateTime.Now.AddDays(-1) }
-        });
     }
 
 
