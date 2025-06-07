@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bank_demo.Pages.ViewStatementPage"
+             Title="Account Statement">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Label Text="Account Statement" FontAttributes="Bold" FontSize="20" />
+
+        <CollectionView ItemsSource="{Binding Transactions}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="LightGray" Padding="10" Margin="5">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding TransactionDate, StringFormat='{0:dd MMM yyyy}'}" FontAttributes="Bold" />
+                            <Label Text="{Binding Description}" />
+                            <Label Text="{Binding Amount, StringFormat='Amount: {0:C}'}" TextColor="Green" />
+                            <Label Text="{Binding BalanceAfterTransaction, StringFormat='Balance: {0:C}'}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="Export to PDF" Command="{Binding ExportPdfCommand}" />
+
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

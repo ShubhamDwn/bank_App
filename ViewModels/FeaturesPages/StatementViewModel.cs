@@ -13,8 +13,8 @@ public class StatementViewModel : INotifyPropertyChanged
     private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    // Make AccountTypes ObservableCollection to update UI dynamically
     public ObservableCollection<string> AccountTypes { get; } = new();
+    public ObservableCollection<AccountModel> AvailableAccounts { get; } = new();
 
     public List<string> TimePeriodOptions { get; } = new() { "Last Week", "Last 1 Month", "Last 3 Months", "Last 1 Year", "Custom" };
 
@@ -28,8 +28,36 @@ public class StatementViewModel : INotifyPropertyChanged
             {
                 _selectedAccountType = value;
                 OnPropertyChanged();
-                // You can optionally load transactions automatically on selection here
-                // _ = LoadStatementAsync();
+                OnPropertyChanged(nameof(IsAccountTypeSelected));
+
+            }
+        }
+    }
+
+    private bool _isAccountListVisible;
+    public bool IsAccountListVisible
+    {
+        get => _isAccountListVisible;
+        set
+        {
+            _isAccountListVisible = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private AccountModel _selectedAccount;
+    public AccountModel SelectedAccount
+    {
+        get => _selectedAccount;
+        set
+        {
+            if (_selectedAccount != value)
+            {
+                _selectedAccount = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsAccountSelected));
+                OnPropertyChanged(nameof(IsTimePeriodVisible));
+                OnPropertyChanged(nameof(IsViewStatementVisible));
             }
         }
     }
@@ -45,6 +73,7 @@ public class StatementViewModel : INotifyPropertyChanged
                 _selectedTimePeriod = value;
                 IsCustomDateRange = value == "Custom";
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsViewStatementVisible));
             }
         }
     }
@@ -96,18 +125,24 @@ public class StatementViewModel : INotifyPropertyChanged
     public ICommand LoadStatementCommand { get; }
     public ICommand ExportPdfCommand { get; }
     public ICommand LoadAccountTypesCommand { get; }
+    public ICommand LoadAccountsCommand { get; }
 
-    private readonly int _customerId; // ✅ use only this
+    private readonly int _customerId;
 
     public StatementViewModel(int customerId)
     {
-        _customerId = customerId; // ✅ set this
+        _customerId = customerId;
+
+        LoadAccountsCommand = new Command(async () => await LoadAccountsAsync());
         LoadAccountTypesCommand = new Command(async () => await LoadAccountTypesAsync());
         LoadStatementCommand = new Command(async () => await LoadStatementAsync());
         ExportPdfCommand = new Command(async () => await ExportToPdfAsync());
 
         _ = LoadAccountTypesAsync();
     }
+
+
+    
 
     private bool _isLoading;
     public bool IsLoading
@@ -120,6 +155,10 @@ public class StatementViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool IsAccountSelected => SelectedAccount != null;
+    public bool IsAccountTypeSelected => !string.IsNullOrEmpty(SelectedAccountType);
+    public bool IsTimePeriodVisible => IsAccountSelected;
+    public bool IsViewStatementVisible => IsAccountSelected && !string.IsNullOrEmpty(SelectedTimePeriod);
 
     public async Task LoadAccountTypesAsync()
     {
@@ -144,6 +183,45 @@ public class StatementViewModel : INotifyPropertyChanged
         }
     }
 
+    private async Task LoadAccountsAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            IsAccountListVisible = false;
+            AvailableAccounts.Clear();
+
+            if (string.IsNullOrWhiteSpace(SelectedAccountType))
+            {
+                await Shell.Current.DisplayAlert("Error", "Please select a valid account type.", "OK");
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"SelectedAccountType: {SelectedAccountType}");
+
+            var accounts = await DBHelper.GetCustomerAccountsAsync(_customerId, SelectedAccountType.Trim());
+            System.Diagnostics.Debug.WriteLine($"Fetched Accounts: {accounts.Count}");
+
+            foreach (var acc in accounts)
+            {
+                AvailableAccounts.Add(acc);
+                System.Diagnostics.Debug.WriteLine($"Added Account: {acc.AccountNumber} - {acc.AccountName}");
+            }
+
+            SelectedAccount = AvailableAccounts.FirstOrDefault();
+            IsAccountListVisible = AvailableAccounts.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", $"Failed to load account details: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
 
 
     private async Task LoadStatementAsync()
@@ -151,6 +229,12 @@ public class StatementViewModel : INotifyPropertyChanged
         if (string.IsNullOrWhiteSpace(SelectedAccountType) || string.IsNullOrWhiteSpace(SelectedTimePeriod))
         {
             await Shell.Current.DisplayAlert("Validation", "Please select both Account Type and Time Period", "OK");
+            return;
+        }
+
+        if (SelectedAccount == null)
+        {
+            await Shell.Current.DisplayAlert("Validation", "Please select an account.", "OK");
             return;
         }
 
@@ -185,9 +269,7 @@ public class StatementViewModel : INotifyPropertyChanged
 
         Transactions.Clear();
 
-        // Replace this with actual call to your transactions retrieval based on SelectedAccountType, date range, etc.
         var fetchedData = await DBHelper.GetTransactionsAsync(_customerId, SelectedAccountType, start, end);
-
         foreach (var txn in fetchedData)
             Transactions.Add(txn);
     }
@@ -212,6 +294,4 @@ public class StatementViewModel : INotifyPropertyChanged
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
-
-
 }

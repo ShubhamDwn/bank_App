@@ -1,57 +1,76 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:bank_demo.ViewModels.FeaturesPages"
              x:Class="bank_demo.Pages.StatementPage"
              Title="Account Statement">
 
-    <ScrollView>
-        
-        <VerticalStackLayout Padding="20" Spacing="15">
+        <ScrollView>
+            <StackLayout Padding="20" Spacing="20">
 
-            <ActivityIndicator IsVisible="{Binding IsLoading}" 
-                   IsRunning="{Binding IsLoading}" 
-                   Color="DarkGray"
-                   HeightRequest="50" />
+                <!-- Account Type Picker -->
+                <Label Text="Select Account Type:" FontAttributes="Bold"/>
+                <Picker ItemsSource="{Binding AccountTypes}" 
+                    SelectedItem="{Binding SelectedAccountType}" 
+                    Title="Choose account type" />
 
+                <!-- NEXT button -->
+                <Button Text="Next"
+                    Command="{Binding LoadAccountsCommand}"
+                    IsEnabled="{Binding IsAccountTypeSelected}" />
 
-            <Label Text="Select Account:" FontAttributes="Bold" />
-            <Picker ItemsSource="{Binding AccountTypes}" 
-                    SelectedItem="{Binding SelectedAccountType}" />
+            <!-- Available Accounts List -->
+                <Label Text="Available Accounts:" FontAttributes="Bold"
+                   IsVisible="{Binding IsAccountTypeSelected}" />
+                <CollectionView ItemsSource="{Binding AvailableAccounts}" 
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedAccount}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BorderColor="Gray" Padding="10" Margin="5">
+                                <StackLayout>
+                                    <Label Text="{Binding AccountNumber}" FontAttributes="Bold" />
+                                    <Label Text="{Binding AccountType}" />
+                                    <Label Text="{Binding Balance, StringFormat='Balance: ₹{0:F2}'}" />
+                                    <Label Text="{Binding Branch}" />
+                                    <Label Text="{Binding IFSC}" />
+                                    <Label Text="{Binding IsClosed, StringFormat='Closed: {0}'}" />
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <Label Text="Select Time Period:" FontAttributes="Bold" />
-            <Picker ItemsSource="{Binding TimePeriodOptions}" 
-                    SelectedItem="{Binding SelectedTimePeriod}" />
+                <!-- Time Period Picker -->
+                <Label Text="Select Time Period:" FontAttributes="Bold"
+                   IsVisible="{Binding IsTimePeriodVisible}" />
+                <Picker ItemsSource="{Binding TimePeriodOptions}" 
+                    SelectedItem="{Binding SelectedTimePeriod}" 
+                    Title="Choose time period"
+                    IsVisible="{Binding IsTimePeriodVisible}" />
 
-            <StackLayout Orientation="Horizontal" IsVisible="{Binding IsCustomDateRange}">
-                <VerticalStackLayout>
-                    <Label Text="From Date:" />
-                    <DatePicker Date="{Binding FromDate}" />
-                </VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label Text="To Date:" />
-                    <DatePicker Date="{Binding ToDate}" />
-                </VerticalStackLayout>
+                <!-- Custom Date Range -->
+                <StackLayout Orientation="Horizontal" IsVisible="{Binding IsCustomDateRange}">
+                    <VerticalStackLayout WidthRequest="150">
+                        <Label Text="From:" />
+                        <DatePicker Date="{Binding FromDate}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout WidthRequest="150">
+                        <Label Text="To:" />
+                        <DatePicker Date="{Binding ToDate}" />
+                    </VerticalStackLayout>
+                </StackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                           IsVisible="{Binding IsLoading}" 
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           HeightRequest="40"
+                           WidthRequest="40"/>
+
+            <!-- View Statement Button -->
+                <Button Text="View Statement"
+                    Command="{Binding LoadStatementCommand}"
+                    IsVisible="{Binding IsViewStatementVisible}" />
+
             </StackLayout>
-
-            <Button Text="View Statement" Command="{Binding LoadStatementCommand}" />
-
-            <CollectionView ItemsSource="{Binding Transactions}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="Gray" CornerRadius="10" Padding="10" Margin="5">
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Description}" FontAttributes="Bold" />
-                                <Label Text="{Binding Date, StringFormat='{0:dd MMM yyyy}'}" FontSize="Small" />
-                                <Label Text="{Binding Amount, StringFormat='₹{0:F2}'}" 
-                                       TextColor="{Binding Amount, Converter={StaticResource AmountColorConverter}}" />
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <Button Text="Export to PDF" Command="{Binding ExportPdfCommand}" />
-
-        </VerticalStackLayout>
-    </ScrollView>
-</ContentPage>
+        </ScrollView>
+    </ContentPage>
