@@ -1,27 +1,26 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using bank_demo.Services;
 using Microsoft.Maui.Controls;
-using Microsoft.Data.SqlClient;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 
 namespace bank_demo.ViewModels
 {
     public class ForgotPasswordViewModel : INotifyPropertyChanged
     {
-        private string _adharNumber;
+        private string _aadhaar;
         private string _newPassword;
         private string _confirmPassword;
-        private bool _isOtpSent;
+        private bool _isOtpVerified;
+        private string _mobile; // store mobile after fetching from API
 
-        public string AdharNumber
+        public string Aadhaar
         {
-            get => _adharNumber;
-            set => SetProperty(ref _adharNumber, value);
+            get => _aadhaar;
+            set => SetProperty(ref _aadhaar, value);
         }
 
         public string NewPassword
@@ -36,98 +35,155 @@ namespace bank_demo.ViewModels
             set => SetProperty(ref _confirmPassword, value);
         }
 
-        public bool IsOtpSent
+        public bool IsOtpVerified
         {
-            get => _isOtpSent;
-            set => SetProperty(ref _isOtpSent, value);
+            get => _isOtpVerified;
+            set => SetProperty(ref _isOtpVerified, value);
         }
 
-        public ICommand SendOtpCommand => new Command(async () => await SendOtpAsync());
-        public ICommand ResetPasswordCommand => new Command(async () => await ResetPasswordAsync());
+        public ICommand SendOtpCommand { get; }
+        public ICommand ResetPasswordCommand { get; }
 
-        private readonly OtpService _otpService = new OtpService();
+        private readonly OtpService _otpService;
 
-        private string _mobile;
+        public ForgotPasswordViewModel()
+        {
+            SendOtpCommand = new Command(async () => await SendOtpAsync());
+            ResetPasswordCommand = new Command(async () => await ResetPasswordAsync());
+            _otpService = new OtpService();
+        }
 
         private async Task SendOtpAsync()
         {
-            if (string.IsNullOrWhiteSpace(AdharNumber))
+            if (string.IsNullOrWhiteSpace(Aadhaar))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Aadhar number is required.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Aadhaar is required.", "OK");
                 return;
             }
 
-            using var conn = await DBHelper.GetConnectionAsync();
-
-            string checkAadhaarQuery = "SELECT EmailId, CellPhone FROM Customer WHERE AdharNumber = @AdharNumber";
-            using var cmd = new SqlCommand(checkAadhaarQuery, conn);
-            cmd.Parameters.AddWithValue("@AdharNumber", AdharNumber);
-
-            using var reader = await cmd.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
+            if (Aadhaar.Length != 12)
             {
-                await Shell.Current.DisplayAlert("Not Found", "No account associated with this Aadhaar number.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Enter a valid 12-digit Aadhaar number.", "OK");
                 return;
             }
 
-            _mobile = reader["CellPhone"]?.ToString();
+            try
+            {
+                // Call your API to get mobile number by Aadhaar
+                var httpClient = new HttpClient();
+                var response = await httpClient.PostAsync(
+                    "http://your-api-url/api/auth/getmobile",
+                    new StringContent(JsonSerializer.Serialize(new { Aadhaar }), Encoding.UTF8, "application/json"));
 
-            // ✅ Fix: assign to property, not local variable
-            IsOtpSent = await _otpService.SendAndVerifyOtpAsync(_mobile);
+                if (!response.IsSuccessStatusCode)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Failed to retrieve mobile number.", "OK");
+                    return;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var mobileResponse = JsonSerializer.Deserialize<GetMobileResponse>(json);
+
+                if (mobileResponse == null || string.IsNullOrWhiteSpace(mobileResponse.Mobile))
+                {
+                    await Shell.Current.DisplayAlert("Error", "Mobile number not found for Aadhaar.", "OK");
+                    return;
+                }
+
+                _mobile = mobileResponse.Mobile;
+
+                // Send OTP and verify
+                IsOtpVerified = await _otpService.SendAndVerifyOtpAsync(_mobile);
+
+                if (!IsOtpVerified)
+                {
+                    await Shell.Current.DisplayAlert("Error", "OTP verification failed.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Exception: {ex.Message}", "OK");
+            }
         }
-
 
         private async Task ResetPasswordAsync()
         {
-            if (!IsOtpSent)
+            if (!IsOtpVerified)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Please verify OTP before resetting password.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Please verify OTP before resetting password.", "OK");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(NewPassword) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Password fields cannot be empty.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Password fields cannot be empty.", "OK");
                 return;
             }
 
             if (NewPassword != ConfirmPassword)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Passwords do not match.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Passwords do not match.", "OK");
                 return;
             }
 
             if (NewPassword.Length < 8)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Password must be at least 8 characters.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Password must be at least 8 characters.", "OK");
                 return;
             }
 
-            string hashedPassword = SecurityHelper.HashPassword(NewPassword);
-
-            using var conn = await DBHelper.GetConnectionAsync();
-            var updateCmd = new SqlCommand("UPDATE Customer SET UserPassword = @Password WHERE AdharNumber = @AdharNumber", conn);
-            updateCmd.Parameters.AddWithValue("@Password", hashedPassword);
-            updateCmd.Parameters.AddWithValue("@AdharNumber", AdharNumber);
-
-            int rowsAffected = await updateCmd.ExecuteNonQueryAsync();
-            if (rowsAffected > 0)
+            try
             {
-                await Application.Current.MainPage.DisplayAlert("Success", "Password reset successful.", "OK");
-                await Shell.Current.GoToAsync("///LoginPage");
+                var forgotPasswordRequest = new
+                {
+                    Aadhaar = this.Aadhaar,
+                    NewPassword = this.NewPassword
+                };
+
+                var httpClient = new HttpClient();
+                var json = JsonSerializer.Serialize(forgotPasswordRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PostAsync("http://your-api-url/api/auth/forgotpassword", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                var forgotPasswordResponse = JsonSerializer.Deserialize<ForgotPasswordResponse>(responseContent);
+
+                if (forgotPasswordResponse != null && forgotPasswordResponse.Success)
+                {
+                    await Shell.Current.DisplayAlert("Success", forgotPasswordResponse.Message, "OK");
+                    await Shell.Current.GoToAsync("///LoginPage");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Failed", forgotPasswordResponse?.Message ?? "Password reset failed.", "OK");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Failed to update password.", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Exception: {ex.Message}", "OK");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "")
         {
-            if (Equals(backingStore, value)) return;
+            if (Equals(backingStore, value))
+                return;
+
             backingStore = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public class GetMobileResponse
+    {
+        public string Mobile { get; set; }
+    }
+
+    public class ForgotPasswordResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 }

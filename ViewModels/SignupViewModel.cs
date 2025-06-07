@@ -1,10 +1,8 @@
-﻿using bank_demo.Services;
-using bank_demo.Services.API;
-using Microsoft.Data.SqlClient;
-using System.Text;
-using System.Text.Json;
+﻿using System.Windows.Input;
 using System.Text.RegularExpressions;
-using System.Windows.Input;
+using bank_demo.Services;
+using Microsoft.Maui.Controls;
+using bank_demo.Services.API;
 
 namespace bank_demo.ViewModels
 {
@@ -50,6 +48,7 @@ namespace bank_demo.ViewModels
 
         private async Task ExecuteSignup()
         {
+            // Validate inputs
             if (string.IsNullOrWhiteSpace(Aadhaar) || string.IsNullOrWhiteSpace(Username) ||
                 string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
@@ -75,52 +74,49 @@ namespace bank_demo.ViewModels
                 return;
             }
 
-            var hashedPassword = SecurityHelper.HashPassword(Password);
-
-            var signupRequest = new SignupRequest
+            // Step 1: Verify OTP (on registered mobile)
+            // Assuming you already have a way to get the mobile linked to Aadhaar, else call an API to fetch it
+            // For demo, we assume OTP sent to mobile and user input handled here
+            bool otpVerified = await _otpService.SendAndVerifyOtpAsync("registered-mobile-number");
+            if (!otpVerified)
             {
-                Aadhaar = Aadhaar,
-                Username = Username,
-                Password = hashedPassword
+                return; // OTP failed, stop signup
+            }
+
+            // Step 2: Call Signup API
+            var signupRequest = new
+            {
+                Aadhaar = this.Aadhaar,
+                Username = this.Username,
+                Password = this.Password
             };
 
-            var handler = new HttpClientHandler();
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+            var json = System.Text.Json.JsonSerializer.Serialize(signupRequest);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            using var client = new HttpClient(handler);
-            var json = JsonSerializer.Serialize(signupRequest);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            string apiUrl = "http://192.168.1.6:5164/api/auth/signup"; // Replace with actual
+            var httpClient = new HttpClient();
 
             try
             {
-                var response = await client.PostAsync(apiUrl, content);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var response = await httpClient.PostAsync("http://your-api-url/api/auth/signup", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-                if (!response.IsSuccessStatusCode)
+                var signupResponse = System.Text.Json.JsonSerializer.Deserialize<SignupResponse>(responseContent);
+
+                if (signupResponse != null && signupResponse.Success)
                 {
-                    await Shell.Current.DisplayAlert("Error", "Server error. Try again.", "OK");
-                    return;
-                }
-
-                var result = JsonSerializer.Deserialize<SignupResponse>(responseBody);
-
-                if (result.Success)
-                {
-                    await Shell.Current.DisplayAlert("Success", result.Message, "OK");
+                    await Shell.Current.DisplayAlert("Success", signupResponse.Message, "OK");
                     await Shell.Current.GoToAsync("///LoginPage");
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Signup Failed", result.Message, "OK");
+                    await Shell.Current.DisplayAlert("Failed", signupResponse?.Message ?? "Signup failed", "OK");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", $"Exception: {ex.Message}", "OK");
             }
         }
-
     }
 }
