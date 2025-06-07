@@ -1,8 +1,10 @@
-﻿using System.Windows.Input;
-using System.Text.RegularExpressions;
+﻿using bank_demo.Services;
+using bank_demo.Services.API;
 using Microsoft.Data.SqlClient;
-using bank_demo.Services;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace bank_demo.ViewModels
 {
@@ -48,7 +50,6 @@ namespace bank_demo.ViewModels
 
         private async Task ExecuteSignup()
         {
-            // 1. Validate Fields
             if (string.IsNullOrWhiteSpace(Aadhaar) || string.IsNullOrWhiteSpace(Username) ||
                 string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
@@ -74,77 +75,52 @@ namespace bank_demo.ViewModels
                 return;
             }
 
-            string hashedPassword = SecurityHelper.HashPassword(Password);
+            var hashedPassword = SecurityHelper.HashPassword(Password);
 
-            using var conn = await DBHelper.GetConnectionAsync();
-
-            // 2. Check Aadhaar exists
-            string checkAadhaarQuery = "SELECT EmailId, CellPhone, UserName, UserPassword FROM Customer WHERE AdharNumber = @AdharNumber";
-            using var cmd = new SqlCommand(checkAadhaarQuery, conn);
-            cmd.Parameters.AddWithValue("@AdharNumber", Aadhaar);
-
-            using var reader = await cmd.ExecuteReaderAsync();
-            if (!reader.HasRows)
+            var signupRequest = new SignupRequest
             {
-                await Shell.Current.DisplayAlert("Not Found", "No account associated with this Aadhaar number.", "OK");
-                return;
+                Aadhaar = Aadhaar,
+                Username = Username,
+                Password = hashedPassword
+            };
+
+            var handler = new HttpClientHandler();
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+
+            using var client = new HttpClient(handler);
+            var json = JsonSerializer.Serialize(signupRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            string apiUrl = "http://192.168.1.6:5164/api/auth/signup"; // Replace with actual
+
+            try
+            {
+                var response = await client.PostAsync(apiUrl, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Server error. Try again.", "OK");
+                    return;
+                }
+
+                var result = JsonSerializer.Deserialize<SignupResponse>(responseBody);
+
+                if (result.Success)
+                {
+                    await Shell.Current.DisplayAlert("Success", result.Message, "OK");
+                    await Shell.Current.GoToAsync("///LoginPage");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Signup Failed", result.Message, "OK");
+                }
             }
-
-            string email = "", mobile = "", existingUsername = null, existingUserPassword = null;
-            if (await reader.ReadAsync())
+            catch (Exception ex)
             {
-                email = reader["EmailId"]?.ToString();
-                mobile = reader["CellPhone"]?.ToString();
-                existingUsername = reader["UserName"]?.ToString();
-                existingUserPassword = reader["UserPassword"]?.ToString();
-            }
-            reader.Close();
-
-            // 3. Check if username is already used by someone else
-            string checkUsernameQuery = "SELECT COUNT(*) FROM Customer WHERE UserName = @UserName";
-            using var usernameCmd = new SqlCommand(checkUsernameQuery, conn);
-            usernameCmd.Parameters.AddWithValue("@UserName", Username);
-            int count = (int)await usernameCmd.ExecuteScalarAsync();
-
-            if (count > 0)
-            {
-                await Shell.Current.DisplayAlert("Username Exists", "Username already exists. Please choose another.", "OK");
-                return;
-            }
-
-            // 4. If already signed up
-            if (!string.IsNullOrWhiteSpace(existingUsername) && !string.IsNullOrWhiteSpace(existingUserPassword))
-            {
-                await Shell.Current.DisplayAlert("Account Exists", "Account already exists. Please login.", "OK");
-                await Shell.Current.GoToAsync("///LoginPage");
-                return;
-            }
-
-            // 5. Verify OTP
-            if (!await _otpService.SendAndVerifyOtpAsync(mobile))
-            {
-                await Shell.Current.DisplayAlert("Failed", "OTP verification failed.", "OK");
-                return;
-            }
-
-            // 6. Update Username and Password
-            string updateQuery = "UPDATE Customer SET UserName = @UserName, UserPassword = @UserPassword WHERE AdharNumber = @AdharNumber";
-            using var updateCmd = new SqlCommand(updateQuery, conn);
-            updateCmd.Parameters.AddWithValue("@UserName", Username);
-            updateCmd.Parameters.AddWithValue("@UserPassword", hashedPassword);
-            updateCmd.Parameters.AddWithValue("@AdharNumber", Aadhaar);
-
-            int rowsAffected = await updateCmd.ExecuteNonQueryAsync();
-
-            if (rowsAffected > 0)
-            {
-                await Shell.Current.DisplayAlert("Success", "Signup successful. You can now login.", "OK");
-                await Shell.Current.GoToAsync("///LoginPage");
-            }
-            else
-            {
-                await Shell.Current.DisplayAlert("Error", "Signup failed. Try again.", "OK");
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
         }
+
     }
 }

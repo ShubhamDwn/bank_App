@@ -1,11 +1,17 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
-using bank_demo.Services;
+﻿using bank_demo.Services;
+using bank_demo.Services.API;
 using Microsoft.Data.SqlClient;
+using Microsoft.Maui.Controls;
+using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+
 
 namespace bank_demo.ViewModels
 {
@@ -55,33 +61,49 @@ namespace bank_demo.ViewModels
                     return;
                 }
 
-                using var conn = await DBHelper.GetConnectionAsync();
-                var cmd = new SqlCommand("SELECT UserPassword,CustomerId FROM Customer WHERE UserName = @username", conn);
-                cmd.Parameters.AddWithValue("@username", Username);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-
-                if (!await reader.ReadAsync())
+                var loginRequest = new LoginRequest
                 {
-                    await Application.Current.MainPage.DisplayAlert("Login Failed", "No user found with this username.", "OK");
+                    Username = Username,
+                    Password = Password
+                };
+
+                var apiUrl = "http://192.168.1.6:5164/api/auth/login"; // Use your actual IP and port here
+
+                var handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // Ignore SSL errors for dev
+
+                using var client = new HttpClient(handler);
+                var json = JsonSerializer.Serialize(loginRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync(apiUrl, content);
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var loginResponse = JsonSerializer.Deserialize<LoginResponse>(responseBody, options);
+
+                // Step 3.2: Check if deserialization failed
+                if (loginResponse == null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Invalid response from server.", "OK");
                     return;
                 }
 
-                string storedHashedPassword = reader["UserPassword"].ToString();
-                int CustomerId = Convert.ToInt32(reader["CustomerID"]);
-
-                string enteredHashedPassword = SecurityHelper.HashPassword(Password);
-
-                await Application.Current.MainPage.DisplayAlert("Debug", $"Entered: {enteredHashedPassword}\nStored: {storedHashedPassword}", "OK");
-
-
-                if (storedHashedPassword == enteredHashedPassword)
+                // Step 3.3: Use the success flag properly
+                if (loginResponse.Success)
                 {
-                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={CustomerId}");
+                    await Application.Current.MainPage.DisplayAlert("Success", "Login successful", "OK");
+                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={loginResponse.CustomerId}");
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Login Failed", "Invalid password.", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Login Failed", loginResponse.Message, "OK");
                 }
             }
             catch (Exception ex)
@@ -89,6 +111,8 @@ namespace bank_demo.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
         }
+
+
 
         private async Task SignUpAsync()
         {
