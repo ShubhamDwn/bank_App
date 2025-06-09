@@ -1,8 +1,8 @@
-﻿using System.Windows.Input;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using System.Windows.Input;
 using bank_demo.Services;
-using Microsoft.Maui.Controls;
 using bank_demo.Services.API;
+using Microsoft.Maui.Controls;
 
 namespace bank_demo.ViewModels
 {
@@ -37,7 +37,6 @@ namespace bank_demo.ViewModels
         }
 
         public ICommand SignupCommand { get; }
-
         private readonly OtpService _otpService;
 
         public SignupViewModel()
@@ -48,42 +47,38 @@ namespace bank_demo.ViewModels
 
         private async Task ExecuteSignup()
         {
-            // Validate inputs
+            // 1. Validate fields
             if (string.IsNullOrWhiteSpace(Aadhaar) || string.IsNullOrWhiteSpace(Username) ||
                 string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                await Shell.Current.DisplayAlert("Error", "All fields are required", "OK");
+                await Shell.Current.DisplayAlert("Error", "All fields are required.", "OK");
                 return;
             }
 
             if (!Regex.IsMatch(Aadhaar, @"^\d{12}$"))
             {
-                await Shell.Current.DisplayAlert("Error", "Enter a valid 12-digit Aadhaar number", "OK");
+                await Shell.Current.DisplayAlert("Error", "Enter a valid 12-digit Aadhaar number.", "OK");
                 return;
             }
 
             if (Password != ConfirmPassword)
             {
-                await Shell.Current.DisplayAlert("Error", "Passwords do not match", "OK");
+                await Shell.Current.DisplayAlert("Error", "Passwords do not match.", "OK");
                 return;
             }
 
             if (Password.Length < 8)
             {
-                await Shell.Current.DisplayAlert("Error", "Password must be at least 8 characters", "OK");
+                await Shell.Current.DisplayAlert("Error", "Password must be at least 8 characters long.", "OK");
                 return;
             }
 
-            // Step 1: Verify OTP (on registered mobile)
-            // Assuming you already have a way to get the mobile linked to Aadhaar, else call an API to fetch it
-            // For demo, we assume OTP sent to mobile and user input handled here
+            // 2. OTP verification
             bool otpVerified = await _otpService.SendAndVerifyOtpAsync("registered-mobile-number");
             if (!otpVerified)
-            {
-                return; // OTP failed, stop signup
-            }
+                return;
 
-            // Step 2: Call Signup API
+            // 3. Send signup request
             var signupRequest = new
             {
                 Aadhaar = this.Aadhaar,
@@ -98,25 +93,51 @@ namespace bank_demo.ViewModels
 
             try
             {
-                var response = await httpClient.PostAsync("http://192.168.12:5164/api/auth/signup", content);
+                var response = await httpClient.PostAsync("http://192.168.1.12:5164/api/auth/signup", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                var signupResponse = System.Text.Json.JsonSerializer.Deserialize<SignupResponse>(responseContent);
+                // Try to parse server JSON response even if it's a 400/500
+                SignupResponse signupResponse = null;
 
-                if (signupResponse != null && signupResponse.Success)
+                try
                 {
-                    await Shell.Current.DisplayAlert("Success", signupResponse.Message, "OK");
-                    await Shell.Current.GoToAsync("///LoginPage");
+                    signupResponse = System.Text.Json.JsonSerializer.Deserialize<SignupResponse>(responseContent,
+                        new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                catch
+                {
+                    // Optional fallback: show raw response
+                    await Shell.Current.DisplayAlert("Server Error", $"Unexpected response: {responseContent}", "OK");
+                    return;
+                }
+
+                if (signupResponse != null)
+                {
+                    if (signupResponse.Success)
+                    {
+                        await Shell.Current.DisplayAlert("Success", signupResponse.Message, "OK");
+                        await Shell.Current.GoToAsync("///LoginPage");
+                    }
+                    else
+                    {
+                        await Shell.Current.DisplayAlert("Signup Failed", signupResponse.Message, "OK");
+                    }
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Failed", signupResponse?.Message ?? "Signup failed", "OK");
+                    await Shell.Current.DisplayAlert("Error", "Something went wrong. Please try again.", "OK");
                 }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                await Shell.Current.DisplayAlert("Network Error", $"Server unreachable: {httpEx.Message}", "OK");
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Exception: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Unexpected Error", $"Error: {ex.Message}", "OK");
             }
+
+
         }
     }
 }
