@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using bank_demo.Pages;
 using Microsoft.Data.SqlClient;
-using bank_demo.Services; // Assuming DBHelper is here
+using bank_demo.Services.API;
 using System.Data;
 using bank_demo.Pages.Fund_Transfer;
 
@@ -48,7 +48,7 @@ namespace bank_demo.ViewModels
         {
             LoadCustomerData(customerId);
 
-            
+
 
             AboutCommand = new Command(async () =>
             {
@@ -88,7 +88,7 @@ namespace bank_demo.ViewModels
             AddBeneficiaryCommand = new Command(async () =>
             {
                 // Pass the account number as a query parameter
-                
+
                 await Shell.Current.GoToAsync($"BeneficiaryStatusPage?CustomerId={customerId}");
             });
 
@@ -104,28 +104,39 @@ namespace bank_demo.ViewModels
             });
         }
 
-        private async void LoadCustomerData(int CustomerID)
+        private async void LoadCustomerData(int customerId)
         {
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
-                string query = "SELECT FirstName,MiddleName,SurName FROM Customer WHERE CustomerId = @CustomerID";
-                using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CustomerId", CustomerID);
-                using var reader = await cmd.ExecuteReaderAsync();
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync($"http://192.168.1.12:5164/api/home/{customerId}");
 
-                if (await reader.ReadAsync())
+                if (response.IsSuccessStatusCode)
                 {
-                    CustomerName = reader.GetString("FirstName")+ reader.GetString("MiddleName")+reader.GetString("SurName");
-                    //SavingsBalance = reader.GetDecimal("balance");  
-                    SavingsBalance = 50000.00M;
+                    var json = await response.Content.ReadAsStringAsync();
+                    var data = System.Text.Json.JsonSerializer.Deserialize<HomeResponse>(json, new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (data != null)
+                    {
+                        CustomerName = data.CustomerName;
+                        SavingsBalance = data.SavingsBalance;
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error", "Failed to load customer data from API", "OK");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Failed to load customer data: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", $"API error: {ex.Message}", "OK");
             }
         }
 
     }
+
 }
+

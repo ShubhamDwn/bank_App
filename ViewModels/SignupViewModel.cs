@@ -98,7 +98,7 @@ namespace bank_demo.ViewModels
 
             try
             {
-                var response = await httpClient.PostAsync("http://your-api-url/api/auth/signup", content);
+                var response = await httpClient.PostAsync("http://192.168.12:5164/api/auth/signup", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 var signupResponse = System.Text.Json.JsonSerializer.Deserialize<SignupResponse>(responseContent);

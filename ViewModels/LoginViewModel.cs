@@ -67,7 +67,7 @@ namespace bank_demo.ViewModels
                     Password = Password
                 };
 
-                var apiUrl = "http://192.168.1.6:5164/api/auth/login"; // Use your actual IP and port here
+                var apiUrl = "http://192.168.1.12:5164/api/auth/login"; // Use your actual IP and port here
 
                 var handler = new HttpClientHandler();
                 handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // Ignore SSL errors for dev

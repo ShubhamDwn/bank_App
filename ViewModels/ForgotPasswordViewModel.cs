@@ -72,7 +72,7 @@ namespace bank_demo.ViewModels
                 // Call your API to get mobile number by Aadhaar
                 var httpClient = new HttpClient();
                 var response = await httpClient.PostAsync(
-                    "http://your-api-url/api/auth/getmobile",
+                    "http://192.168.1.12:5164/api/auth/getmobile",
                     new StringContent(JsonSerializer.Serialize(new { Aadhaar }), Encoding.UTF8, "application/json"));
 
                 if (!response.IsSuccessStatusCode)
@@ -144,7 +144,7 @@ namespace bank_demo.ViewModels
                 var json = JsonSerializer.Serialize(forgotPasswordRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await httpClient.PostAsync("http://your-api-url/api/auth/forgotpassword", content);
+                var response = await httpClient.PostAsync("http://192.168.1.6:5164/api/auth/forgotpassword", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 var forgotPasswordResponse = JsonSerializer.Deserialize<ForgotPasswordResponse>(responseContent);
