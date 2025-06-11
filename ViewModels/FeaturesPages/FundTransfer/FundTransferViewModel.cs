@@ -1,9 +1,9 @@
-﻿using bank_demo.Services;
-using Microsoft.Data.SqlClient;
+﻿using bank_demo.Services.API;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Windows.Input;
 
 namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
@@ -23,7 +23,8 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             }
         }
 
-        public Command LoadBeneficiariesCommand { get; }
+        public ICommand LoadBeneficiariesCommand { get; }
+        public ICommand SelectBeneficiaryCommand { get; }
 
         public FundTransferViewModel(int customerId)
         {
@@ -37,31 +38,31 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
         {
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
-                string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
-                                 FROM BeneficiaryDetail 
-                                 WHERE CustomerId = @CustomerId";
+                string baseUrl = BaseURL.Url(); // From your BaseURL class
+                string url = $"{baseUrl}api/beneficiaries?customerId={CustomerId}";
 
-                using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
+                using var client = new HttpClient();
+                var response = await client.GetAsync(url);
 
-                using var reader = await cmd.ExecuteReaderAsync();
-
-                Beneficiaries.Clear();
-                while (await reader.ReadAsync())
+                if (response.IsSuccessStatusCode)
                 {
-                    Beneficiaries.Add(new Beneficiary
+                    var json = await response.Content.ReadAsStringAsync();
+                    var beneficiaries = JsonSerializer.Deserialize<List<Beneficiary>>(json, new JsonSerializerOptions
                     {
-                        BeneficiaryName = reader.GetString("BeneficiaryName"),
-                        BankName = reader.GetString("BeneficiaryBankName"),
-                        IFSCCode = reader.GetString("BeneficiaryIFSCCode"),
-                        AccountNumber = reader.GetInt32("AccountNumber"),
-                        BranchName = reader.GetString("BeneficiaryBankBranch"),
-                        BeneficiaryNickName = reader.IsDBNull(reader.GetOrdinal("BeneficiaryNickname")) ? "" : reader.GetString("BeneficiaryNickname"),
-                        CustomerId = CustomerId // ✅ This line fixes the error
+                        PropertyNameCaseInsensitive = true
                     });
-                } 
 
+                    Beneficiaries.Clear();
+                    foreach (var b in beneficiaries)
+                    {
+                        b.CustomerId = CustomerId;
+                        Beneficiaries.Add(b);
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {response.StatusCode}", "OK");
+                }
             }
             catch (Exception ex)
             {
@@ -69,16 +70,12 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             }
         }
 
-        public ICommand SelectBeneficiaryCommand { get; }
-
         private async void OnBeneficiarySelected(Beneficiary selected)
         {
             if (selected == null) return;
 
             await Shell.Current.GoToAsync($"EnterAmountPage?account_number={CustomerId}&beneficiary_account_number={selected.AccountNumber}");
         }
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>

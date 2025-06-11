@@ -7,7 +7,7 @@ namespace bank_demo.Pages;
 public partial class BeneficiaryDetailPage : ContentPage
 {
     private int _customerId;
-    private int _accountNumber;
+    private string _accountNumber;
     private bool _isAccountSet = false;
     private bool _isBeneficiarySet = false;
 
@@ -28,7 +28,7 @@ public partial class BeneficiaryDetailPage : ContentPage
         }
     }
 
-    public int AccountNumber
+    public string AccountNumber
     {
         get => _accountNumber;
         set

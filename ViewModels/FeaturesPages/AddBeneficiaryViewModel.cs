@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Microsoft.Data.SqlClient;
-using bank_demo.Services;
+using bank_demo.Services.API;
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
@@ -75,7 +77,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             set { _branchName = value; OnPropertyChanged(); }
         }
 
-        public ICommand AddCommand { get;}
+        public ICommand AddCommand { get; }
 
         public AddBeneficiaryViewModel(int customerId)
         {
@@ -92,47 +94,46 @@ namespace bank_demo.ViewModels.FeaturesPages
                 return;
             }
 
+            var beneficiary = new
+            {
+                CustomerId = CustomerId,
+                BeneficiaryName = BeneficiaryName,
+                BeneficiaryNickName = BeneficiaryNickName,
+                AccountNumber = AccountNumber,
+                ConfirmAccountNumber = ConfirmAccountNumber,
+                IFSC = IFSC,
+                MobileNo = MobileNo,
+                Email = Email,
+                BankName = BankName,
+                BranchName = BranchName
+            };
+
+
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
+                string baseurl = BaseURL.Url();
+                using var client = new HttpClient();
+                client.BaseAddress = new Uri(baseurl); // ⛳️ Replace with actual API base URL
 
-                string checkQuery = @"SELECT COUNT(*) FROM BeneficiaryDetail 
-                                      WHERE CustomerId = @CustomerId AND AccountNumber = @AccountNumber";
-                using var checkCmd = new SqlCommand(checkQuery, conn);
-                checkCmd.Parameters.AddWithValue("@CustomerId", CustomerId);
-                checkCmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                var json = JsonSerializer.Serialize(beneficiary);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var exists = (int)(await checkCmd.ExecuteScalarAsync() ?? 0);
-                if (exists > 0)
+                var response = await client.PostAsync("/api/beneficiaries", content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    await Shell.Current.DisplayAlert("Duplicate", "This beneficiary is already added.", "OK");
-                    return;
+                    await Shell.Current.DisplayAlert("Success", "Beneficiary added successfully!", "OK");
+                    await Shell.Current.GoToAsync("..");
                 }
-
-                string insertQuery = @"
-                    INSERT INTO BeneficiaryDetail (CustomerId, BenificiaryCode, BeneficiaryName, BeneficiaryNickName, AccountNumber, IFSC, MobileNo, Email, BankName, BranchName, IsRegister, RegistrationDate, RegistrationStatus, Status, SysDate)
-                    VALUES (@CustomerId, @BeneficiaryCode, @BeneficiaryName, @BeneficiaryNickName, @AccountNumber, @IFSC, @MobileNo, @Email, @BankName, @BranchName, 1, GETDATE(), 'Registered', 1, GETDATE())";
-
-                using var insertCmd = new SqlCommand(insertQuery, conn);
-                insertCmd.Parameters.AddWithValue("@CustomerId", CustomerId);
-                insertCmd.Parameters.AddWithValue("@BeneficiaryCode", AccountNumber+IFSC);
-                insertCmd.Parameters.AddWithValue("@BeneficiaryName", BeneficiaryName);
-                insertCmd.Parameters.AddWithValue("@BeneficiaryNickName", BeneficiaryNickName ?? "");
-                insertCmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-                insertCmd.Parameters.AddWithValue("@IFSC", IFSC);
-                insertCmd.Parameters.AddWithValue("@MobileNo", MobileNo);
-                insertCmd.Parameters.AddWithValue("@Email", Email);
-                insertCmd.Parameters.AddWithValue("@BankName", BankName);
-                insertCmd.Parameters.AddWithValue("@BranchName", BranchName);
-
-                await insertCmd.ExecuteNonQueryAsync();
-
-                await Shell.Current.DisplayAlert("Success", "Beneficiary added successfully!", "OK");
-                await Shell.Current.GoToAsync(".."); // or a detail page
+                else
+                {
+                    var respContent = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Failed: {respContent}", "OK");
+                }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Failed: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", $"Exception: {ex.Message}", "OK");
             }
         }
 

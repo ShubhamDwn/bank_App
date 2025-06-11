@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input; // MAUI-compatible input
-using Microsoft.Data.SqlClient;
-using bank_demo.Services;
+﻿using bank_demo.Services.API;
 using Microsoft.Maui.ApplicationModel.DataTransfer;
+using System.Collections.ObjectModel;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Windows.Input;
 
 namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
 {
@@ -10,20 +11,8 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
     {
         public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
 
-        private int _accountNumber;
-        private int _customerId;
-
-        public int AccountNumber
-        {
-            get => _accountNumber;
-            set { _accountNumber = value; OnPropertyChanged(); }
-        }
-
-        public int CustomerId
-        {
-            get => _customerId;
-            set { _customerId = value; OnPropertyChanged(); }
-        }
+        public int AccountNumber { get; set; }
+        public int CustomerId { get; set; }
 
         public string BeneficiaryName => Beneficiaries.FirstOrDefault()?.BeneficiaryName ?? "";
         public string BankName => Beneficiaries.FirstOrDefault()?.BankName ?? "";
@@ -70,41 +59,37 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
         {
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
-                string query = @"SELECT BeneficiaryName, BeneficiaryBankName, BeneficiaryIFSCCode, 
-                                        BeneficiaryAccountNumber, BeneficiaryBankBranch, BeneficiaryNickname
-                                 FROM BeneficiaryDetail 
-                                 WHERE CustomerId = @CustomerId AND AccountNumber = @AccountNumber";
+                string endpoint = $"{BaseURL.Url()}api/beneficiaries?customerId={CustomerId}&accountNumber={AccountNumber}";
 
-                using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-                cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
+                using var client = new HttpClient();
+                var response = await client.GetAsync(endpoint);
 
-                using var reader = await cmd.ExecuteReaderAsync();
-
-                Beneficiaries.Clear();
-                while (await reader.ReadAsync())
+                if (response.IsSuccessStatusCode)
                 {
-                    Beneficiaries.Add(new Beneficiary
+                    var json = await response.Content.ReadAsStringAsync();
+                    var beneficiaries = JsonSerializer.Deserialize<List<Beneficiary>>(json, new JsonSerializerOptions
                     {
-                        BeneficiaryName = reader["BeneficiaryName"].ToString(),
-                        BankName = reader["BeneficiaryBankName"].ToString(),
-                        IFSCCode = reader["BeneficiaryIFSCCode"].ToString(),
-                        AccountNumber = Convert.ToInt32(reader["AccountNumber"]),
-                        BranchName = reader["BeneficiaryBankBranch"].ToString(),
-                        BeneficiaryNickName = reader["BeneficiaryNickname"]?.ToString() ?? "",
-                        CustomerId = CustomerId
+                        PropertyNameCaseInsensitive = true
                     });
-                }
 
-                OnPropertyChanged(nameof(BeneficiaryName));
-                OnPropertyChanged(nameof(BankName));
+                    Beneficiaries.Clear();
+                    foreach (var item in beneficiaries)
+                        Beneficiaries.Add(item);
+
+                    OnPropertyChanged(nameof(BeneficiaryName));
+                    OnPropertyChanged(nameof(BankName));
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {response.StatusCode}", "OK");
+                }
             }
             catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("Error", "Unable to load beneficiary details: " + ex.Message, "OK");
             }
         }
+
 
         private async void OnProceed()
         {
@@ -117,7 +102,7 @@ namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
             var beneficiary = Beneficiaries.FirstOrDefault();
             if (beneficiary == null)
             {
-                await Shell.Current.DisplayAlert("Error", "Beneficiary not found", "OK");
+                await Shell.Current.DisplayAlert("Error", "No beneficiary found", "OK");
                 return;
             }
 

@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using bank_demo.Services.API;
 using Microsoft.Maui.Controls;
-using Microsoft.Data.SqlClient;
-using bank_demo.Services;
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
@@ -13,11 +14,13 @@ namespace bank_demo.ViewModels.FeaturesPages
         public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new ObservableCollection<Beneficiary>();
         public ICommand SelectBeneficiaryCommand { get; }
 
-        private int _customerId;
+        private readonly int _customerId;
+        private readonly HttpClient _httpClient;
 
         public BeneficiaryStatusViewModel(int customerId)
         {
             _customerId = customerId;
+            _httpClient = new HttpClient(); // Ideally injected or reused via DI/singleton
             SelectBeneficiaryCommand = new Command<Beneficiary>(OnSelectBeneficiary);
             LoadBeneficiaries();
         }
@@ -26,29 +29,14 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
-                string query = @"SELECT BeneficiaryName, BankName, IFSC, AccountNumber, BranchName, BeneficiaryNickName 
-                                 FROM BeneficiaryDetail 
-                                 WHERE CustomerId = @CustomerId AND IsRegister = 1 AND Status = 1";
+                string url = $"{BaseURL.Url()}api/beneficiaries?customerId={_customerId}";
+                var result = await _httpClient.GetFromJsonAsync<List<Beneficiary>>(url);
 
-                using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CustomerId", _customerId);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                Beneficiaries.Clear();
+                if (result != null)
                 {
-                    var beneficiary = new Beneficiary
-                    {
-                        BeneficiaryName = reader["BeneficiaryName"].ToString() ?? "",
-                        BankName = reader["BankName"].ToString() ?? "",
-                        IFSCCode = reader["IFSC"].ToString() ?? "",
-                        BranchName = reader["BranchName"].ToString() ?? "",
-                        BeneficiaryNickName = reader["BeneficiaryNickName"].ToString() ?? "",
-                        CustomerId = _customerId, // current user
-                        AccountNumber = Convert.ToInt32(reader["AccountNumber"])
-                    };
-
-                    Beneficiaries.Add(beneficiary);
+                    foreach (var beneficiary in result)
+                        Beneficiaries.Add(beneficiary);
                 }
             }
             catch (Exception ex)
@@ -61,8 +49,12 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             if (selected == null) return;
 
+            string customerId = selected.CustomerId.ToString();
+            string accountNumber = selected.AccountNumber.ToString();
+
             await Shell.Current.GoToAsync($"BeneficiaryDetailPage?CustomerId={selected.CustomerId}&AccountNumber={selected.AccountNumber}");
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>

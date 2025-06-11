@@ -109,7 +109,7 @@ namespace bank_demo.ViewModels
             try
             {
                 using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync($"http://192.168.1.12:5164/api/home/{customerId}");
+                var response = await httpClient.GetAsync($"{BaseURL.Url()}api/home/{customerId}");
 
                 if (response.IsSuccessStatusCode)
                 {

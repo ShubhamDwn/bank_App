@@ -93,7 +93,7 @@ namespace bank_demo.ViewModels
 
             try
             {
-                var response = await httpClient.PostAsync("http://192.168.1.12:5164/api/auth/signup", content);
+                var response = await httpClient.PostAsync($"{BaseURL.Url()}api/auth/signup", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 // Try to parse server JSON response even if it's a 400/500

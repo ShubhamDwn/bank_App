@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using System.Threading.Tasks;
-using bank_demo.Services;
-using Microsoft.Data.SqlClient;
-using System.Collections.ObjectModel;
+using bank_demo.Services.API;
+using Microsoft.Maui.Controls;
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
@@ -12,20 +13,9 @@ namespace bank_demo.ViewModels.FeaturesPages
     {
         public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
 
-        private int _customerId;
-        private int _accountNumber;
-
-        public int CustomerId
-        {
-            get => _customerId;
-            set { _customerId = value; OnPropertyChanged(); }
-        }
-
-        public int AccountNumber
-        {
-            get => _accountNumber;
-            set { _accountNumber = value; OnPropertyChanged(); }
-        }
+        private readonly long _customerId;
+        private readonly string _accountNumber;
+        private readonly HttpClient _httpClient;
 
         public Command LoadBeneficiariesCommand { get; }
         public ICommand DeleteCommand { get; }
@@ -35,24 +25,19 @@ namespace bank_demo.ViewModels.FeaturesPages
         public Beneficiary SelectedBeneficiary
         {
             get => _selectedBeneficiary;
-            set
-            {
-                _selectedBeneficiary = value;
-                OnPropertyChanged();
-            }
+            set { _selectedBeneficiary = value; OnPropertyChanged(); }
         }
 
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        public BeneficiaryDetailPageViewModel(int customerId, int accountNumber)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        public BeneficiaryDetailPageViewModel(long customerId, string accountNumber)
         {
-            CustomerId = customerId;
-            AccountNumber = accountNumber;
+            _customerId = customerId;
+            _accountNumber = accountNumber;
+            _httpClient = new HttpClient(); // Ideally injected/shared instance
 
+            LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
             DeleteCommand = new Command(async () => await DeleteBeneficiaryAsync());
             PaymentCommand = new Command(async () => await NavigateToPaymentPageAsync());
-            LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
+
             LoadBeneficiariesCommand.Execute(null);
         }
 
@@ -60,69 +45,40 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
-
-                string query = @"
-                    SELECT 
-                        BeneficiaryName, 
-                        BankName, 
-                        IFSC, 
-                        AccountNumber, 
-                        BranchName, 
-                        BeneficiaryNickName,
-                        CustomerId
-                    FROM BeneficiaryDetail
-                    WHERE CustomerId = @CustomerId AND AccountNumber = @AccountNumber";
-
-                using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CustomerId", CustomerId);
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-
-                using var reader = await cmd.ExecuteReaderAsync();
+                string url = $"{BaseURL.Url()}api/beneficiaries?customerId={_customerId}&accountNumber={_accountNumber}";
+                var result = await _httpClient.GetFromJsonAsync<List<Beneficiary>>(url);
 
                 Beneficiaries.Clear();
-
-                while (await reader.ReadAsync())
+                if (result != null)
                 {
-                    Beneficiaries.Add(new Beneficiary
-                    {
-                        BeneficiaryName = reader["BeneficiaryName"].ToString()!,
-                        BankName = reader["BankName"].ToString()!,
-                        IFSCCode = reader["IFSC"].ToString()!,
-                        AccountNumber = Convert.ToInt32(reader["AccountNumber"]),
-                        BranchName = reader["BranchName"].ToString()!,
-                        BeneficiaryNickName = reader["BeneficiaryNickName"]?.ToString() ?? "",
-                        CustomerId = Convert.ToInt32(reader["CustomerId"])
-                    });
+                    foreach (var beneficiary in result)
+                        Beneficiaries.Add(beneficiary);
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Unable to load beneficiary details: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Unable to load beneficiaries: {ex.Message}", "OK");
             }
-
         }
 
         private async Task NavigateToPaymentPageAsync()
         {
-            var beneficiary = Beneficiaries.FirstOrDefault();
+            var beneficiary = SelectedBeneficiary ?? Beneficiaries.FirstOrDefault();
             if (beneficiary == null)
             {
-                await Shell.Current.DisplayAlert("Error", "No beneficiary found", "OK");
+                await Shell.Current.DisplayAlert("Error", "No beneficiary selected.", "OK");
                 return;
             }
 
             await Shell.Current.GoToAsync($"EnterAmountPage?account_number={beneficiary.AccountNumber}&customer_id={beneficiary.CustomerId}");
         }
 
-
-
         private async Task DeleteBeneficiaryAsync()
         {
-            var beneficiary = Beneficiaries.FirstOrDefault();
+            var beneficiary = SelectedBeneficiary ?? Beneficiaries.FirstOrDefault();
             if (beneficiary == null)
             {
-                await Shell.Current.DisplayAlert("Error", "No beneficiary found", "OK");
+                await Shell.Current.DisplayAlert("Error", "No beneficiary selected.", "OK");
                 return;
             }
 
@@ -135,27 +91,24 @@ namespace bank_demo.ViewModels.FeaturesPages
 
             try
             {
-                using var conn = await DBHelper.GetConnectionAsync();
-                string query = @"DELETE FROM BeneficiaryDetail 
-                         WHERE CustomerId = @CustomerId 
-                           AND AccountNumber = @AccountNumber 
-                           AND BeneficiaryAccountNumber = @BeneficiaryAccountNumber";
-
-                using var cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CustomerId", beneficiary.CustomerId);
-                cmd.Parameters.AddWithValue("@AccountNumber", beneficiary.AccountNumber);
-
-                int rows = await cmd.ExecuteNonQueryAsync();
-
-                if (rows > 0)
+                string deleteUrl = $"{BaseURL.Url()}/api/beneficiaries/delete";
+                var response = await _httpClient.PostAsJsonAsync(deleteUrl, new
                 {
-                    Beneficiaries.Clear();
+                    customerId = beneficiary.CustomerId,
+                    accountNumber = _accountNumber,
+                    beneficiaryAccountNumber = beneficiary.AccountNumber
+                });
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Beneficiaries.Remove(beneficiary);
                     await Shell.Current.DisplayAlert("Success", "Beneficiary deleted", "OK");
-                    await Shell.Current.GoToAsync(".."); // Navigate back
+                    await Shell.Current.GoToAsync("..");
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Error", "Deletion failed", "OK");
+                    var msg = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Deletion failed: {msg}", "OK");
                 }
             }
             catch (Exception ex)
@@ -163,14 +116,6 @@ namespace bank_demo.ViewModels.FeaturesPages
                 await Shell.Current.DisplayAlert("Error", $"Could not delete: {ex.Message}", "OK");
             }
         }
-
-
-
-
-
-
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
