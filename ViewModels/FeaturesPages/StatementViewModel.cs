@@ -126,7 +126,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             _ = LoadAccountTypesAsync();
         }
 
-        private async Task LoadAccountTypesAsync()
+        public async Task LoadAccountTypesAsync()
         {
             try
             {
