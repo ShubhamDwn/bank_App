@@ -18,7 +18,7 @@ namespace bank_demo.Services
             return await client.GetFromJsonAsync<List<string>>($"{baseUrl}/account-types/{customerId}");
         }
 
-        public static async Task<List<AccountModel>> GetCustomerAccountsAsync(int customerId, string accountType, string deviceId = "d7620a1b553407a7", int closed = 0)
+        public static async Task<List<AccountModel>> GetCustomerAccountsAsync(int customerId, string accountType, string deviceId = "083ea3911295b82d", int closed = 0)
         {
             // Append optional query parameters
             string url = $"{baseUrl}/accounts?customerId={customerId}&accountType={Uri.EscapeDataString(accountType)}&deviceId={Uri.EscapeDataString(deviceId)}&closed={closed}";

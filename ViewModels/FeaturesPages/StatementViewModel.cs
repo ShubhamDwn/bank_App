@@ -167,7 +167,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 foreach (var acc in accounts)
                     AvailableAccounts.Add(acc);
 
-                SelectedAccount = AvailableAccounts.FirstOrDefault();
+                // No auto-selection
                 IsAccountListVisible = AvailableAccounts.Count > 0;
             }
             catch (Exception ex)
@@ -179,6 +179,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 IsLoading = false;
             }
         }
+
 
         private async Task LoadStatementAsync()
         {

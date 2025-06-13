@@ -2,6 +2,6 @@
 {
     public static class BaseURL
     {
-        public static string Url() => "http://192.168.1.8:5164/";
+        public static string Url() => "http://192.168.1.9:5164/";
     }
 }

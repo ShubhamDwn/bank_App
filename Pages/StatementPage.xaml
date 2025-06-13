@@ -18,28 +18,62 @@
                     IsEnabled="{Binding IsAccountTypeSelected}" />
 
             <!-- Available Accounts List -->
-                <Label Text="Available Accounts:" FontAttributes="Bold"
-                   IsVisible="{Binding IsAccountTypeSelected}" />
-                <CollectionView ItemsSource="{Binding AvailableAccounts}" 
-                            SelectionMode="Single"
-                            SelectedItem="{Binding SelectedAccount}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BorderColor="Gray" Padding="10" Margin="5">
-                                <StackLayout>
-                                    <Label Text="{Binding AccountNumber}" FontAttributes="Bold" />
-                                    <Label Text="{Binding AccountType}" />
-                                    <Label Text="{Binding Balance, StringFormat='Balance: ₹{0:F2}'}" />
-                                    <Label Text="{Binding Branch}" />
-                                    <Label Text="{Binding IFSC}" />
-                                    <Label Text="{Binding IsClosed, StringFormat='Closed: {0}'}" />
-                                </StackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+            <Label Text="Available Accounts:"
+               FontAttributes="Bold"
+               Margin="10,5,10,0"
+               FontSize="14"
+               IsVisible="{Binding IsAccountTypeSelected}" />
 
-                <!-- Time Period Picker -->
+            <CollectionView ItemsSource="{Binding AvailableAccounts}" 
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedAccount}"
+                
+                Margin="10,5,10,10">
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="8" Margin="0,0,0,12" HasShadow="True" BorderColor="Aqua" CornerRadius="6">
+                            <Grid ColumnDefinitions="Auto,*,*" 
+                          RowDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="10" 
+                          RowSpacing="4">   
+
+                                <!-- Row 0 -->
+                                <Label Grid.Row="0" Grid.Column="0"
+                           Text="{Binding PrimaryId}"
+                           FontAttributes="Bold"
+                           FontSize="12"
+                           HorizontalOptions="Center" />
+
+                                <Label Grid.Row="0" Grid.Column="1"
+                           Text="{Binding SubSchemeName}"
+                           FontAttributes="Bold"
+                           FontSize="12" />
+
+                                <Label Grid.Row="0" Grid.Column="2"
+                           Text="{Binding SubSchemeId, StringFormat='SubScheme ID: {0}'}"
+                           FontSize="12" />
+
+                                <!-- Row 1 -->
+                                <Label Grid.Row="1" Grid.Column="1"
+                           Text="{Binding AccountNumber, StringFormat='Account No: {0}'}"
+                           FontSize="12" />
+
+                                <Label Grid.Row="1" Grid.Column="2"
+                           Text="{Binding Balance, StringFormat='Balance: ₹{0:F2}'}"
+                           FontSize="12" />
+                            </Grid>
+                           
+                        </Frame>
+               
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+
+
+            <!-- Time Period Picker -->
                 <Label Text="Select Time Period:" FontAttributes="Bold"
                    IsVisible="{Binding IsTimePeriodVisible}" />
                 <Picker ItemsSource="{Binding TimePeriodOptions}" 
