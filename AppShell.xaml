@@ -96,6 +96,9 @@
               Shell.FlyoutBehavior="Disabled"
               Shell.NavBarIsVisible="True" />
 
+    <!-- View Statement Page -->
+    <ShellContent Route="ViewStatementPage" 
+                  ContentTemplate="{DataTemplate pages:ViewStatementPage}" />
 
 
 

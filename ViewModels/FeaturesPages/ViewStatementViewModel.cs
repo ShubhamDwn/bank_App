@@ -14,12 +14,15 @@ public class ViewStatementViewModel : INotifyPropertyChanged
     void OnPropertyChanged([CallerMemberName] string propName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-    private string _accountNumber;
+    public ObservableCollection<TransactionModel> Transactions { get; } = new();
+
+    private int _customerId;
+    private int _accountNumber;
+    private int _subSchemeId;
+    private int _pigmyAgentId;
+    private string _deviceId;
     private DateTime _fromDate;
     private DateTime _toDate;
-    private string _timePeriod;
-
-    public ObservableCollection<TransactionModel> Transactions { get; } = new();
 
     private bool _isLoading;
     public bool IsLoading
@@ -38,69 +41,42 @@ public class ViewStatementViewModel : INotifyPropertyChanged
     public ICommand LoadTransactionsCommand { get; }
     public ICommand ExportPdfCommand { get; }
 
-    public ViewStatementViewModel()
+    public ViewStatementViewModel(int CustomerId, int subSchemeId, int accountNumber, int pigmyAgentId, DateTime start, DateTime end)
     {
+        _customerId = CustomerId;
+        _subSchemeId = subSchemeId;
+        _accountNumber = accountNumber;
+        _pigmyAgentId= pigmyAgentId;
+        _fromDate=start;
+        _toDate=end;
+
         LoadTransactionsCommand = new Command(async () => await LoadTransactionsAsync());
         ExportPdfCommand = new Command(async () => await ExportPdfAsync());
     }
 
-    // Called when page is navigated to
-    public void Initialize(string accountNumber, DateTime fromDate, DateTime toDate, string timePeriod)
-    {
-        _accountNumber = accountNumber;
-        _fromDate = fromDate;
-        _toDate = toDate;
-        _timePeriod = timePeriod;
-    }
-
-    private DateTime CalculateStartDate()
-    {
-        if (_timePeriod == "Custom")
-            return _fromDate;
-
-        return _timePeriod switch
-        {
-            "Last Week" => DateTime.Now.AddDays(-7),
-            "Last 1 Month" => DateTime.Now.AddMonths(-1),
-            "Last 3 Months" => DateTime.Now.AddMonths(-3),
-            "Last 1 Year" => DateTime.Now.AddYears(-1),
-            _ => DateTime.Now.AddMonths(-1),
-        };
-    }
-
-    private DateTime CalculateEndDate()
-    {
-        if (_timePeriod == "Custom")
-            return _toDate;
-
-        return DateTime.Now;
-    }
 
     public async Task LoadTransactionsAsync()
     {
-        if (string.IsNullOrWhiteSpace(_accountNumber))
-            return;
-
-        IsLoading = true;
-        Transactions.Clear();
-
-        DateTime start = CalculateStartDate();
-        DateTime end = CalculateEndDate();
-
-        var customerId = await SecureStorage.Default.GetAsync("CustomerId");
-        if (!int.TryParse(customerId, out int custId))
-            custId = 0; // or handle appropriately
 
         try
         {
-            //var transactions = await DBHelper.GetTransactionsByAccountAsync(custId, _accountNumber, start, end);
+            IsLoading = true;
 
-            //foreach (var txn in transactions)
-              //  Transactions.Add(txn);
+            var data = await DBHelper.GetTransactionsAsync(
+                _customerId,
+                _subSchemeId,
+                _accountNumber,
+                _pigmyAgentId,
+                _fromDate,
+                _toDate
+            );
+
+            foreach (var txn in data)
+                Transactions.Add(txn);
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", $"Failed to load transactions: {ex.Message}", "OK");
+            await Shell.Current.DisplayAlert("Error", "Unable to load statement: " + ex.Message, "OK");
         }
         finally
         {
@@ -112,11 +88,11 @@ public class ViewStatementViewModel : INotifyPropertyChanged
     {
         try
         {
-            var bytes = StatementPdfExporter.GeneratePdf(Transactions.ToList(), _accountNumber, CalculateStartDate(), CalculateEndDate());
+            //var bytes = StatementPdfExporter.GeneratePdf(Transactions.ToList(), _accountNumber, CalculateStartDate(), CalculateEndDate());
 
             var fileName = $"Statement_{_accountNumber}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
             var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
-            File.WriteAllBytes(filePath, bytes);
+            //File.WriteAllBytes(filePath, bytes);
 
             await Launcher.OpenAsync(new OpenFileRequest
             {

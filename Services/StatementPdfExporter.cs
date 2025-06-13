@@ -34,9 +34,9 @@ public static class StatementPdfExporter
                         {
                             col.Item().Row(row =>
                             {
-                                row.RelativeItem(4).Text(txn.Description);
-                                row.RelativeItem(2).Text(txn.Date.ToShortDateString());
-                                row.RelativeItem(2).Text(txn.Amount.ToString("C"));
+                                //row.RelativeItem(4).Text(txn.Description);
+                               // row.RelativeItem(2).Text(txn.Date.ToShortDateString());
+                               // row.RelativeItem(2).Text(txn.Amount.ToString("C"));
                             });
                         }
                     });

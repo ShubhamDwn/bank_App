@@ -5,6 +5,7 @@ using System.Windows.Input;
 using bank_demo.Services.API;
 using bank_demo.Services;
 using Microsoft.Maui.Storage;
+using bank_demo.Pages;
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
@@ -15,6 +16,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private readonly int _customerId;
+
         public ObservableCollection<string> AccountTypes { get; } = new();
         public ObservableCollection<AccountModel> AvailableAccounts { get; } = new();
         public ObservableCollection<TransactionModel> Transactions { get; } = new();
@@ -105,6 +107,16 @@ namespace bank_demo.ViewModels.FeaturesPages
                 OnPropertyChanged();
             }
         }
+        private bool isStatementVisible;
+        public bool IsStatementVisible
+        {
+            get => isStatementVisible;
+            set
+            {
+                isStatementVisible = value;
+                OnPropertyChanged();
+            }
+        }
 
         public DateTime FromDate { get; set; } = DateTime.Now.AddMonths(-1);
         public DateTime ToDate { get; set; } = DateTime.Now;
@@ -118,10 +130,10 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             _customerId = customerId;
 
-            LoadAccountsCommand = new Command(async () => await LoadAccountsAsync());
-            LoadAccountTypesCommand = new Command(async () => await LoadAccountTypesAsync());
             LoadStatementCommand = new Command(async () => await LoadStatementAsync());
             ExportPdfCommand = new Command(async () => await ExportToPdfAsync());
+            LoadAccountsCommand = new Command(async () => await LoadAccountsAsync());
+            LoadAccountTypesCommand = new Command(async () => await LoadAccountTypesAsync());
 
             _ = LoadAccountTypesAsync();
         }
@@ -141,11 +153,12 @@ namespace bank_demo.ViewModels.FeaturesPages
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Failed to load accounts: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Failed to load account types: {ex.Message}", "OK");
             }
             finally
             {
                 IsLoading = false;
+                
             }
         }
 
@@ -167,7 +180,6 @@ namespace bank_demo.ViewModels.FeaturesPages
                 foreach (var acc in accounts)
                     AvailableAccounts.Add(acc);
 
-                // No auto-selection
                 IsAccountListVisible = AvailableAccounts.Count > 0;
             }
             catch (Exception ex)
@@ -180,7 +192,6 @@ namespace bank_demo.ViewModels.FeaturesPages
             }
         }
 
-
         private async Task LoadStatementAsync()
         {
             if (SelectedAccount == null || string.IsNullOrWhiteSpace(SelectedAccountType) || string.IsNullOrWhiteSpace(SelectedTimePeriod))
@@ -189,19 +200,27 @@ namespace bank_demo.ViewModels.FeaturesPages
                 return;
             }
 
-            DateTime start = FromDate;
-            DateTime end = ToDate;
+            DateTime start = DateTime.Now;
+            DateTime end = DateTime.Now;
 
             switch (SelectedTimePeriod)
             {
                 case "Last Week":
-                    start = DateTime.Now.AddDays(-7); break;
+                    start = DateTime.Now.AddDays(-7);
+                    break;
                 case "Last 1 Month":
-                    start = DateTime.Now.AddMonths(-1); break;
+                    start = DateTime.Now.AddMonths(-1);
+                    break;
                 case "Last 3 Months":
-                    start = DateTime.Now.AddMonths(-3); break;
+                    start = DateTime.Now.AddMonths(-3);
+                    break;
                 case "Last 1 Year":
-                    start = DateTime.Now.AddYears(-1); break;
+                    start = DateTime.Now.AddYears(-1);
+                    break;
+                case "Custom":
+                    start = FromDate;
+                    end = ToDate;
+                    break;
             }
 
             if (end > DateTime.Now)
@@ -210,11 +229,46 @@ namespace bank_demo.ViewModels.FeaturesPages
                 return;
             }
 
-            Transactions.Clear();
+            if (start > end)
+            {
+                await Shell.Current.DisplayAlert("Validation", "From date cannot be later than To date.", "OK");
+                return;
+            }
 
-            var data = await DBHelper.GetTransactionsAsync(_customerId, SelectedAccountType, start, end);
-            foreach (var txn in data)
-                Transactions.Add(txn);
+            Transactions.Clear();
+            IsStatementVisible = false;
+
+            try
+            {
+                IsLoading = true;
+
+                int subSchemeId = SelectedAccount.SubSchemeId;
+                int accountNumber = int.Parse(SelectedAccount.AccountNumber);
+                int pigmyAgentId = SelectedAccount.PigmyAgentId;
+
+                var data = await DBHelper.GetTransactionsAsync(
+                    _customerId,
+                    subSchemeId,
+                    accountNumber,
+                    pigmyAgentId,
+                    start,
+                    end
+                );
+                //await Shell.Current.GoToAsync($"ViewStatementPage?CustomerId={_customerId}" +$"&AccountNumber={accountNumber}"+$"&pigmyAgentId={pigmyAgentId}" +$"&start={start}" +$"&end ={ end}");
+
+
+                foreach (var txn in data)
+                    Transactions.Add(txn);
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", "Unable to load statement: " + ex.Message, "OK");
+            }
+            finally
+            {
+                IsLoading = false;
+                IsStatementVisible = true;
+            }
         }
 
         private async Task ExportToPdfAsync()

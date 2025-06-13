@@ -35,10 +35,26 @@
     // Models/TransactionModel.cs
     public class TransactionModel
     {
-        public DateTime Date { get; set; }
-        public string Description { get; set; }
-        public decimal Amount { get; set; }
-        public string Type { get; set; }
+        public int PrimaryId { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public int SubSchemeId { get; set; }
+        public string AccountNumber { get; set; }  // Changed to string to avoid overflow
+        public int ScrollNumber { get; set; }
+        public string Narration { get; set; }
+        public string TransactionType { get; set; }
+        public decimal Deposite { get; set; }
+        public decimal Withdraw { get; set; }
+        public decimal Plain { get; set; }
+        public decimal PlainCr { get; set; }
+        public decimal PlainDr { get; set; }
+        public decimal Penalty { get; set; }
+        public decimal PenaltyCr { get; set; }
+        public decimal PenaltyDr { get; set; }
+        public decimal Payable { get; set; }
+        public decimal Receivable { get; set; }
+        public decimal Dividend { get; set; }
+        public string DrCr { get; set; }
+        public decimal Balance { get; set; }
     }
 
 }
