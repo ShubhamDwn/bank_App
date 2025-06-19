@@ -23,7 +23,7 @@
                    FontSize="14"
                    IsVisible="{Binding IsAccountTypeSelected}" />
 
-            <CollectionView ItemsSource="{Binding AvailableAccounts}" 
+            <!-- <CollectionView ItemsSource="{Binding AvailableAccounts}" 
                             SelectionMode="Single"
                             SelectedItem="{Binding SelectedAccount}"
                             Margin="10,5,10,10">
@@ -60,7 +60,83 @@
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+            </CollectionView> -->
+
+            <CollectionView ItemsSource="{Binding AvailableAccounts}"
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedAccount}"
+                Margin="10,5,10,10">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="4"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border x:Name="AccountBorder"
+                                Stroke="LightGray"
+                                StrokeThickness="1"
+                                Margin="3"
+                                Padding="8">        
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+
+                            <Grid ColumnDefinitions="Auto,*,*"
+                                  RowDefinitions="Auto,Auto"
+                                  ColumnSpacing="10"
+                                  RowSpacing="4">
+
+                                <!-- Visual State Manager INSIDE Grid -->
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter TargetName="AccountBorder" Property="Border.Stroke" Value="LightGray"/>
+                                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter TargetName="AccountBorder" Property="Border.Stroke" Value="DodgerBlue"/>
+                                                <Setter Property="BackgroundColor" Value="#E6F4FF"/>
+                                                <!-- light blue -->
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+
+                                <!-- Row 1 -->
+                                <Label Grid.Row="0" Grid.Column="0"
+                           Text="{Binding PrimaryId}"
+                           FontAttributes="Bold"
+                           FontSize="12"
+                           
+                           HorizontalOptions="Center" />
+
+                                <Label Grid.Row="0" Grid.Column="1"
+                           Text="{Binding SubSchemeName}"
+                           FontAttributes="Bold"
+                           FontSize="12" />
+
+                                <Label Grid.Row="0" Grid.Column="2"
+                           Text="{Binding SubSchemeId, StringFormat='SubScheme ID: {0}'}"
+                           FontSize="12"/>
+
+                                <!-- Row 2 -->
+                                <Label Grid.Row="1" Grid.Column="1"
+                           Text="{Binding AccountNumber, StringFormat='Account No: {0}'}"
+                           FontSize="12"/>
+
+                                <Label Grid.Row="1" Grid.Column="2"
+                           Text="{Binding Balance, StringFormat='Balance: ₹{0:F2}'}"
+                           FontSize="12"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
             </CollectionView>
+
+
+
 
             <!-- Time Period Picker -->
             <Label Text="Select Time Period:" FontAttributes="Bold"
@@ -87,107 +163,6 @@
                     Command="{Binding LoadStatementCommand}"
                     IsVisible="{Binding IsViewStatementVisible}" />
 
-            <!-- Loading Indicator -->
-            <ActivityIndicator IsRunning="{Binding IsLoading}" 
-                               IsVisible="{Binding IsLoading}" 
-                               VerticalOptions="Center"
-                               HorizontalOptions="Center"
-                               HeightRequest="40"
-                               WidthRequest="40"/>
-
-            <!-- Scrollable Statement Table -->
-            <Grid Padding="10" RowSpacing="5" IsVisible="{Binding IsStatementVisible}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <!-- Header -->
-                    <RowDefinition Height="*" />
-                    <!-- Data -->
-                </Grid.RowDefinitions>
-
-                <!-- Horizontal ScrollView for wide table -->
-                <ScrollView Orientation="Horizontal" Grid.Row="0">
-                    <Grid  Padding="5" ColumnSpacing="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Text="Date" FontAttributes="Bold" Grid.Column="0" />
-                        <Label Text="Narration" FontAttributes="Bold" Grid.Column="1" />
-                        <Label Text="Deposit" FontAttributes="Bold" Grid.Column="2" />
-                        <Label Text="Withdraw" FontAttributes="Bold" Grid.Column="3" />
-                        <Label Text="Plain" FontAttributes="Bold" Grid.Column="4" />
-                        <Label Text="PlainCr" FontAttributes="Bold" Grid.Column="5" />
-                        <Label Text="PlainDr" FontAttributes="Bold" Grid.Column="6" />
-                        <Label Text="Penalty" FontAttributes="Bold" Grid.Column="7" />
-                        <Label Text="PenaltyCr" FontAttributes="Bold" Grid.Column="8" />
-                        <Label Text="PenaltyDr" FontAttributes="Bold" Grid.Column="9" />
-                        <Label Text="Payable" FontAttributes="Bold" Grid.Column="10" />
-                        <Label Text="Receivable" FontAttributes="Bold" Grid.Column="11" />
-                        <Label Text="Dr/Cr" FontAttributes="Bold" Grid.Column="12" />
-                        <Label Text="Balance" FontAttributes="Bold" Grid.Column="13" />
-                    </Grid>
-                </ScrollView>
-
-                <!-- Data -->
-                <ScrollView Orientation="Horizontal" Grid.Row="1">
-                    <CollectionView ItemsSource="{Binding Transactions}" >
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical"/>
-                        </CollectionView.ItemsLayout>
-
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnSpacing="5" Padding="5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"/>
-                                        <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="100"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Label Text="{Binding TransactionDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="0" />
-                                    <Label Text="{Binding Narration}" Grid.Column="1" />
-                                    <Label Text="{Binding Deposite}" Grid.Column="2" />
-                                    <Label Text="{Binding Withdraw}" Grid.Column="3" />
-                                    <Label Text="{Binding Plain}" Grid.Column="4" />
-                                    <Label Text="{Binding PlainCr}" Grid.Column="5" />
-                                    <Label Text="{Binding PlainDr}" Grid.Column="6" />
-                                    <Label Text="{Binding Penalty}" Grid.Column="7" />
-                                    <Label Text="{Binding PenaltyCr}" Grid.Column="8" />
-                                    <Label Text="{Binding PenaltyDr}" Grid.Column="9" />
-                                    <Label Text="{Binding Payable}" Grid.Column="10" />
-                                    <Label Text="{Binding Receivable}" Grid.Column="11" />
-                                    <Label Text="{Binding DrCr}" Grid.Column="12" />
-                                    <Label Text="{Binding Balance}" Grid.Column="13" />
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </ScrollView>
-            </Grid>
 
         </StackLayout>
     </ScrollView>

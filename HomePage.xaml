@@ -62,107 +62,100 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- First Row: QR / Scan / Statement -->
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="43">
-                        <!-- Reusable Icon Template -->
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="qrcode.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding QRCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="My QR Code" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        </VerticalStackLayout>
-
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="scantopay.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ScanToPayCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Scan to Pay" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        </VerticalStackLayout>
-
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="statement.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding StatementCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Statement" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
-
-                    <!-- Second Row: History / Add Beneficiary / Payments -->
+                    <!-- First Row (QR, Scan, Statement)-->
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="history.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding HistoryCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="History" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <!-- QR -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="qrcode.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding QRCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="My QR Code" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="adbenef.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding AddBeneficiaryCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Add/Manage" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                            <Label Text="Beneficiary" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <!-- Scan -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="scantopay.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ScanToPayCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Scan to Pay" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
 
-
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="pay.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Payments" FontSize="15" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center"/>
+                        <!-- Statement -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="statement.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding StatementCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Statement" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
 
 
-                    <!-- Second Row: Fund Transfer / Payments -->
+
+                    <!-- Second Row (History, Beneficiary, Payments) -->
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="fund.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding FundTransferCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Fund Transfer" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <!-- History -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="history.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding HistoryCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="History" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+
+                        <!-- Beneficiary -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="adbenef.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding AddBeneficiaryCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Add/Manage" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                            <Label Text="Beneficiary" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+
+                        <!-- Payments -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="pay.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Payments" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
+
+
+                    <!-- Third Row (Fund Transfer, Investment) -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+                        <!-- Fund Transfer -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="fund.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FundTransferCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Fund Transfer" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
 
                         <!-- Investment -->
-                        <VerticalStackLayout HorizontalOptions="Center">
-                            <Border StrokeThickness="0" WidthRequest="80" HeightRequest="80">
-                                <Image Source="invest.png" WidthRequest="50" HeightRequest="50">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Investment" FontSize="15" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="invest.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Investment" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
+
                 </VerticalStackLayout>
             </ScrollView>
 

@@ -20,7 +20,14 @@ namespace bank_demo.ViewModels.FeaturesPages
         public ObservableCollection<string> AccountTypes { get; } = new();
         public ObservableCollection<AccountModel> AvailableAccounts { get; } = new();
         public ObservableCollection<TransactionModel> Transactions { get; } = new();
-        public List<string> TimePeriodOptions { get; } = new() { "Last Week", "Last 1 Month", "Last 3 Months", "Last 1 Year", "Custom" };
+        public List<string> TimePeriodOptions { get; } = new() { 
+            "Choose time period",
+            "Last Week", 
+            "Last 1 Month", 
+            "Last 3 Months", 
+            "Last 1 Year", 
+            "Custom" 
+        };
 
         public ICommand LoadStatementCommand { get; }
         public ICommand ExportPdfCommand { get; }
@@ -188,6 +195,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             finally
             {
                 IsLoading = false;
+                SelectedTimePeriod = TimePeriodOptions[0];
             }
         }
 
@@ -204,6 +212,9 @@ namespace bank_demo.ViewModels.FeaturesPages
 
             switch (SelectedTimePeriod)
             {
+                case "Choose time period":
+                    await Application.Current.MainPage.DisplayAlert("Invalid", "Please select a time period.", "OK");
+                    return;
                 case "Last Week":
                     start = DateTime.Now.AddDays(-7);
                     end = DateTime.Now;
