@@ -131,7 +131,6 @@ namespace bank_demo.ViewModels.FeaturesPages
             _customerId = customerId;
 
             LoadStatementCommand = new Command(async () => await LoadStatementAsync());
-            ExportPdfCommand = new Command(async () => await ExportToPdfAsync());
             LoadAccountsCommand = new Command(async () => await LoadAccountsAsync());
             LoadAccountTypesCommand = new Command(async () => await LoadAccountTypesAsync());
 
@@ -207,15 +206,19 @@ namespace bank_demo.ViewModels.FeaturesPages
             {
                 case "Last Week":
                     start = DateTime.Now.AddDays(-7);
+                    end = DateTime.Now;
                     break;
                 case "Last 1 Month":
                     start = DateTime.Now.AddMonths(-1);
+                    end = DateTime.Now;
                     break;
                 case "Last 3 Months":
                     start = DateTime.Now.AddMonths(-3);
+                    end = DateTime.Now;
                     break;
                 case "Last 1 Year":
                     start = DateTime.Now.AddYears(-1);
+                    end = DateTime.Now;
                     break;
                 case "Custom":
                     start = FromDate;
@@ -245,20 +248,17 @@ namespace bank_demo.ViewModels.FeaturesPages
                 int subSchemeId = SelectedAccount.SubSchemeId;
                 int accountNumber = int.Parse(SelectedAccount.AccountNumber);
                 int pigmyAgentId = SelectedAccount.PigmyAgentId;
+                string startStr = start.ToString("yyyy-MM-dd");
+                string endStr = end.ToString("yyyy-MM-dd");
 
-                var data = await DBHelper.GetTransactionsAsync(
-                    _customerId,
-                    subSchemeId,
-                    accountNumber,
-                    pigmyAgentId,
-                    start,
-                    end
-                );
-                //await Shell.Current.GoToAsync($"ViewStatementPage?CustomerId={_customerId}" +$"&AccountNumber={accountNumber}"+$"&pigmyAgentId={pigmyAgentId}" +$"&start={start}" +$"&end ={ end}");
+                await Shell.Current.GoToAsync(
+                                                $"ViewStatementPage?CustomerId={_customerId}" +
+                                                $"&SubSchemeId={subSchemeId}" +
+                                                $"&AccountNumber={accountNumber}" +
+                                                $"&PigmyAgentId={pigmyAgentId}" +
+                                                $"&Start={startStr}" +
+                                                $"&End={endStr}");
 
-
-                foreach (var txn in data)
-                    Transactions.Add(txn);
             }
             catch (Exception ex)
             {
@@ -267,28 +267,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             finally
             {
                 IsLoading = false;
-                IsStatementVisible = true;
-            }
-        }
-
-        private async Task ExportToPdfAsync()
-        {
-            try
-            {
-                var bytes = StatementPdfExporter.GeneratePdf(Transactions.ToList(), SelectedAccountType, FromDate, ToDate);
-                var fileName = $"Statement_{SelectedAccountType}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
-                var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
-
-                File.WriteAllBytes(filePath, bytes);
-
-                await Launcher.OpenAsync(new OpenFileRequest
-                {
-                    File = new ReadOnlyFile(filePath)
-                });
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                IsStatementVisible = false;
             }
         }
     }

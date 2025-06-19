@@ -1,53 +1,43 @@
-﻿using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
-using bank_demo.ViewModels.FeaturesPages;
-using bank_demo.Services;
+﻿using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
 using bank_demo.Services.API;
+using System.Collections.Generic;
+using System.IO;
 
-
-public static class StatementPdfExporter
+namespace bank_demo.Services
 {
-    public static byte[] GeneratePdf(List<TransactionModel> transactions, string accountType, DateTime from, DateTime to)
+    public static class StatementPdfExporter
     {
-        return Document.Create(container =>
+        public static byte[] GenerateStatementPdf(List<TransactionModel> transactions)
         {
-            container.Page(page =>
+            PdfDocument document = new PdfDocument();
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont font = new XFont("Verdana", 10, XFontStyle.Regular);
+
+            int y = 40;
+            gfx.DrawString("Account Statement", new XFont("Verdana", 14, XFontStyle.Bold), XBrushes.Black, new XRect(0, y, page.Width, page.Height), XStringFormats.TopCenter);
+            y += 30;
+
+            foreach (var txn in transactions)
             {
-                page.Margin(30);
-                page.Size(PageSizes.A4);
-                page.PageColor(QuestPDF.Helpers.Colors.White);
-                page.DefaultTextStyle(x => x.FontSize(12));
+                string line = $"{txn.TransactionDate:dd-MM-yyyy} | {txn.Narration} | D: {txn.Deposite} | W: {txn.Withdraw} | Bal: {txn.Balance}";
+                gfx.DrawString(line, font, XBrushes.Black, new XRect(40, y, page.Width - 80, page.Height), XStringFormats.TopLeft);
+                y += 20;
 
-                page.Header().Text($"Bank Statement - {accountType}")
-                             .FontSize(20).Bold().AlignCenter();
-
-                page.Content().Element(c =>
+                if (y > page.Height - 40)
                 {
-                    c.Column(col =>
-                    {
-                        col.Spacing(5);
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    y = 40;
+                }
+            }
 
-                        col.Item().Text($"From: {from:dd-MM-yyyy}  To: {to:dd-MM-yyyy}").Bold();
-
-                        foreach (var txn in transactions)
-                        {
-                            col.Item().Row(row =>
-                            {
-                                //row.RelativeItem(4).Text(txn.Description);
-                               // row.RelativeItem(2).Text(txn.Date.ToShortDateString());
-                               // row.RelativeItem(2).Text(txn.Amount.ToString("C"));
-                            });
-                        }
-                    });
-                });
-
-                page.Footer().AlignCenter().Text(x =>
-                {
-                    x.Span("Generated on: ");
-                    x.Span(DateTime.Now.ToString("dd MMM yyyy")).SemiBold();
-                });
-            });
-        }).GeneratePdf();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                document.Save(stream, false);
+                return stream.ToArray();
+            }
+        }
     }
 }

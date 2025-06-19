@@ -10,87 +10,135 @@
 
             <Label Text="Account Statement" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" />
 
-            <!-- Table Header -->
-            <Grid ColumnSpacing="10" Padding="5" BackgroundColor="#eeeeee">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <Label Text="Field" FontAttributes="Bold" />
-                <Label Text="Value" FontAttributes="Bold" Grid.Column="1" />
-            </Grid>
+            <!-- Custom Date Range -->
+            <StackLayout Orientation="Horizontal" IsVisible="{Binding IsCustomDateRange}">
+                <VerticalStackLayout WidthRequest="150">
+                    <Label Text="From:" />
+                    <DatePicker Date="{Binding FromDate}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout WidthRequest="150">
+                    <Label Text="To:" />
+                    <DatePicker Date="{Binding ToDate}" />
+                </VerticalStackLayout>
+            </StackLayout>
+
+            <!-- View Statement Button -->
+            <Button Text="View Statement"
+                    Command="{Binding LoadStatementCommand}"
+                    IsVisible="{Binding IsViewStatementVisible}" />
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                               IsVisible="{Binding IsLoading}" 
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               HeightRequest="40"
+                               WidthRequest="40"/>
 
             <!-- Table Body -->
-            <CollectionView ItemsSource="{Binding Transactions}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="LightGray" Padding="5" Margin="5">
-                            <Grid ColumnDefinitions="Auto,*" RowSpacing="4">
-                                <Label Text="PrimaryId" />
-                                <Label Text="{Binding PrimaryId}" Grid.Column="1"/>
+            <!-- Scrollable Statement Table -->
+            <Grid Padding="10" RowSpacing="5" IsVisible="{Binding IsStatementVisible}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <!-- Header -->
+                    <RowDefinition Height="*" />
+                    <!-- Data -->
+                </Grid.RowDefinitions>
 
-                                <Label Text="TransactionDate" Grid.Row="1"/>
-                                <Label Text="{Binding TransactionDate, StringFormat='{0:dd MMM yyyy}'}" Grid.Row="1" Grid.Column="1"/>
+                <!-- Horizontal ScrollView for wide table -->
+                <!-- Unified Scrollable Table -->
+                <!-- Fixed header and scrollable data table -->
+                <ScrollView Orientation="Horizontal" IsVisible="{Binding IsStatementVisible}">
+                    <VerticalStackLayout>
 
-                                <Label Text="SubSchemeId" Grid.Row="2"/>
-                                <Label Text="{Binding SubSchemeId}" Grid.Row="2" Grid.Column="1"/>
+                        <!-- 🔹 Header stays visible -->
+                        <Grid Padding="5" ColumnSpacing="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Label Text="AccountNumber" Grid.Row="3"/>
-                                <Label Text="{Binding AccountNumber}" Grid.Row="3" Grid.Column="1"/>
+                            <Label Text="Date" FontAttributes="Bold" Grid.Column="0" />
+                            <Label Text="Narration" FontAttributes="Bold" Grid.Column="1" />
+                            <Label Text="Deposit" FontAttributes="Bold" Grid.Column="2" />
+                            <Label Text="Withdraw" FontAttributes="Bold" Grid.Column="3" />
+                            <Label Text="Plain" FontAttributes="Bold" Grid.Column="4" />
+                            <Label Text="PlainCr" FontAttributes="Bold" Grid.Column="5" />
+                            <Label Text="PlainDr" FontAttributes="Bold" Grid.Column="6" />
+                            <Label Text="Penalty" FontAttributes="Bold" Grid.Column="7" />
+                            <Label Text="PenaltyCr" FontAttributes="Bold" Grid.Column="8" />
+                            <Label Text="PenaltyDr" FontAttributes="Bold" Grid.Column="9" />
+                            <Label Text="Payable" FontAttributes="Bold" Grid.Column="10" />
+                            <Label Text="Receivable" FontAttributes="Bold" Grid.Column="11" />
+                            <Label Text="Dr/Cr" FontAttributes="Bold" Grid.Column="12" />
+                            <Label Text="Balance" FontAttributes="Bold" Grid.Column="13" />
+                        </Grid>
 
-                                <Label Text="ScrollNumber" Grid.Row="4"/>
-                                <Label Text="{Binding ScrollNumber}" Grid.Row="4" Grid.Column="1"/>
+                        <!-- 🔹 Scrollable data below -->
+                        <ScrollView Orientation="Vertical" HeightRequest="400">
+                            <!-- you can adjust height -->
+                            <CollectionView ItemsSource="{Binding Transactions}">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnSpacing="5" Padding="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
 
-                                <Label Text="Narration" Grid.Row="5"/>
-                                <Label Text="{Binding Narration}" Grid.Row="5" Grid.Column="1"/>
+                                            <Label Text="{Binding TransactionDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="0" />
+                                            <Label Text="{Binding Narration}" Grid.Column="1" />
+                                            <Label Text="{Binding Deposite}" Grid.Column="2" />
+                                            <Label Text="{Binding Withdraw}" Grid.Column="3" />
+                                            <Label Text="{Binding Plain}" Grid.Column="4" />
+                                            <Label Text="{Binding PlainCr}" Grid.Column="5" />
+                                            <Label Text="{Binding PlainDr}" Grid.Column="6" />
+                                            <Label Text="{Binding Penalty}" Grid.Column="7" />
+                                            <Label Text="{Binding PenaltyCr}" Grid.Column="8" />
+                                            <Label Text="{Binding PenaltyDr}" Grid.Column="9" />
+                                            <Label Text="{Binding Payable}" Grid.Column="10" />
+                                            <Label Text="{Binding Receivable}" Grid.Column="11" />
+                                            <Label Text="{Binding DrCr}" Grid.Column="12" />
+                                            <Label Text="{Binding Balance}" Grid.Column="13" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </ScrollView>
 
-                                <Label Text="TransactionType" Grid.Row="6"/>
-                                <Label Text="{Binding TransactionType}" Grid.Row="6" Grid.Column="1"/>
+                    </VerticalStackLayout>
+                </ScrollView>
 
-                                <Label Text="Deposite" Grid.Row="7"/>
-                                <Label Text="{Binding Deposite}" Grid.Row="7" Grid.Column="1"/>
 
-                                <Label Text="Withdraw" Grid.Row="8"/>
-                                <Label Text="{Binding Withdraw}" Grid.Row="8" Grid.Column="1"/>
-
-                                <Label Text="Plain" Grid.Row="9"/>
-                                <Label Text="{Binding Plain}" Grid.Row="9" Grid.Column="1"/>
-
-                                <Label Text="PlainCr" Grid.Row="10"/>
-                                <Label Text="{Binding PlainCr}" Grid.Row="10" Grid.Column="1"/>
-
-                                <Label Text="PlainDr" Grid.Row="11"/>
-                                <Label Text="{Binding PlainDr}" Grid.Row="11" Grid.Column="1"/>
-
-                                <Label Text="Penalty" Grid.Row="12"/>
-                                <Label Text="{Binding Penalty}" Grid.Row="12" Grid.Column="1"/>
-
-                                <Label Text="PenaltyCr" Grid.Row="13"/>
-                                <Label Text="{Binding PenaltyCr}" Grid.Row="13" Grid.Column="1"/>
-
-                                <Label Text="PenaltyDr" Grid.Row="14"/>
-                                <Label Text="{Binding PenaltyDr}" Grid.Row="14" Grid.Column="1"/>
-
-                                <Label Text="Payable" Grid.Row="15"/>
-                                <Label Text="{Binding Payable}" Grid.Row="15" Grid.Column="1"/>
-
-                                <Label Text="Receivable" Grid.Row="16"/>
-                                <Label Text="{Binding Receivable}" Grid.Row="16" Grid.Column="1"/>
-
-                                <Label Text="Dividend" Grid.Row="17"/>
-                                <Label Text="{Binding Dividend}" Grid.Row="17" Grid.Column="1"/>
-
-                                <Label Text="DrCr" Grid.Row="18"/>
-                                <Label Text="{Binding DrCr}" Grid.Row="18" Grid.Column="1"/>
-
-                                <Label Text="Balance" Grid.Row="19"/>
-                                <Label Text="{Binding Balance}" Grid.Row="19" Grid.Column="1"/>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            </Grid>
 
             <Button Text="Export to PDF" Command="{Binding ExportPdfCommand}" />
             <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />

@@ -1,107 +1,134 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using bank_demo.Services;
-using Microsoft.Maui.Storage;
+﻿using bank_demo.Services;
 using bank_demo.Services.API;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Microsoft.Maui.Controls;
 
-namespace bank_demo.ViewModels.FeaturesPages;
-
-public class ViewStatementViewModel : INotifyPropertyChanged
+namespace bank_demo.ViewModels.FeaturesPages
 {
-    public event PropertyChangedEventHandler PropertyChanged;
-    void OnPropertyChanged([CallerMemberName] string propName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-    public ObservableCollection<TransactionModel> Transactions { get; } = new();
-
-    private int _customerId;
-    private int _accountNumber;
-    private int _subSchemeId;
-    private int _pigmyAgentId;
-    private string _deviceId;
-    private DateTime _fromDate;
-    private DateTime _toDate;
-
-    private bool _isLoading;
-    public bool IsLoading
+    public class ViewStatementViewModel : BaseViewModel
     {
-        get => _isLoading;
-        set
+        public ObservableCollection<TransactionModel> Transactions { get; set; } = new();
+
+        public ICommand LoadStatementCommand { get; }
+        public ICommand ExportPdfCommand { get; }
+
+        private int _customerId;
+        private int _subSchemeId;
+        private int _accountNumber;
+        private int _pigmyAgentId;
+
+        // ✅ These are the actual bindable properties used in UI
+        private DateTime _from;
+        public DateTime FromDate
         {
-            if (_isLoading != value)
+            get => _from;
+            set => SetProperty(ref _from, value);
+        }
+
+        private DateTime _to;
+        public DateTime ToDate
+        {
+            get => _to;
+            set => SetProperty(ref _to, value);
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
+
+        private bool _isStatementVisible;
+        public bool IsStatementVisible
+        {
+            get => _isStatementVisible;
+            set => SetProperty(ref _isStatementVisible, value);
+        }
+
+        public bool IsCustomDateRange => true;
+        public bool IsViewStatementVisible => true;
+
+        // ✅ Constructor now assigns dates to bindable properties FromDate and ToDate
+        public ViewStatementViewModel(int customerId, int subSchemeId, int accountNumber, int pigmyAgentId, DateTime fromDate, DateTime toDate)
+        {
+            _customerId = customerId;
+            _subSchemeId = subSchemeId;
+            _accountNumber = accountNumber;
+            _pigmyAgentId = pigmyAgentId;
+
+            FromDate = fromDate;  // ✅ show correct value in DatePicker
+            ToDate = toDate;
+
+            LoadStatementCommand = new Command(async () => await LoadStatementAsync());
+            ExportPdfCommand = new Command(ExportToPdf);
+
+            // ✅ Load using these properties (you can test with log alert too)
+            _ = LoadStatementAsync();
+        }
+
+        private async Task LoadStatementAsync()
+        {
+            try
             {
-                _isLoading = value;
-                OnPropertyChanged();
+                IsLoading = true;
+                Transactions.Clear();
+
+                var data = await DBHelper.GetTransactionsAsync(
+                    _customerId,
+                    _subSchemeId,
+                    _accountNumber,
+                    _pigmyAgentId,
+                    FromDate,     // ✅ using bound property, not private field
+                    ToDate
+                );
+
+                foreach (var txn in data)
+                    Transactions.Add(txn);
+
+                if (Transactions.Count == 0)
+                {
+                    await Shell.Current.DisplayAlert("Info", "No transactions found for selected period.", "OK");
+                }
+
+                IsStatementVisible = true;
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Failed to load statement: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
-    }
 
-    public ICommand LoadTransactionsCommand { get; }
-    public ICommand ExportPdfCommand { get; }
-
-    public ViewStatementViewModel(int CustomerId, int subSchemeId, int accountNumber, int pigmyAgentId, DateTime start, DateTime end)
-    {
-        _customerId = CustomerId;
-        _subSchemeId = subSchemeId;
-        _accountNumber = accountNumber;
-        _pigmyAgentId= pigmyAgentId;
-        _fromDate=start;
-        _toDate=end;
-
-        LoadTransactionsCommand = new Command(async () => await LoadTransactionsAsync());
-        ExportPdfCommand = new Command(async () => await ExportPdfAsync());
-    }
-
-
-    public async Task LoadTransactionsAsync()
-    {
-
-        try
+        private async void ExportToPdf()
         {
-            IsLoading = true;
-
-            var data = await DBHelper.GetTransactionsAsync(
-                _customerId,
-                _subSchemeId,
-                _accountNumber,
-                _pigmyAgentId,
-                _fromDate,
-                _toDate
-            );
-
-            foreach (var txn in data)
-                Transactions.Add(txn);
-        }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Error", "Unable to load statement: " + ex.Message, "OK");
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    public async Task ExportPdfAsync()
-    {
-        try
-        {
-            //var bytes = StatementPdfExporter.GeneratePdf(Transactions.ToList(), _accountNumber, CalculateStartDate(), CalculateEndDate());
-
-            var fileName = $"Statement_{_accountNumber}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
-            var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
-            //File.WriteAllBytes(filePath, bytes);
-
-            await Launcher.OpenAsync(new OpenFileRequest
+            try
             {
-                File = new ReadOnlyFile(filePath)
-            });
+                var bytes = StatementPdfExporter.GenerateStatementPdf(Transactions.ToList());
+
+                string fileName = $"Statement_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+                File.WriteAllBytes(filePath, bytes);
+
+                await Shell.Current.DisplayAlert("Success", $"PDF exported: {filePath}", "OK");
+
+                // Optionally open the file:
+                await Launcher.Default.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath)
+                });
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Export failed: {ex.Message}", "OK");
+            }
         }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
+
     }
 }
