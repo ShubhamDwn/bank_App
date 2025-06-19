@@ -4,6 +4,7 @@ namespace bank_demo.Pages;
 
 [QueryProperty(nameof(CustomerId), "CustomerId")]
 [QueryProperty(nameof(SubSchemeId), "SubSchemeId")]
+[QueryProperty(nameof(SubSchemeName), "SubSchemeName")]
 [QueryProperty(nameof(AccountNumber), "AccountNumber")]
 [QueryProperty(nameof(PigmyAgentId), "PigmyAgentId")]
 [QueryProperty(nameof(Start), "Start")]
@@ -13,12 +14,13 @@ public partial class ViewStatementPage : ContentPage
 {
     private int _customerId;
     private int _subSchemeId;
+    private string _subSchemeName;
     private int _accountNumber;
     private int _pigmyAgentId;
     private string _start;
     private string _end;
 
-    private bool _customerSet, _subSchemeSet, _accountSet, _agentSet, _startSet, _endSet;
+    private bool _customerSet, _subSchemeIdSet, _subSchemeNameSet, _accountSet, _agentSet, _startSet, _endSet;
 
     public ViewStatementPage()
     {
@@ -42,7 +44,17 @@ public partial class ViewStatementPage : ContentPage
         set
         {
             _subSchemeId = value;
-            _subSchemeSet = true;
+            _subSchemeIdSet = true;
+            TryInitializeViewModel();
+        }
+    }
+    public string SubSchemeName
+    {
+        get => _subSchemeName;
+        set
+        {
+            _subSchemeName = value;
+            _subSchemeNameSet = true;
             TryInitializeViewModel();
         }
     }
@@ -93,16 +105,19 @@ public partial class ViewStatementPage : ContentPage
 
     private void TryInitializeViewModel()
     {
-        if (_customerSet && _subSchemeSet && _accountSet && _agentSet && _startSet && _endSet)
+        if (_customerSet && _subSchemeIdSet && _subSchemeNameSet && _accountSet && _agentSet && _startSet && _endSet)
         {
             if (DateTime.TryParse(_start, out var fromDate) && DateTime.TryParse(_end, out var toDate))
             {
-                BindingContext = new ViewStatementViewModel(_customerId, _subSchemeId, _accountNumber, _pigmyAgentId, fromDate, toDate);
-                Shell.Current.DisplayAlert("Success", "ViewModel Loaded", "OK");
+
+                BindingContext = new ViewStatementViewModel(_customerId, _subSchemeId, _subSchemeName, _accountNumber, _pigmyAgentId, fromDate, toDate);
+
+                //Shell.Current.DisplayAlert("subscheme Name", _subSchemeName, "OK");
+                //Shell.Current.DisplayAlert("Success", "Data Loaded", "OK");
             }
             else
             {
-                Shell.Current.DisplayAlert("Error", "Invalid date format", "OK");
+                Shell.Current.DisplayAlert("Error", "Unable to Load Data", "OK");
             }
         }
     }

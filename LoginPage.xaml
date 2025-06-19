@@ -4,6 +4,7 @@
              x:Class="bank_demo.LoginPage"
              xmlns:viewModels="clr-namespace:bank_demo.ViewModels"
              Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="White"
              Shell.NavBarIsVisible="False">
 
     <ContentPage.BindingContext>
@@ -27,32 +28,63 @@
             <HorizontalStackLayout Spacing="10">
                 <Image Source="user_icon.png" HeightRequest="24" WidthRequest="24"/>
                 <Entry Placeholder="Enter Username"
-                       Text="{Binding Username}"
+                       Text="{Binding Username}" TextColor="Black"
                        WidthRequest="250" VerticalOptions="Center"/>
             </HorizontalStackLayout>
         </Border>
 
         <!-- Password Field -->
-        <Border Stroke="Gray" StrokeThickness="2"
-                HeightRequest="50" WidthRequest="300" Padding="5">
+        <Border Stroke="Gray" StrokeThickness="2" BackgroundColor="White"
+        HeightRequest="50" WidthRequest="300" Padding="5">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10"/>
             </Border.StrokeShape>
-            <HorizontalStackLayout Spacing="10">
-                <Image Source="lock_icon.png" HeightRequest="24" WidthRequest="24"/>
-                <Entry Placeholder="Enter Password"
-                       IsPassword="True"
-                       Text="{Binding Password}"
-                       WidthRequest="250" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Lock Icon -->
+                <Image Source="lock_icon.png"
+               HeightRequest="24" WidthRequest="24"
+               Margin="5,0" />
+
+                <!-- Password Entry -->
+                <Entry x:Name="PasswordEntry"
+                    Grid.Column="1"
+                   Placeholder="Enter Password"
+                   Text="{Binding Password}"
+                   IsPassword="True"
+                   TextColor="Black"
+                   VerticalOptions="Center"/>
+
+
+                <!-- Eye Toggle Button -->
+                <ImageButton x:Name="PasswordToggleButton"
+                             
+                     Grid.Column="2"
+                     Source="eye_icon.png"
+                     BackgroundColor="Transparent"
+                     WidthRequest="10"
+                     HeightRequest="20"
+                     
+                     HorizontalOptions="Start"
+                     VerticalOptions="Start"
+                     Margin="0,0,5,0"
+                     Clicked="OnPasswordToggleClicked"/>
+            </Grid>
         </Border>
+
 
         <!-- Remember Me & Forgot Password -->
         <HorizontalStackLayout WidthRequest="300" HorizontalOptions="FillAndExpand" Spacing="10">
             <!-- Remember Me -->
             <HorizontalStackLayout Spacing="2">
-                <CheckBox IsChecked="{Binding IsRememberMe}" />
-                <Label Text="Remember Me" VerticalOptions="Center"/>
+                <CheckBox IsChecked="{Binding IsRememberMe}" Color="WhiteSmoke" />
+                <Label Text="Remember Me" VerticalOptions="Center" TextColor="Black"/>
             </HorizontalStackLayout>
 
             <!-- Forgot Password -->
@@ -79,8 +111,8 @@
 
         <!-- Sign Up -->
         <HorizontalStackLayout HorizontalOptions="Center">
-            <Label Text="Don't have an account?" VerticalOptions="Center"/>
-            <Label Text="Sign Up" TextColor="Blue" VerticalOptions="Center">
+            <Label Text="Don't have an account? " VerticalOptions="Center" TextColor="Black"/>
+            <Label Text=" Sign Up" TextColor="Blue" VerticalOptions="Center">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding SignUpCommand}" />
                 </Label.GestureRecognizers>

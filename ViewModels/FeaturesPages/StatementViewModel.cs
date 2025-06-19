@@ -248,12 +248,16 @@ namespace bank_demo.ViewModels.FeaturesPages
                 int subSchemeId = SelectedAccount.SubSchemeId;
                 int accountNumber = int.Parse(SelectedAccount.AccountNumber);
                 int pigmyAgentId = SelectedAccount.PigmyAgentId;
+                string SubSchemeName = SelectedAccount.SubSchemeName;
                 string startStr = start.ToString("yyyy-MM-dd");
                 string endStr = end.ToString("yyyy-MM-dd");
+
+                
 
                 await Shell.Current.GoToAsync(
                                                 $"ViewStatementPage?CustomerId={_customerId}" +
                                                 $"&SubSchemeId={subSchemeId}" +
+                                                $"&SubSchemeName={SubSchemeName}" +
                                                 $"&AccountNumber={accountNumber}" +
                                                 $"&PigmyAgentId={pigmyAgentId}" +
                                                 $"&Start={startStr}" +

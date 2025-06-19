@@ -17,6 +17,7 @@ namespace bank_demo.ViewModels.FeaturesPages
 
         private int _customerId;
         private int _subSchemeId;
+        private string _subSchemeName;
         private int _accountNumber;
         private int _pigmyAgentId;
 
@@ -53,10 +54,11 @@ namespace bank_demo.ViewModels.FeaturesPages
         public bool IsViewStatementVisible => true;
 
         // ✅ Constructor now assigns dates to bindable properties FromDate and ToDate
-        public ViewStatementViewModel(int customerId, int subSchemeId, int accountNumber, int pigmyAgentId, DateTime fromDate, DateTime toDate)
+        public ViewStatementViewModel(int customerId, int subSchemeId, string subSchemeName, int accountNumber, int pigmyAgentId, DateTime fromDate, DateTime toDate)
         {
             _customerId = customerId;
             _subSchemeId = subSchemeId;
+            _subSchemeName = subSchemeName;
             _accountNumber = accountNumber;
             _pigmyAgentId = pigmyAgentId;
 
@@ -89,6 +91,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 foreach (var txn in data)
                     Transactions.Add(txn);
 
+
                 if (Transactions.Count == 0)
                 {
                     await Shell.Current.DisplayAlert("Info", "No transactions found for selected period.", "OK");
@@ -110,15 +113,45 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             try
             {
-                var bytes = StatementPdfExporter.GenerateStatementPdf(Transactions.ToList());
+                string customerName;
+                string SubSchemeName = _subSchemeName; 
+                string accountNumber = _accountNumber.ToString();
 
-                string fileName = $"Statement_{DateTime.Now:yyyyMMddHHmmss}.pdf";
-                string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
-                File.WriteAllBytes(filePath, bytes);
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync($"{BaseURL.Url()}api/home/{_customerId}");
 
-                await Shell.Current.DisplayAlert("Success", $"PDF exported: {filePath}", "OK");
+                if (!response.IsSuccessStatusCode)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Failed to fetch customer details.", "OK");
+                    return;
+                }
 
-                // Optionally open the file:
+                var json = await response.Content.ReadAsStringAsync();
+                var data = System.Text.Json.JsonSerializer.Deserialize<HomeResponse>(json, new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (data == null)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Invalid customer data received.", "OK");
+                    return;
+                }
+
+                customerName = data.CustomerName;
+
+
+                var filePath = await StatementPdfExporter.ExportToDownloadAsync(
+                    Transactions.ToList(),
+                    customerName,
+                    accountNumber,
+                    SubSchemeName,
+                    FromDate,
+                    ToDate
+                );
+
+                await Shell.Current.DisplayAlert("Success", $"PDF saved to: {filePath}", "OK");
+
                 await Launcher.Default.OpenAsync(new OpenFileRequest
                 {
                     File = new ReadOnlyFile(filePath)
@@ -129,6 +162,7 @@ namespace bank_demo.ViewModels.FeaturesPages
                 await Shell.Current.DisplayAlert("Error", $"Export failed: {ex.Message}", "OK");
             }
         }
+
 
     }
 }
