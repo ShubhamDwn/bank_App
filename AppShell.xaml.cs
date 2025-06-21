@@ -1,5 +1,9 @@
 ﻿using bank_demo.Pages;
 using bank_demo.Pages.Fund_Transfer;
+using bank_demo.Pages.HomePages;
+using bank_demo.Pages.AuthenticationPage;
+using bank_demo.Pages.StatementPages;
+using bank_demo.Pages.BeneficiaryPages;
 
 
 namespace bank_demo;
@@ -19,9 +23,9 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("Settings", typeof(Settings));
         Routing.RegisterRoute("ViewStatementPage", typeof(ViewStatementPage));
 
-        Routing.RegisterRoute(nameof(MyQRCodePage), typeof(bank_demo.Pages.MyQRCodePage));
+        Routing.RegisterRoute(nameof(MyQRCodePage), typeof(MyQRCodePage));
         Routing.RegisterRoute(nameof(ScanToPayPage), typeof(ScanToPayPage));
-        Routing.RegisterRoute(nameof(StatementPage), typeof(Pages.StatementPage));
+        Routing.RegisterRoute(nameof(StatementPage), typeof(StatementPage));
         Routing.RegisterRoute(nameof(HistoryPage), typeof(HistoryPage));
         Routing.RegisterRoute(nameof(AddBeneficiaryPage), typeof(AddBeneficiaryPage));
         Routing.RegisterRoute(nameof(PaymentsPage), typeof(PaymentsPage));
@@ -30,7 +34,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(TransactionHistoryPage), typeof(TransactionHistoryPage));
         Routing.RegisterRoute(nameof(BeneficiaryStatusPage), typeof(BeneficiaryStatusPage));
         Routing.RegisterRoute(nameof(ContactSupportPage), typeof(ContactSupportPage));
-        Routing.RegisterRoute(nameof(SecuritySettingsPage), typeof(SecuritySettingsPage));
+        //Routing.RegisterRoute(nameof(SecuritySettingsPage), typeof(SecuritySettingsPage));
         Routing.RegisterRoute(nameof(TermsPage), typeof(TermsPage));
         Routing.RegisterRoute(nameof(FundTransferPage), typeof(FundTransferPage));
         Routing.RegisterRoute(nameof(EnterAmountPage), typeof(EnterAmountPage));

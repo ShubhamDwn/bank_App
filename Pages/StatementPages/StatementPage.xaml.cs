@@ -2,7 +2,7 @@ using bank_demo.Services;
 using bank_demo.ViewModels.FeaturesPages;
 using System.Globalization;
 
-namespace bank_demo.Pages;
+namespace bank_demo.Pages.StatementPages;
 
 [QueryProperty(nameof(CustomerId), "CustomerId")]
 public partial class StatementPage : ContentPage

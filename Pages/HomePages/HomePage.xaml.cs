@@ -3,7 +3,7 @@ using Microsoft.Maui.Controls;
 using bank_demo.ViewModels;
 using System.Threading.Tasks;
 
-namespace bank_demo
+namespace bank_demo.Pages.HomePages
 {
         [QueryProperty(nameof(CustomerId), "CustomerId")]
         public partial class HomePage : ContentPage

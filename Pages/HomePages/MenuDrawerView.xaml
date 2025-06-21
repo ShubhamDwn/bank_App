@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bank_demo.Pages.HomePages.MenuDrawerView"
+             x:Name="Drawer"
+             BackgroundColor="Transparent"
+             Opacity="1"
+             WidthRequest="280"
+             HorizontalOptions="Start"
+             VerticalOptions="Fill">
+
+
+
+    <Border
+        Stroke="LightGray"
+        StrokeThickness="1"
+        BackgroundColor="White"
+        Padding="15"
+        
+        HorizontalOptions="Start"
+        VerticalOptions="Fill">
+
+        <Border.Shadow>
+            <Shadow
+                Brush="Black"
+                Offset="10,0"
+                Radius="15"
+                Opacity="0.3" />
+        </Border.Shadow>
+        <VerticalStackLayout Spacing="0" VerticalOptions="Start">
+
+        <!-- Apply Shadow Here 
+        <VerticalStackLayout.Shadow>
+            <Shadow
+                Brush="Black"
+                Offset="10,0"
+                Radius="15"
+                Opacity="0.3" />
+        </VerticalStackLayout.Shadow>-->
+
+
+            
+            <!-- Name label -->
+            <Label Text="{Binding CustomerName}"
+           FontSize="18"
+           FontAttributes="Bold"
+           TextColor="Black"
+           Margin="10,0,10,10" 
+                   
+           VerticalOptions="Center"
+           HorizontalOptions="Start" />
+            
+            <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+
+            <!-- Profile -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=ProfileCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="profile.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Profile" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+        <!-- Transaction History -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=TransactionHistoryCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="thistory.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Transaction History" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+        <!-- Repeat this pattern for each item -->
+
+        <!-- Beneficiary Status -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=BeneficiaryStatusCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="benef.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Beneficiary Status" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+        <!-- Contact Support -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=ContactSupportCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="contact.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Contact Support" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+        <!-- Security Settings -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=SecuritySettingsCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="security.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Security Settings" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+        <!-- Terms -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=TermsCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="terms.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Terms &amp; Conditions" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+        <!-- Logout -->
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={x:Reference Drawer}, Path=LogoutCommand}" />
+            </Grid.GestureRecognizers>
+            <HorizontalStackLayout Spacing="15" Padding="0,12">
+                <Image Source="logout.png" WidthRequest="24" HeightRequest="24"/>
+                <Label Text="Logout" FontSize="16" VerticalOptions="Center" TextColor="Black"/>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView HeightRequest="1" Color="#D3D3D3" />
+
+    </VerticalStackLayout>
+    </Border>
+
+
+</ContentView>

@@ -1,4 +1,4 @@
-namespace bank_demo;
+namespace bank_demo.Pages.AuthenticationPage;
 
 public partial class ForgotPasswordPage : ContentPage
 {

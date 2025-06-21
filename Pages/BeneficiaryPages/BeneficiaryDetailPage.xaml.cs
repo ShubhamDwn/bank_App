@@ -1,6 +1,6 @@
 using bank_demo.ViewModels.FeaturesPages;
 
-namespace bank_demo.Pages;
+namespace bank_demo.Pages.BeneficiaryPages;
 
 [QueryProperty(nameof(CustomerId), "CustomerId")]
 [QueryProperty(nameof(AccountNumber), "AccountNumber")]

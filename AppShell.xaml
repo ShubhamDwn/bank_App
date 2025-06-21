@@ -3,7 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:root="clr-namespace:bank_demo"
     xmlns:pages="clr-namespace:bank_demo.Pages"
+    xmlns:Home="clr-namespace:bank_demo.Pages.HomePages"
+    xmlns:Authentication="clr-namespace:bank_demo.Pages.AuthenticationPage"
     xmlns:fund="clr-namespace:bank_demo.Pages.Fund_Transfer"
+    xmlns:Beneficiary="clr-namespace:bank_demo.Pages.BeneficiaryPages"
+    xmlns:Statement="clr-namespace:bank_demo.Pages.StatementPages"
     x:Class="bank_demo.AppShell"
     Shell.FlyoutBehavior="Flyout"
     x:Name="RootShell">
@@ -19,34 +23,34 @@
 
     <!-- Login -->
     <ShellContent Route="LoginPage"
-                  ContentTemplate="{DataTemplate root:LoginPage}"
+                  ContentTemplate="{DataTemplate Authentication:LoginPage}"
                   Shell.FlyoutBehavior="Disabled" />
 
     <!-- Signup -->
     <ShellContent Route="Signup"
-                  ContentTemplate="{DataTemplate root:SignupPage}"
+                  ContentTemplate="{DataTemplate Authentication:SignupPage}"
                   Shell.FlyoutBehavior="Disabled" />
 
     <!-- Forgot Password -->
     <ShellContent Route="ForgotPasswordPage"
-                  ContentTemplate="{DataTemplate root:ForgotPasswordPage}"
+                  ContentTemplate="{DataTemplate Authentication:ForgotPasswordPage}"
                   Shell.FlyoutBehavior="Disabled" />
 
     <!-- Home (Show Hamburger) -->
     
     <ShellContent Route="HomePage"
-                  ContentTemplate="{DataTemplate root:HomePage}"
+                  ContentTemplate="{DataTemplate Home:HomePage}"
                   Shell.FlyoutBehavior="Disabled" />
 
     <!-- About (Show Back Arrow) -->
     <ShellContent Route="About"
-                  ContentTemplate="{DataTemplate root:About}"
+                  ContentTemplate="{DataTemplate Home:About}"
                   Shell.FlyoutBehavior="Disabled"
                   Shell.NavBarIsVisible="True" />
 
     <!-- Settings (Show Back Arrow) -->
     <ShellContent Route="Settings"
-                  ContentTemplate="{DataTemplate root:Settings}"
+                  ContentTemplate="{DataTemplate Home:Settings}"
                   Shell.FlyoutBehavior="Disabled"
                   Shell.NavBarIsVisible="True" />
 
@@ -64,7 +68,7 @@
 
     <!-- Statement Page -->
     <ShellContent Route="StatementPage"
-              ContentTemplate="{DataTemplate pages:StatementPage}"
+              ContentTemplate="{DataTemplate Statement:StatementPage}"
               Shell.FlyoutBehavior="Disabled"
               Shell.NavBarIsVisible="True" />
 
@@ -76,18 +80,18 @@
 
     <!-- Add Beneficiary Page -->
     <ShellContent Route="AddBeneficiaryPage"
-              ContentTemplate="{DataTemplate pages:AddBeneficiaryPage}"
+              ContentTemplate="{DataTemplate Beneficiary:AddBeneficiaryPage}"
               Shell.FlyoutBehavior="Disabled"
               Shell.NavBarIsVisible="True" />
 
     <!-- Beneficiary Status Page -->
     <ShellContent Route="BeneficiaryStatusPage"
-              ContentTemplate="{DataTemplate pages:BeneficiaryStatusPage}"
+              ContentTemplate="{DataTemplate Beneficiary:BeneficiaryStatusPage}"
               Shell.FlyoutBehavior="Disabled" />
 
     <!-- Beneficiary Detail Page -->
     <ShellContent Route="beneficiarydetailpage"
-                  ContentTemplate="{DataTemplate pages:BeneficiaryDetailPage}"
+                  ContentTemplate="{DataTemplate Beneficiary:BeneficiaryDetailPage}"
                   Shell.FlyoutBehavior="Disabled" />
 
     <!-- Payments Page -->
@@ -98,18 +102,6 @@
 
     <!-- View Statement Page -->
     <ShellContent Route="ViewStatementPage" 
-                  ContentTemplate="{DataTemplate pages:ViewStatementPage}" />
-
-
-
-
-
-    <!-- Flyout Menu Items (will show back arrow when navigated) -->
-    <FlyoutItem Title="Menu" Icon="menu.png">
-        <ShellContent
-        Title="Menu"
-        ContentTemplate="{DataTemplate root:MoreOptionsPage}"
-        Route="MoreOptionsPage" />
-    </FlyoutItem>
+                  ContentTemplate="{DataTemplate Statement:ViewStatementPage}" />
 
 </Shell>

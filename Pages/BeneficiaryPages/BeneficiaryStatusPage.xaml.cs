@@ -1,6 +1,6 @@
 using bank_demo.ViewModels.FeaturesPages;
 using bank_demo.Services;
-namespace bank_demo.Pages
+namespace bank_demo.Pages.BeneficiaryPages
 {
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public partial class BeneficiaryStatusPage : ContentPage
