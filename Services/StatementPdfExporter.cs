@@ -1,6 +1,7 @@
-﻿using PdfSharpCore.Drawing;
+﻿using bank_demo.Services.API;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Fonts;
 using PdfSharpCore.Pdf;
-using bank_demo.Services.API;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,13 +18,16 @@ namespace bank_demo.Services
             DateTime fromDate,
             DateTime toDate)
         {
+            // 🔹 Register font resolver
+            GlobalFontSettings.FontResolver ??= VerdanaFontResolver.Instance;
+
             PdfDocument document = new PdfDocument();
             PdfPage page = document.AddPage();
             page.Orientation = PdfSharpCore.PageOrientation.Landscape;
 
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont headerFont = new XFont("Verdana", 14, XFontStyle.Bold);
-            XFont cellFont = new XFont("Verdana", 7, XFontStyle.Regular);
+            XFont headerFont = new XFont("Verdana", 12, XFontStyle.Bold);
+            XFont cellFont = new XFont("Verdana", 8, XFontStyle.Regular);
 
             int margin = 30;
             int y = margin;
@@ -141,21 +145,28 @@ namespace bank_demo.Services
             DateTime fromDate,
             DateTime toDate){
             string fileName = $"{customerName.Replace(" ", "_")}_{accountType}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.pdf"; //{fromDate:yyyyMMdd}_{toDate:yyyyMMdd}_{Date}.pdf";
-                string fullPath = GetDownloadPath(fileName);
+            string fullPath = GetDownloadPath(fileName);
 
-                var bytes = GenerateStatementPdf(transactions, customerName, accountNumber, accountType, fromDate, toDate);
-                File.WriteAllBytes(fullPath, bytes);
+            //var bytes = GenerateStatementPdf(transactions, customerName, accountNumber, accountType, fromDate, toDate);
+            //File.WriteAllBytes(fullPath, bytes);
+            var bytes = await Task.Run(() => GenerateStatementPdf(transactions, customerName, accountNumber, accountType, fromDate, toDate));
+            await Task.Run(() => File.WriteAllBytes(fullPath, bytes));
 
-                return fullPath;
+
+            return fullPath;
         }
 
         private static string GetDownloadPath(string fileName)
         {
             #if ANDROID
-                // For API 29+ (Scoped Storage), consider using MediaStore
-                return Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, fileName);
-            #elif WINDOWS
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", fileName);
+                var downloadsDirectory = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
+                if (downloadsDirectory == null)
+                {
+                    throw new InvalidOperationException("Downloads directory is not available.");
+                }
+                return Path.Combine(downloadsDirectory.AbsolutePath, fileName);
+            #elif WINDOWS        
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", fileName);
             #elif IOS
                         return Path.Combine(FileSystem.AppDataDirectory, fileName); // Limited sandbox access
             #else

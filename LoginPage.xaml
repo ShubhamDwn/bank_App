@@ -63,18 +63,20 @@
 
 
                 <!-- Eye Toggle Button -->
-                <ImageButton x:Name="PasswordToggleButton"
-                             
-                     Grid.Column="2"
-                     Source="eye_icon.png"
-                     BackgroundColor="Transparent"
-                     WidthRequest="10"
-                     HeightRequest="20"
-                     
-                     HorizontalOptions="Start"
-                     VerticalOptions="Start"
-                     Margin="0,0,5,0"
-                     Clicked="OnPasswordToggleClicked"/>
+                <Image x:Name="PasswordToggleButton"
+                       Grid.Column="2"
+                       Source="eye_icon.png"
+                       WidthRequest="30"
+                       HeightRequest="30"
+                       Aspect="AspectFill"
+                       Margin="0,0,5,0"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPasswordToggleClicked"/>
+                    </Image.GestureRecognizers>
+                </Image>
+
             </Grid>
         </Border>
 
@@ -83,7 +85,7 @@
         <HorizontalStackLayout WidthRequest="300" HorizontalOptions="FillAndExpand" Spacing="10">
             <!-- Remember Me -->
             <HorizontalStackLayout Spacing="2">
-                <CheckBox IsChecked="{Binding IsRememberMe}" Color="WhiteSmoke" />
+                <CheckBox IsChecked="{Binding IsRememberMe}" Color="black" />
                 <Label Text="Remember Me" VerticalOptions="Center" TextColor="Black"/>
             </HorizontalStackLayout>
 

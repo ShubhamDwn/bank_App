@@ -140,8 +140,7 @@
 
             </Grid>
 
-            <Button Text="Export to PDF" Command="{Binding ExportPdfCommand}" />
-            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+            <Button Text="Export to PDF" Command="{Binding ExportPdfCommand}" IsVisible="{Binding IsExportButtonVisible}" />
 
         </VerticalStackLayout>
     </ScrollView>

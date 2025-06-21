@@ -49,6 +49,12 @@ namespace bank_demo.ViewModels.FeaturesPages
             get => _isStatementVisible;
             set => SetProperty(ref _isStatementVisible, value);
         }
+        private bool _isExportButtonVisible;
+        public bool IsExportButtonVisible
+        {
+            get => _isExportButtonVisible;
+            set => SetProperty(ref _isExportButtonVisible, value);
+        }
 
         public bool IsCustomDateRange => true;
         public bool IsViewStatementVisible => true;
@@ -95,13 +101,19 @@ namespace bank_demo.ViewModels.FeaturesPages
                 if (Transactions.Count == 0)
                 {
                     await Shell.Current.DisplayAlert("Info", "No transactions found for selected period.", "OK");
+                    IsExportButtonVisible = false;
+                    IsStatementVisible = false;
                 }
-
-                IsStatementVisible = true;
+                else
+                {
+                    IsStatementVisible = true;
+                    IsExportButtonVisible = true;
+                }
             }
             catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("Error", $"Failed to load statement: {ex.Message}", "OK");
+                IsExportButtonVisible = false;
             }
             finally
             {

@@ -46,6 +46,14 @@
 		
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+	  <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+	  <RunAOTCompilation>False</RunAOTCompilation>
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -65,19 +73,36 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiFont Remove="Resources\Fonts\verdana.ttf" />
+	  <MauiFont Remove="Resources\Fonts\verdanab.ttf" />
+	  <MauiFont Remove="Resources\Fonts\verdanai.ttf" />
+	  <MauiFont Remove="Resources\Fonts\verdanaz.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Platforms\Android\Resources\xml\network_security_config.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Fonts\verdana.ttf" />
+	  <EmbeddedResource Include="Resources\Fonts\verdanab.ttf">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\Fonts\verdanai.ttf" />
+	  <EmbeddedResource Include="Resources\Fonts\verdanaz.ttf" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui.Camera" Version="2.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.60" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.80" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.80" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="PdfSharpCore" Version="1.3.67" />
 		<PackageReference Include="QRCoder" Version="1.6.0" />
+		<PackageReference Include="SkiaSharp" Version="3.119.0" />
 		<PackageReference Include="ZXing" Version="2.1.1" />
 		<PackageReference Include="ZXing.Net" Version="0.16.10" />
 		<PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
@@ -153,12 +178,6 @@
 	  <MauiXaml Update="SignupPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-	  <PackageReference Include="SkiaSharp.NativeAssets.Android">
-	    <Version>3.116.1</Version>
-	  </PackageReference>
 	</ItemGroup>
 
 </Project>

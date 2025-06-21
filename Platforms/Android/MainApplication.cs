@@ -3,9 +3,10 @@ using Android.Runtime;
 
 namespace bank_demo
 {
-    [Application]
+    [Application(UsesCleartextTraffic = true)]
     public class MainApplication : MauiApplication
     {
+
         public MainApplication(IntPtr handle, JniHandleOwnership ownership)
             : base(handle, ownership)
         {
