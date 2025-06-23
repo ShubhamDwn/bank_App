@@ -69,6 +69,7 @@ namespace bank_demo.ViewModels
 
         private bool _isCarouselRunning = true;
 
+        [Obsolete]
         public void StartCarousel()
         {
             if (_isCarouselRunning) return;

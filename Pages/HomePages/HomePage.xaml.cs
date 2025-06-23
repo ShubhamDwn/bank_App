@@ -62,6 +62,7 @@ namespace bank_demo.Pages.HomePages
             }
         }
 
+        [Obsolete]
         protected override void OnAppearing()
         {
             base.OnAppearing();
