@@ -2,13 +2,47 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:bank_demo.ViewModels"
+             xmlns:components="clr-namespace:bank_demo.Pages.HomePages"
              x:Class="bank_demo.Pages.HomePages.HomePage"
              x:DataType="vm:HomeViewModel"
              Background="White">
 
     <Grid>
-
         <!-- Overlay -->
+        <BoxView x:Name="MenuOverlay"
+                 BackgroundColor="Transparent"
+                 IsVisible="True"
+                 InputTransparent="False"
+                 ZIndex="1"
+                 Margin="280,0,0,0">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnOverlayTapped" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+
+        <!-- Menu Drawer Component -->
+    <components:MenuDrawerView x:Name="MenuDrawer"
+                                   TranslationX="-300"
+                           
+                                   Opacity="0"
+                                   InputTransparent="True"
+                                   IsVisible="True"
+                                   ZIndex="2"
+                                   ProfileCommand="{Binding ProfileCommand}"
+                                   TransactionHistoryCommand="{Binding TransactionHistoryCommand}"
+                                   BeneficiaryStatusCommand="{Binding BeneficiaryStatusCommand}"
+                                   ContactSupportCommand="{Binding ContactSupportCommand}"
+                                   SecuritySettingsCommand="{Binding SecuritySettingsCommand}"
+                                   TermsCommand="{Binding TermsCommand}"
+                                   LogoutCommand="{Binding LogoutCommand}" />
+
+
+
+
+    <Grid>
+
+        <!-- Overlay --><!--
         <BoxView x:Name="MenuOverlay"
                  BackgroundColor="Transparent"
                  IsVisible="False"
@@ -18,7 +52,7 @@
             <BoxView.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnOverlayTapped" />
             </BoxView.GestureRecognizers>
-        </BoxView>
+        </BoxView>-->
 
         <!-- Main Grid -->
         <Grid RowDefinitions="Auto,*,Auto" ZIndex="0">
@@ -200,8 +234,9 @@
             </Grid>
         </Grid>
 
+       
         <!-- Drawer Menu -->
-        <Grid x:Name="MenuDrawer"
+        <!--<Grid x:Name="MenuDrawer"
               BackgroundColor="#F5F5F5"
               WidthRequest="300"
               TranslationX="-300"
@@ -210,29 +245,31 @@
               VerticalOptions="FillAndExpand"
               HorizontalOptions="Start">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>-->
 
-            <!-- Close Button -->
-            <Button Text="←"
-                    FontSize="30"
-                    FontAttributes="Bold"
-                    TextColor="Black"
-                    BackgroundColor="Transparent"
-                    HorizontalOptions="End"
-                    Clicked="OnDrawerArrowClicked" />
+                <!-- Close Button -->
+                <!--<Button Text="←"
+                        FontSize="30"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="End"
+                        Clicked="OnDrawerArrowClicked" />-->
 
-            <!-- Drawer Options -->
-            <StackLayout Grid.Row="1" Spacing="10">
-                <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10" TextColor="Black"/>
-                <Button Text="Profile" Clicked="OnProfileClicked"/>
-                <Button Text="Settings" Clicked="OnSettingsClicked"/>
-                <Button Text="Benfeciary Status" Clicked="OnBenfeciaryClicked"/>
-                <Button Text="Logout" BackgroundColor="IndianRed" TextColor="White" Clicked="OnLogoutClicked"/>
+                <!-- Drawer Options -->
+                 <!--
+                <StackLayout Grid.Row="1" Spacing="10">
+                    <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10" TextColor="Black"/>
+                    <Button Text="Profile" Clicked="OnProfileClicked"/>
+                    <Button Text="Settings" Clicked="OnSettingsClicked"/>
+                    <Button Text="Benfeciary Status" Clicked="OnBenfeciaryClicked"/>
+                    <Button Text="Logout" BackgroundColor="IndianRed" TextColor="White" Clicked="OnLogoutClicked"/>
 
-            </StackLayout>
+                </StackLayout>      
+            </Grid>-->
         </Grid>
     </Grid>
 </ContentPage>

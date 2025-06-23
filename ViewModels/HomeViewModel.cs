@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using bank_demo.Pages;
@@ -30,6 +31,75 @@ namespace bank_demo.ViewModels
             get => _savingsBalance;
             set { _savingsBalance = value; OnPropertyChanged(); }
         }
+        private bool _isMenuVisible;
+        public bool IsMenuVisible
+        {
+            get => _isMenuVisible;
+            set
+            {
+                if (_isMenuVisible != value)
+                {
+                    _isMenuVisible = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _selectedIndex;
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (_selectedIndex != value)
+                {
+                    _selectedIndex = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<Advertisement> Advertisements { get; } = new()
+        {
+            new Advertisement { ImageUrl = "ad1.jpg" },
+            new Advertisement { ImageUrl = "ad2.jpg" },
+            new Advertisement { ImageUrl = "ad3.jpg" }
+        };
+
+
+        private bool _isCarouselRunning = true;
+
+        public void StartCarousel()
+        {
+            if (_isCarouselRunning) return;
+
+            _isCarouselRunning = true;
+
+            Device.StartTimer(TimeSpan.FromSeconds(3), () =>
+            {
+                if (!_isCarouselRunning || Advertisements.Count == 0)
+                    return false;
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    SelectedIndex = (SelectedIndex + 1) % Advertisements.Count;
+                });
+
+                return true;
+            });
+        }
+
+        public void StopCarousel()
+        {
+            _isCarouselRunning = false;
+        }
+
+
+
+
+
+
+
 
         public ICommand AboutCommand { get; }
         public ICommand HomeCommand { get; }

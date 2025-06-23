@@ -23,39 +23,59 @@ namespace bank_demo.Pages.HomePages
                 }
             }
 
-            public HomePage()
-            {
-                InitializeComponent();
-                // Move drawer off-screen initially
-                MenuDrawer.TranslationX = -DrawerWidth;
-            }
-        
+        public HomePage()
+        {
+            InitializeComponent();
 
+            MenuDrawer.TranslationX = -DrawerWidth;
+            MenuDrawer.Opacity = 0;
+            MenuDrawer.InputTransparent = true;
+            MenuOverlay.IsVisible = false;
+        }
 
         private async void OnHamburgerClicked(object sender, EventArgs e)
         {
             MenuOverlay.IsVisible = true;
+            MenuDrawer.InputTransparent = false;
             MenuDrawer.IsVisible = true;
 
-            await MenuDrawer.TranslateTo(0, 0, DrawerAnimationDuration, Easing.CubicInOut);
+            await MenuDrawer.TranslateTo(0, 0, DrawerAnimationDuration, Easing.CubicOut);
+            await MenuDrawer.FadeTo(1, DrawerAnimationDuration, Easing.CubicOut);
+
+            if (BindingContext is ViewModels.HomeViewModel vm)
+            {
+                vm.IsMenuVisible = true;
+            }
         }
 
         private async void OnOverlayTapped(object sender, EventArgs e)
         {
-            await HideDrawer();
-        }
+            await MenuDrawer.TranslateTo(-DrawerWidth, 0, DrawerAnimationDuration, Easing.CubicIn);
+            await MenuDrawer.FadeTo(0, DrawerAnimationDuration, Easing.CubicIn);
 
-        private async void OnDrawerArrowClicked(object sender, EventArgs e)
-        {
-            await HideDrawer();
-        }
-
-        private async Task HideDrawer()
-        {
-            await MenuDrawer.TranslateTo(-DrawerWidth, 0, DrawerAnimationDuration, Easing.CubicInOut);
-            MenuDrawer.IsVisible = false;
+            MenuDrawer.InputTransparent = true;
             MenuOverlay.IsVisible = false;
+
+            if (BindingContext is ViewModels.HomeViewModel vm)
+            {
+                vm.IsMenuVisible = false;
+            }
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (BindingContext is HomeViewModel vm)
+                vm.StartCarousel();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if (BindingContext is HomeViewModel vm)
+                vm.StopCarousel();
+        }
+
 
         private async void OnProfileClicked(object sender, EventArgs e)
         {
