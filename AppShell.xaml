@@ -71,7 +71,12 @@
               ContentTemplate="{DataTemplate Statement:StatementPage}"
               Shell.FlyoutBehavior="Disabled"
               Shell.NavBarIsVisible="True" />
-
+    
+    <!-- customer-ledger -->
+    <ShellContent Route="CustomerLedgerPage"
+                  ContentTemplate="{DataTemplate Statement:CustomerLedgerPage}" 
+                  Shell.NavBarIsVisible="True" />
+    
     <!-- History Page -->
     <ShellContent Route="HistoryPage"
               ContentTemplate="{DataTemplate pages:HistoryPage}"

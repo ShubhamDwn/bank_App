@@ -3,6 +3,8 @@ using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using PdfSharpCore.Fonts;
 using bank_demo.Services;
+using bank_demo.Pages.AuthenticationPage;
+using bank_demo.Pages.HomePages;
 
 namespace bank_demo
 {

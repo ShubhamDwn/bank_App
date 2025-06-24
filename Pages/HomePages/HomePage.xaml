@@ -131,7 +131,7 @@
 
 
 
-                    <!-- Second Row (History, Beneficiary, Payments) -->
+                    <!-- Second Row (History, Beneficiary, Balances) -->
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
                         <!-- History -->
                         <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
@@ -154,14 +154,14 @@
                             <Label Text="Beneficiary" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
 
-                        <!-- Payments -->
+                        <!-- Balances -->
                         <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
-                            <Image Source="pay.png" WidthRequest="50" HeightRequest="50">
+                            <Image Source="balance.png" WidthRequest="50" HeightRequest="50">
                                 <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
+                                        <TapGestureRecognizer Command="{Binding CustomerLedgerCommand}" />
                                 </Image.GestureRecognizers>
                             </Image>
-                            <Label Text="Payments" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                            <Label Text="Balance" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
 
@@ -188,9 +188,20 @@
                             </Image>
                             <Label Text="Investment" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
-                    </HorizontalStackLayout>
 
-                </VerticalStackLayout>
+
+                        <!-- Payments -->
+                        <VerticalStackLayout WidthRequest="90" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="pay.png" WidthRequest="50" HeightRequest="50">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding PaymentsCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="Payments" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                    </VerticalStackLayout>
             </ScrollView>
 
             <!-- Bottom Navigation -->

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bank_demo.Pages.StatementPages.CustomerLedgerPage"
+             Title="Customer Ledger">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="10">
+
+            <!-- 🔹 Title -->
+            <Label Text="Customer Ledger"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <!-- 🔹 Date & Refresh (Inline) -->
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="Date:" VerticalOptions="Center" />
+                <DatePicker Date="{Binding SelectedDate}"
+                            Format="dd/MM/yyyy"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center" />
+                <Button Text="Refresh"
+                        Command="{Binding RefreshLedgerCommand}"
+                        VerticalOptions="Center"
+                        HeightRequest="40" />
+            </HorizontalStackLayout>
+
+            <!-- 🔹 Loading -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               HorizontalOptions="Center"
+                               HeightRequest="40" />
+
+            <!-- 🔹 Ledger Table -->
+            <ScrollView Orientation="Horizontal">
+                <VerticalStackLayout>
+
+                    <!-- Header Row -->
+                    <Grid ColumnSpacing="5" Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="Date" FontAttributes="Bold" Grid.Column="0"/>
+                        <Label Text="Account No" FontAttributes="Bold" Grid.Column="1"/>
+                        <Label Text="Scheme" FontAttributes="Bold" Grid.Column="2"/>
+                        <Label Text="Balance" FontAttributes="Bold" Grid.Column="3"/>
+                        <Label Text="Opening Date" FontAttributes="Bold" Grid.Column="4"/>
+                        <Label Text="Expiry Date" FontAttributes="Bold" Grid.Column="5"/>
+                        <Label Text="Period (Months)" FontAttributes="Bold" Grid.Column="6"/>
+                        <Label Text="IAmount" FontAttributes="Bold" Grid.Column="7"/>
+                        <Label Text="Maturity" FontAttributes="Bold" Grid.Column="8"/>
+                        <Label Text="Installment" FontAttributes="Bold" Grid.Column="9"/>
+                        <Label Text="Closed" FontAttributes="Bold" Grid.Column="10"/>
+                        <Label Text="Apply Interest" FontAttributes="Bold" Grid.Column="11"/>
+                        <Label Text="Director" FontAttributes="Bold" Grid.Column="12"/>
+                        <Label Text="Overdue?" FontAttributes="Bold" Grid.Column="13"/>
+                        <Label Text="Phone" FontAttributes="Bold" Grid.Column="14"/>
+                        <Label Text="Receipt No" FontAttributes="Bold" Grid.Column="15"/>
+                        <Label Text="Customer" FontAttributes="Bold" Grid.Column="16"/>
+                        <Label Text="Address" FontAttributes="Bold" Grid.Column="17"/>
+                        <Label Text="Area" FontAttributes="Bold" Grid.Column="18"/>
+                        <Label Text="Old Acc No" FontAttributes="Bold" Grid.Column="19"/>
+                    </Grid>
+
+                    <!-- Data Rows -->
+                    <ScrollView Orientation="Vertical" HeightRequest="400">
+                        <CollectionView ItemsSource="{Binding LedgerData}">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnSpacing="5" Padding="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Text="{Binding TransactionDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="0"/>
+                                        <Label Text="{Binding AccountNumber}" Grid.Column="1"/>
+                                        <Label Text="{Binding SubSchemeName}" Grid.Column="2"/>
+                                        <Label Text="{Binding Balance, StringFormat='₹{0:F2}'}" Grid.Column="3"/>
+                                        <Label Text="{Binding OpeningDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="4"/>
+                                        <Label Text="{Binding ExpiryDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="5"/>
+                                        <Label Text="{Binding PeriodInMonth}" Grid.Column="6"/>
+                                        <Label Text="{Binding IAmount}" Grid.Column="7"/>
+                                        <Label Text="{Binding MaturityAmount}" Grid.Column="8"/>
+                                        <Label Text="{Binding Installment}" Grid.Column="9"/>
+                                        <Label Text="{Binding Closed}" Grid.Column="10"/>
+                                        <Label Text="{Binding IsApplyInterest}" Grid.Column="11"/>
+                                        <Label Text="{Binding DirectorName}" Grid.Column="12"/>
+                                        <Label Text="{Binding IsOverdueAccount}" Grid.Column="13"/>
+                                        <Label Text="{Binding CellPhone}" Grid.Column="14"/>
+                                        <Label Text="{Binding ReceiptNo}" Grid.Column="15"/>
+                                        <Label Text="{Binding Name}" Grid.Column="16"/>
+                                        <Label Text="{Binding PermanentAddress}" Grid.Column="17"/>
+                                        <Label Text="{Binding AreaName}" Grid.Column="18"/>
+                                        <Label Text="{Binding OldAccountNumber}" Grid.Column="19"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -148,6 +148,9 @@
 	  <MauiXaml Update="Pages\ScanToPayPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\StatementPages\CustomerLedgerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\StatementPages\StatementPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

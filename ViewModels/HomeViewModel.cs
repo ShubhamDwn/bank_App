@@ -108,6 +108,7 @@ namespace bank_demo.ViewModels
         public ICommand QRCommand { get; }
         public ICommand ScanToPayCommand { get; }
         public ICommand StatementCommand { get; }
+        public ICommand CustomerLedgerCommand { get; }
         public ICommand HistoryCommand { get; }
         public ICommand AddBeneficiaryCommand { get; }
         public ICommand PaymentsCommand { get; }
@@ -150,7 +151,13 @@ namespace bank_demo.ViewModels
             {
                 await Shell.Current.GoToAsync($"StatementPage?CustomerId={customerId}");
             });
+            CustomerLedgerCommand = new Command(async () =>
+            {
 
+                //await Shell.Current.GoToAsync($"{nameof(CustomerLedgerPage)}?CustomerId={customerId}");
+                await Shell.Current.GoToAsync($"CustomerLedgerPage?CustomerId={customerId}");
+            });
+            
             HistoryCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync(nameof(HistoryPage));
