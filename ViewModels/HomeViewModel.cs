@@ -3,10 +3,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using bank_demo.Pages;
-using Microsoft.Data.SqlClient;
 using bank_demo.Services.API;
-using System.Data;
-using bank_demo.Pages.Fund_Transfer;
 
 namespace bank_demo.ViewModels 
 {

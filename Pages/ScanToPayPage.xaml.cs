@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+
 using ZXing.Net.Maui.Controls;
 using ZXing;
 using bank_demo.ViewModels.FeaturesPages;

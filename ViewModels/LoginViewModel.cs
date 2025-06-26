@@ -1,16 +1,12 @@
 ﻿using bank_demo.Services;
 using bank_demo.Services.API;
-using Microsoft.Data.SqlClient;
-using Microsoft.Maui.Controls;
 using System.ComponentModel;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
+using Microsoft.Maui.Controls;
+using System.Threading.Tasks;
+
 
 
 namespace bank_demo.ViewModels
