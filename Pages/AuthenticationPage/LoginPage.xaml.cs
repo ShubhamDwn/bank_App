@@ -1,5 +1,6 @@
-using Microsoft.Maui.Controls;
 using bank_demo.ViewModels;
+using Microsoft.Maui.Controls;
+
 
 namespace bank_demo.Pages.AuthenticationPage;
 

@@ -33,7 +33,8 @@
                                HeightRequest="40" />
 
             <!-- 🔹 Ledger Table -->
-            <ScrollView Orientation="Horizontal">
+            <ScrollView Orientation="Horizontal"
+                        IsVisible= "{Binding IsVisible}">
                 <VerticalStackLayout>
 
                     <!-- Header Row -->
@@ -84,7 +85,6 @@
                     </Grid>
 
                     <!-- Data Rows -->
-                    <ScrollView Orientation="Vertical" HeightRequest="400">
                         <CollectionView ItemsSource="{Binding LedgerData}">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Vertical" />
@@ -139,7 +139,6 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                    </ScrollView>
 
                 </VerticalStackLayout>
             </ScrollView>

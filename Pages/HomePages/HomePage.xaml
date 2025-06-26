@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:bank_demo.ViewModels"
              xmlns:components="clr-namespace:bank_demo.Pages.HomePages"
+             xmlns:models="clr-namespace:bank_demo.Services.API"
              x:Class="bank_demo.Pages.HomePages.HomePage"
              x:DataType="vm:HomeViewModel"
              Background="White">
 
-    <Grid>
+  <Grid>
         <!-- Overlay -->
         <BoxView x:Name="MenuOverlay"
                  BackgroundColor="Transparent"
@@ -40,7 +41,7 @@
 
 
 
-    <Grid>
+    
 
         <!-- Overlay --><!--
         <BoxView x:Name="MenuOverlay"
@@ -201,7 +202,30 @@
                         </VerticalStackLayout>
                         </HorizontalStackLayout>
 
-                    </VerticalStackLayout>
+
+                    <CarouselView ItemsSource="{Binding Advertisements}"
+                          HeightRequest="140"
+                          Margin="0,10,0,0"
+                          PeekAreaInsets="30"
+                          Position="{Binding SelectedIndex, Mode=TwoWay}">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Advertisement">
+                                <Border Stroke="Gray"
+                                StrokeThickness="0.5"
+                                StrokeShape="RoundRectangle 20"
+                                Margin="10"
+                                BackgroundColor="#f5f5f5">
+                                    <Image Source="{Binding ImageUrl}"
+                                   Aspect="AspectFill"
+                                   HeightRequest="120"
+                                   WidthRequest="320" />
+                                </Border>
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
+
+
+                </VerticalStackLayout>
             </ScrollView>
 
             <!-- Bottom Navigation -->
@@ -245,42 +269,12 @@
             </Grid>
         </Grid>
 
-       
-        <!-- Drawer Menu -->
-        <!--<Grid x:Name="MenuDrawer"
-              BackgroundColor="#F5F5F5"
-              WidthRequest="300"
-              TranslationX="-300"
-              IsVisible="False"
-              Padding="20"
-              VerticalOptions="FillAndExpand"
-              HorizontalOptions="Start">
+        
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>-->
 
-                <!-- Close Button -->
-                <!--<Button Text="←"
-                        FontSize="30"
-                        FontAttributes="Bold"
-                        TextColor="Black"
-                        BackgroundColor="Transparent"
-                        HorizontalOptions="End"
-                        Clicked="OnDrawerArrowClicked" />-->
 
-                <!-- Drawer Options -->
-                 <!--
-                <StackLayout Grid.Row="1" Spacing="10">
-                    <Label Text="Menu" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10" TextColor="Black"/>
-                    <Button Text="Profile" Clicked="OnProfileClicked"/>
-                    <Button Text="Settings" Clicked="OnSettingsClicked"/>
-                    <Button Text="Benfeciary Status" Clicked="OnBenfeciaryClicked"/>
-                    <Button Text="Logout" BackgroundColor="IndianRed" TextColor="White" Clicked="OnLogoutClicked"/>
 
-                </StackLayout>      
-            </Grid>-->
-        </Grid>
+
+
     </Grid>
 </ContentPage>
