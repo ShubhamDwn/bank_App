@@ -7,6 +7,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+        Application.Current.UserAppTheme = AppTheme.Light;
 
         // Set Shell as MainPage
         MainPage = new AppShell();

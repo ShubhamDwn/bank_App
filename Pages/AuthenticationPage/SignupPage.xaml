@@ -9,8 +9,8 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label Text="Aadhaar Number" />
-            <Entry Text="{Binding Aadhaar}" Keyboard="Numeric" MaxLength="12"/>
+            <Label Text="Customer ID" />
+            <Entry Text="{Binding CustomerId}" Keyboard="Numeric" MaxLength="12"/>
 
             <Label Text="Username" />
             <Entry Text="{Binding Username}" />

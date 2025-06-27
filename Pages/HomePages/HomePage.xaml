@@ -162,7 +162,7 @@
                                         <TapGestureRecognizer Command="{Binding CustomerLedgerCommand}" />
                                 </Image.GestureRecognizers>
                             </Image>
-                            <Label Text="Balance" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
+                            <Label Text="Ledger" FontSize="15" HorizontalTextAlignment="Center" TextColor="Black" FontAttributes="Bold"/>
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
 

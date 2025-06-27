@@ -7,17 +7,24 @@ using System.Windows.Input;
 using bank_demo.Services.API;
 using Microsoft.Maui.Controls;
 
-
 namespace bank_demo.ViewModels.FeaturesPages
 {
     public class CustomerLedgerViewModel : BaseViewModel
     {
-        public ObservableCollection<CustomerAccountLedgerModel> LedgerData { get; set; } = new();
+        public ObservableCollection<CustomerAccountLedgerModel> LedgerData { get; private set; } = new();
+        private List<CustomerAccountLedgerModel> _allLedgerData = new();
+
+        private int _pageSize = 20;
+        private int _currentPage = 0;
 
         public ICommand RefreshLedgerCommand { get; }
+        public ICommand LoadMoreCommand { get; }
 
         private int _customerId;
         private DateTime _selectedDate;
+        private bool _isLoading;
+        private bool _isVisible;
+        private bool _showClosedAccounts;
 
         public DateTime SelectedDate
         {
@@ -25,17 +32,29 @@ namespace bank_demo.ViewModels.FeaturesPages
             set => SetProperty(ref _selectedDate, value);
         }
 
-        private bool _isLoading;
-        private bool _isVisible;
         public bool IsLoading
         {
             get => _isLoading;
             set => SetProperty(ref _isLoading, value);
         }
+
         public bool IsVisible
         {
             get => _isVisible;
             set => SetProperty(ref _isVisible, value);
+        }
+
+        public bool ShowClosedAccounts
+        {
+            get => _showClosedAccounts;
+            set
+            {
+                if (SetProperty(ref _showClosedAccounts, value))
+                {
+                    _currentPage = 0;
+                    ApplyClosedFilter(reset: true);
+                }
+            }
         }
 
         public CustomerLedgerViewModel(int customerId)
@@ -44,12 +63,12 @@ namespace bank_demo.ViewModels.FeaturesPages
             SelectedDate = DateTime.Today;
 
             RefreshLedgerCommand = new Command(async () => await LoadLedgerAsync());
+            LoadMoreCommand = new Command(() => ApplyClosedFilter(reset: false));
 
-            // auto-load on start
             _ = LoadLedgerAsync();
         }
 
-        private static readonly HttpClient _httpClient = new(); // reuse
+        private static readonly HttpClient _httpClient = new();
 
         private async Task LoadLedgerAsync()
         {
@@ -60,23 +79,25 @@ namespace bank_demo.ViewModels.FeaturesPages
             {
                 IsLoading = true;
                 IsVisible = false;
+
                 string dateParam = SelectedDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                 string url = $"{BaseURL.Url()}api/customerledger/account-ledger" +
                              $"?customerId={_customerId}" +
-                             $"&transactionDate={dateParam}" +
-                             $"&isClosed=true";
+                             $"&transactionDate={dateParam}";
 
                 var result = await _httpClient.GetFromJsonAsync<List<CustomerAccountLedgerModel>>(url);
 
                 if (result == null || result.Count == 0)
                 {
-                    await Shell.Current.DisplayAlert("Info", "No ledger records found.", "OK");
                     LedgerData.Clear();
+                    OnPropertyChanged(nameof(LedgerData));
+                    await Shell.Current.DisplayAlert("Info", "No ledger records found.", "OK");
                     return;
                 }
 
-                LedgerData = new ObservableCollection<CustomerAccountLedgerModel>(result);
-                OnPropertyChanged(nameof(LedgerData));
+                _allLedgerData = result;
+                _currentPage = 0;
+                ApplyClosedFilter(reset: true);
             }
             catch (Exception ex)
             {
@@ -90,6 +111,28 @@ namespace bank_demo.ViewModels.FeaturesPages
             }
         }
 
+        private void ApplyClosedFilter(bool reset)
+        {
+            if (reset)
+            {
+                LedgerData.Clear();
+                _currentPage = 0;
+            }
+
+            var filtered = ShowClosedAccounts
+                ? _allLedgerData
+                : _allLedgerData.Where(x => !x.Closed);
+
+            var nextPage = filtered
+                .Skip(_currentPage * _pageSize)
+                .Take(_pageSize)
+                .ToList();
+
+            foreach (var item in nextPage)
+                LedgerData.Add(item);
+
+            _currentPage++;
+            OnPropertyChanged(nameof(LedgerData));
+        }
     }
 }
-
