@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using bank_demo.Services.API;
-using Microsoft.Maui.Controls;
-
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
@@ -47,7 +46,13 @@ namespace bank_demo.ViewModels.FeaturesPages
         public string IFSC
         {
             get => _ifsc;
-            set { _ifsc = value; OnPropertyChanged(); }
+            set
+            {
+                _ifsc = value; OnPropertyChanged();
+                if (!string.IsNullOrWhiteSpace(_ifsc) && _ifsc.Length == 11)
+                    _ = FetchBankDetailsByIFSC();
+
+            }
         }
 
         private string _mobileNo;
@@ -78,12 +83,77 @@ namespace bank_demo.ViewModels.FeaturesPages
             set { _branchName = value; OnPropertyChanged(); }
         }
 
+        private string _address;
+        public string Address
+        {
+            get => _address;
+            set { _address = value; OnPropertyChanged(); }
+        }
+
+        private string _city;
+        public string City
+        {
+            get => _city;
+            set { _city = value; OnPropertyChanged(); }
+        }
+
+        private string _district;
+        public string District
+        {
+            get => _district;
+            set { _district = value; OnPropertyChanged(); }
+        }
+
+        private string _state;
+        public string State
+        {
+            get => _state;
+            set { _state = value; OnPropertyChanged(); }
+        }
+
+
         public ICommand AddCommand { get; }
 
         public AddBeneficiaryViewModel(int customerId)
         {
             CustomerId = customerId;
             AddCommand = new Command(async () => await AddAsync());
+        }
+
+
+        private async Task FetchBankDetailsByIFSC()
+        {
+            try
+            {
+                using var client = new HttpClient();
+                var url = $"https://ifsc.razorpay.com/{IFSC.Trim().ToUpper()}";
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var bankData = JsonSerializer.Deserialize<IFSCBankInfo>(json);
+
+                    if (bankData != null)
+                    {
+                        BankName = bankData.BANK;
+                        BranchName = bankData.BRANCH;
+                        Address = bankData.ADDRESS;
+                        City = bankData.CITY;
+                        District = bankData.DISTRICT;
+                        State = bankData.STATE;
+                    }
+                }
+                else
+                {
+                    BankName = BranchName = Address = City = District = State = string.Empty;
+                    await Shell.Current.DisplayAlert("Info", "Bank details not found for this IFSC.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Failed to fetch IFSC details: {ex.Message}", "OK");
+            }
         }
 
         private async Task AddAsync()
@@ -97,16 +167,16 @@ namespace bank_demo.ViewModels.FeaturesPages
 
             var beneficiary = new
             {
-                CustomerId = CustomerId,
-                BeneficiaryName = BeneficiaryName,
-                BeneficiaryNickName = BeneficiaryNickName,
-                AccountNumber = AccountNumber,
-                ConfirmAccountNumber = ConfirmAccountNumber,
-                IFSC = IFSC,
-                MobileNo = MobileNo,
-                Email = Email,
-                BankName = BankName,
-                BranchName = BranchName
+                CustomerId,
+                BeneficiaryName,
+                BeneficiaryNickName,
+                AccountNumber,
+                ConfirmAccountNumber,
+                IFSC,
+                MobileNo,
+                Email,
+                BankName,
+                BranchName
             };
 
 
@@ -114,7 +184,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             {
                 string baseurl = BaseURL.Url();
                 using var client = new HttpClient();
-                client.BaseAddress = new Uri(baseurl); // ⛳️ Replace with actual API base URL
+                client.BaseAddress = new Uri(baseurl); // ⛳ Replace with actual API base URL
 
                 var json = JsonSerializer.Serialize(beneficiary);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -138,7 +208,11 @@ namespace bank_demo.ViewModels.FeaturesPages
             }
         }
 
+
+
         private void OnPropertyChanged([CallerMemberName] string propName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+
     }
 }

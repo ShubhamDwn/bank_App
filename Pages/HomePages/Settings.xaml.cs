@@ -14,7 +14,7 @@ public partial class Settings : ContentPage
         set
         {
             _customerId = value;
-            Application.Current.MainPage.DisplayAlert("Debug", $"Received CustomerId: {_customerId}", "OK");
+            //Application.Current.MainPage.DisplayAlert("Debug", $"Received CustomerId: {_customerId}", "OK");
         }
     }
     public Settings()
@@ -58,6 +58,8 @@ public partial class Settings : ContentPage
             if (result != null && result.Success)
             {
                 await DisplayAlert("Success", result.Message, "OK");
+                await AppShell.RecheckDeviceAsync();
+
             }
             else
             {

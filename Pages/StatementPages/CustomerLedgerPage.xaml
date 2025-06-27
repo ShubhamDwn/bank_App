@@ -30,7 +30,7 @@
             <StackLayout>
 
                 <!-- 🔹 Header Row -->
-                <Grid ColumnSpacing="1" BackgroundColor="LightGray" Padding="2">
+                <Grid ColumnSpacing="1" BackgroundColor="LightGray" Padding="2" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="120"/>
@@ -52,43 +52,44 @@
 
                 <!-- 🔹 CollectionView (Vertical Scroll) -->
                 <CollectionView ItemsSource="{Binding LedgerData}"
-                                IsVisible="{Binding IsVisible}"
-                                ItemsLayout="VerticalList"
-                                Margin="0"
-                                SelectionMode="None"
-                                HeightRequest="500">
+                IsVisible="{Binding IsVisible}"
+                ItemsLayout="VerticalList"
+                Margin="0"
+                SelectionMode="None"
+                HeightRequest="600">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Padding="4">
-                                <Grid.Triggers>
-                                    <DataTrigger TargetType="Grid"
-                                                 Binding="{Binding Closed}"
-                                                 Value="true">
-                                        <Setter Property="BackgroundColor" Value="#FFEBEB" />
-                                    </DataTrigger>
-                                </Grid.Triggers>
+                            <Border Stroke="Gray" StrokeThickness="0.5" Padding="0" Margin="0">
+                                <Grid Padding="4" BackgroundColor="White">
+                                    <Grid.Triggers>
+                                        <DataTrigger TargetType="Grid" Binding="{Binding Closed}" Value="true">
+                                            <Setter Property="BackgroundColor" Value="#FFEBEB" />
+                                        </DataTrigger>
+                                    </Grid.Triggers>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="120"/>
-                                </Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <Label Text="{Binding AccountNumber}" Grid.Column="0" FontSize="13"/>
-                                <Label Text="{Binding SubSchemeName}" Grid.Column="1" FontSize="13"/>
-                                <Label Text="{Binding Balance, StringFormat='₹{0:F2}'}" Grid.Column="2" FontSize="13"/>
-                                <Label Text="{Binding OpeningDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="3" FontSize="13"/>
-                                <Label Text="{Binding ExpiryDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="4" FontSize="13"/>
-                                <Label Text="{Binding IAmount}" Grid.Column="5" FontSize="13"/>
-                                <Label Text="{Binding MaturityAmount}" Grid.Column="6" FontSize="13"/>
-                            </Grid>
+                                    <Label Text="{Binding AccountNumber}" Grid.Column="0" FontSize="13" VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding SubSchemeName}" Grid.Column="1" FontSize="13" VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding Balance, StringFormat='₹{0:F2}'}" Grid.Column="2" FontSize="13" VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding OpeningDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="3" FontSize="13" VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding ExpiryDate, StringFormat='{0:dd/MM/yyyy}'}" Grid.Column="4" FontSize="13" VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding IAmount}" Grid.Column="5" FontSize="13" VerticalTextAlignment="Center"/>
+                                    <Label Text="{Binding MaturityAmount}" Grid.Column="6" FontSize="13" VerticalTextAlignment="Center"/>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
 
             </StackLayout>
 

@@ -10,65 +10,83 @@
         <VerticalStackLayout Spacing="15">
 
             <!-- Beneficiary Full Name -->
-            <Entry 
-                Placeholder="Full Name" 
-                Keyboard="Text"
-                Text="{Binding BeneficiaryName}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Full Name" FontAttributes="Bold" FontSize="15" />
+                <Entry Placeholder="Full Name" Keyboard="Text" Text="{Binding BeneficiaryName}" />
+            </VerticalStackLayout>
 
             <!-- Nickname -->
-            <Entry 
-                Placeholder="Nickname (Optional)" 
-                Keyboard="Text"
-                Text="{Binding BeneficiaryNickName}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Nickname (Optional)" FontAttributes="Bold" FontSize="15" />
+                <Entry Placeholder="Nickname (Optional)" Keyboard="Text" Text="{Binding BeneficiaryNickName}" />
+            </VerticalStackLayout>
 
-            <!-- Beneficiary Account Number -->
-            <Entry 
-                Placeholder="Beneficiary Account Number" 
-                Keyboard="Numeric"
-                Text="{Binding AccountNumber}" />
+            <!-- Account Number -->
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Account Number" FontAttributes="Bold" FontSize="15" />
+                <Entry Placeholder="Beneficiary Account Number" Keyboard="Numeric" Text="{Binding AccountNumber}" />
+            </VerticalStackLayout>
 
             <!-- Confirm Account Number -->
-            <Entry 
-                Placeholder="Confirm Account Number"
-                Keyboard="Numeric"
-                Text="{Binding ConfirmAccountNumber}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Confirm Account Number" FontAttributes="Bold" FontSize="15" />
+                <Entry Placeholder="Confirm Account Number" Keyboard="Numeric" Text="{Binding ConfirmAccountNumber}" />
+            </VerticalStackLayout>
 
             <!-- IFSC Code -->
-            <Entry 
-                Placeholder="IFSC Code" 
-                Keyboard="Text"
-                Text="{Binding IFSC}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="IFSC Code" FontAttributes="Bold" FontSize="15" />
+                <Entry Placeholder="IFSC Code" Keyboard="Text" Text="{Binding IFSC}" />
+            </VerticalStackLayout>
 
             <!-- Mobile Number -->
-            <Entry 
-                Placeholder="Mobile Number" 
-                Keyboard="Telephone"
-                Text="{Binding MobileNo}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Mobile Number" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="Mobile Number" Keyboard="Telephone" Text="{Binding MobileNo}" />
+            </VerticalStackLayout>
 
             <!-- Email -->
-            <Entry 
-                Placeholder="Email" 
-                Keyboard="Email"
-                Text="{Binding Email}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Email" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="Email" Keyboard="Email" Text="{Binding Email}" />
+            </VerticalStackLayout>
 
-            <!-- Bank Name -->
-            <Entry 
-                Placeholder="Bank Name" 
-                Keyboard="Text"
-                Text="{Binding BankName}" />
+            <!-- Auto-filled from IFSC -->
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Bank Name" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="Bank Name" Text="{Binding BankName}" IsReadOnly="True" />
+            </VerticalStackLayout>
 
-            <!-- Branch Name -->
-            <Entry 
-                Placeholder="Branch Name" 
-                Keyboard="Text"
-                Text="{Binding BranchName}" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Branch Name" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="Branch Name" Text="{Binding BranchName}" IsReadOnly="True" />
+            </VerticalStackLayout>
 
-            <!-- Add Beneficiary Button -->
-            <Button 
-                Text="Add Beneficiary"
-                Command="{Binding AddCommand}"
-                HorizontalOptions="Center" />
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Address" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="Address" Text="{Binding Address}" IsReadOnly="True" />
+            </VerticalStackLayout>
 
+            <VerticalStackLayout Spacing="2">
+                <Label Text="City " FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="District" Text="{Binding District}" IsReadOnly="True" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="District" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="City" Text="{Binding City}" IsReadOnly="True" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="State" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="State" Text="{Binding State}" IsReadOnly="True" />
+            </VerticalStackLayout>
+
+            <!-- Add Button -->
+            <Button Text="Add Beneficiary"
+                    Command="{Binding AddCommand}"
+                    HorizontalOptions="Center"
+                    Margin="0,10,0,0" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

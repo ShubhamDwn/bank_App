@@ -21,7 +21,7 @@
                 CornerRadius="10"/>
         
         <Button Text="Logout from All Devices"
-            Command="{Binding LogoutAllDevicesCommand}"
+            Clicked="OnLogoutAllDevicesClicked"
             BackgroundColor="Red"
             TextColor="White"
             Margin="20"

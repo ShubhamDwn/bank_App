@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="bank_demo.Pages.BeneficiaryPages.BeneficiaryDetailPage"
@@ -6,28 +7,58 @@
     <Grid RowDefinitions="*,Auto" Padding="10">
 
         <!-- Beneficiary Details -->
-        <CollectionView Grid.Row="0" ItemsSource="{Binding Beneficiaries}" SelectedItem="{Binding SelectedBeneficiary}"
-                SelectionMode="Single">
+        <CollectionView Grid.Row="0"
+                        ItemsSource="{Binding Beneficiaries}"
+                        SelectedItem="{Binding SelectedBeneficiary}"
+                        >
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <VerticalStackLayout Spacing="10" Padding="20">
-                        <Label Text="{Binding BeneficiaryName}" FontSize="25" Padding="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                    <Border Margin="5" Padding="15" StrokeShape="RoundRectangle 15" >
+                        <VerticalStackLayout Spacing="6">
 
-                        <Label Text="Account Number:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding AccountNumber}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                            <Label Text="{Binding BeneficiaryName}" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" />
 
-                        <Label Text="Bank:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding BankName}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                            <Label Text="Nickname:" FontAttributes="Bold" />
+                            <Label Text="{Binding BeneficiaryNickName}" />
 
-                        <Label Text="Branch:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding BranchName}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                            <Label Text="Account Number:" FontAttributes="Bold" />
+                            <Label Text="{Binding AccountNumber}" />
 
-                        <Label Text="IFSC Code:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding IFSCCode}" FontSize="25" Padding="5" FontAttributes="Bold"/>
+                            <Label Text="IFSC Code:" FontAttributes="Bold" />
+                            <Label Text="{Binding IFSC}" />
 
-                        <Label Text="Nickname:" FontSize="15" FontAttributes="Bold" />
-                        <Label Text="{Binding BeneficiaryNickname}" FontSize="25" Padding="5" FontAttributes="Bold"/>
-                    </VerticalStackLayout>
+                            <Label Text="Bank Name:" FontAttributes="Bold" />
+                            <Label Text="{Binding BankName}" />
+
+                            <Label Text="Branch Name:" FontAttributes="Bold" />
+                            <Label Text="{Binding BranchName}" />
+
+                            <!--<Label Text="Address:" FontAttributes="Bold" />
+                            <Label Text="{Binding Address}" />
+
+                            <Label Text="City:" FontAttributes="Bold" />
+                            <Label Text="{Binding City}" />
+
+                            <Label Text="District:" FontAttributes="Bold" />
+                            <Label Text="{Binding District}" />
+
+                            <Label Text="State:" FontAttributes="Bold" />
+                            <Label Text="{Binding State}" />-->
+
+                            <Label Text="Mobile No:" FontAttributes="Bold" />
+                            <Label Text="{Binding MobileNo}" />
+
+                            <Label Text="Email:" FontAttributes="Bold" />
+                            <Label Text="{Binding Email }" />
+
+                            <Label Text="Is Registered:" FontAttributes="Bold" />
+                            <Label Text="{Binding IsRegister}" />
+
+                            <Label Text="Status:" FontAttributes="Bold" />
+                            <Label Text="{Binding Status}" />
+
+                        </VerticalStackLayout>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
@@ -35,7 +66,7 @@
         <!-- Buttons at the bottom -->
         <HorizontalStackLayout Grid.Row="1" Spacing="15" Padding="10" HorizontalOptions="Center">
             <Button Text="Delete"
-                    BackgroundColor="DarkRed"
+                    BackgroundColor="Red"
                     TextColor="White"
                     FontAttributes="Bold"
                     WidthRequest="150"
@@ -43,7 +74,7 @@
                     CornerRadius="10"
                     Command="{Binding DeleteCommand}"/>
             <Button Text="Payment"
-                    BackgroundColor="DarkGreen"
+                    BackgroundColor="Green"
                     TextColor="White"
                     FontAttributes="Bold"
                     WidthRequest="150"
