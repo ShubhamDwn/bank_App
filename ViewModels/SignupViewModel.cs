@@ -1,41 +1,35 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Net;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using bank_demo.Services;
 using bank_demo.Services.API;
 using Microsoft.Maui.Controls;
-
-
+using Microsoft.Maui.Storage;
 
 namespace bank_demo.ViewModels
 {
     public class SignupViewModel : BaseViewModel
     {
-        private string _aadhaar;
-        public string Aadhaar
+        private string _customerId;
+        public string CustomerId
         {
-            get => _aadhaar;
-            set => SetProperty(ref _aadhaar, value);
+            get => _customerId;
+            set => SetProperty(ref _customerId, value);
         }
 
-        private string _username;
-        public string Username
+        private string _pin;
+        public string Pin
         {
-            get => _username;
-            set => SetProperty(ref _username, value);
+            get => _pin;
+            set => SetProperty(ref _pin, value);
         }
 
-        private string _password;
-        public string Password
+        private string _confirmPin;
+        public string ConfirmPin
         {
-            get => _password;
-            set => SetProperty(ref _password, value);
-        }
-
-        private string _confirmPassword;
-        public string ConfirmPassword
-        {
-            get => _confirmPassword;
-            set => SetProperty(ref _confirmPassword, value);
+            get => _confirmPin;
+            set => SetProperty(ref _confirmPin, value);
         }
 
         public ICommand SignupCommand { get; }
@@ -43,52 +37,50 @@ namespace bank_demo.ViewModels
 
         public SignupViewModel()
         {
-            SignupCommand = new Command(async () => await ExecuteSignup());
+            SignupCommand = new Command(async () => await ExecuteSignup(false));
             _otpService = new OtpService();
         }
 
-        private async Task ExecuteSignup()
+        private async Task ExecuteSignup(bool forceOverride)
         {
-            // 1. Validate fields
-            if (string.IsNullOrWhiteSpace(Aadhaar) || string.IsNullOrWhiteSpace(Username) ||
-                string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(ConfirmPassword))
+            if (string.IsNullOrWhiteSpace(CustomerId) || string.IsNullOrWhiteSpace(Pin))
             {
-                await Shell.Current.DisplayAlert("Error", "All fields are required.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Customer ID and 4-digit PIN are required.", "OK");
                 return;
             }
 
-            if (!Regex.IsMatch(Aadhaar, @"^\d{12}$"))
+            if (!Regex.IsMatch(Pin, @"^\d{4}$"))
             {
-                await Shell.Current.DisplayAlert("Error", "Enter a valid 12-digit Aadhaar number.", "OK");
+                await Shell.Current.DisplayAlert("Error", "PIN must be a 4-digit number.", "OK");
                 return;
             }
 
-            if (Password != ConfirmPassword)
+            if (Pin != ConfirmPin)
             {
-                await Shell.Current.DisplayAlert("Error", "Passwords do not match.", "OK");
+                await Shell.Current.DisplayAlert("Error", "PINs do not match.", "OK");
                 return;
             }
 
-            if (Password.Length < 8)
-            {
-                await Shell.Current.DisplayAlert("Error", "Password must be at least 8 characters long.", "OK");
-                return;
-            }
-
-            // 2. OTP verification
             bool otpVerified = await _otpService.SendAndVerifyOtpAsync("registered-mobile-number");
             if (!otpVerified)
                 return;
 
-            // 3. Send signup request
-            var signupRequest = new
+            string deviceId = Preferences.Get("DeviceId", string.Empty);
+            if (string.IsNullOrEmpty(deviceId))
             {
-                Aadhaar = this.Aadhaar,
-                Username = this.Username,
-                Password = this.Password
+                deviceId = Guid.NewGuid().ToString();
+                Preferences.Set("DeviceId", deviceId);
+            }
+
+            var signupRequest = new SignupRequest
+            {
+                CustomerId = this.CustomerId,
+                Pin = this.Pin,
+                DeviceId = deviceId,
+                ForceOverride = forceOverride
             };
 
-            var json = System.Text.Json.JsonSerializer.Serialize(signupRequest);
+            var json = JsonSerializer.Serialize(signupRequest);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
             var httpClient = new HttpClient();
@@ -98,48 +90,65 @@ namespace bank_demo.ViewModels
                 var response = await httpClient.PostAsync($"{BaseURL.Url()}api/auth/signup", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                // Try to parse server JSON response even if it's a 400/500
-                SignupResponse signupResponse = null;
+                SignupResponse? signupResponse = null;
 
-                try
+                if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    signupResponse = System.Text.Json.JsonSerializer.Deserialize<SignupResponse>(responseContent,
-                        new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    // Try to parse known failure response
+                    try
+                    {
+                        signupResponse = JsonSerializer.Deserialize<SignupResponse>(responseContent,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (signupResponse?.Message?.Contains("another device", StringComparison.OrdinalIgnoreCase) == true && !forceOverride)
+                        {
+                            bool confirm = await Shell.Current.DisplayAlert("Device Conflict",
+                                "Account is already registered on another device.\nDo you want to log out the previous device and register this one?",
+                                "Yes", "Cancel");
+
+                            if (confirm)
+                            {
+                                await ExecuteSignup(true); // Retry with override
+                                return;
+                            }
+                        }
+
+                        await Shell.Current.DisplayAlert("Signup Failed", signupResponse?.Message ?? "Signup failed.", "OK");
+                        return;
+                    }
+                    catch
+                    {
+                        await Shell.Current.DisplayAlert("Signup Failed", $"Server said:\n{responseContent}", "OK");
+                        return;
+                    }
                 }
-                catch
+
+                if (!response.IsSuccessStatusCode)
                 {
-                    // Optional fallback: show raw response
-                    await Shell.Current.DisplayAlert("Server Error", $"Unexpected response: {responseContent}", "OK");
+                    await Shell.Current.DisplayAlert("Error", $"Unexpected error: {response.StatusCode}", "OK");
                     return;
                 }
 
-                if (signupResponse != null)
+                // Success
+                signupResponse = JsonSerializer.Deserialize<SignupResponse>(responseContent,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (signupResponse?.Success == true)
                 {
-                    if (signupResponse.Success)
-                    {
-                        await Shell.Current.DisplayAlert("Success", signupResponse.Message, "OK");
-                        await Shell.Current.GoToAsync("///LoginPage");
-                    }
-                    else
-                    {
-                        await Shell.Current.DisplayAlert("Signup Failed", signupResponse.Message, "OK");
-                    }
+                    await Shell.Current.DisplayAlert("Success", signupResponse.Message, "OK");
+                    await AppShell.RecheckDeviceAsync();
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Error", "Something went wrong. Please try again.", "OK");
+                    await Shell.Current.DisplayAlert("Signup Failed", signupResponse?.Message ?? "Unknown failure.", "OK");
                 }
-            }
-            catch (HttpRequestException httpEx)
-            {
-                await Shell.Current.DisplayAlert("Network Error", $"Server unreachable: {httpEx.Message}", "OK");
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Unexpected Error", $"Error: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Unexpected exception: {ex.Message}", "OK");
             }
-
-
         }
     }
+
+  
 }

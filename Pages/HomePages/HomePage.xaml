@@ -6,7 +6,8 @@
              xmlns:models="clr-namespace:bank_demo.Services.API"
              x:Class="bank_demo.Pages.HomePages.HomePage"
              x:DataType="vm:HomeViewModel"
-             Background="White">
+             Background="White"
+            >
 
   <Grid>
         <!-- Overlay -->
@@ -58,22 +59,34 @@
         <!-- Main Grid -->
         <Grid RowDefinitions="Auto,*,Auto" ZIndex="0">
 
-            <!-- Header -->
-            <Grid ColumnDefinitions="*,Auto" Padding="10">
-                <Label Text="Welcome"
-                       TextColor="Black"
-                       FontSize="24"
-                       FontAttributes="Bold"
-                       VerticalOptions="Center" />
-                <Button x:Name="HamburgerButton"
-                        Text="☰"
-                        FontSize="24"
-                        BackgroundColor="Transparent"
-                        TextColor="Black"
-                        Clicked="OnHamburgerClicked"
-                        VerticalOptions="Center"
-                        HorizontalOptions="End" />
+     <!-- Custom Title Bar -->
+            <Grid RowDefinitions="Auto,*,Auto" ZIndex="0">
+
+                <!-- Header -->
+                <Grid ColumnDefinitions="Auto,*" Padding="10">
+                    <!-- Hamburger Icon in Column 0 -->
+                    <Button x:Name="HamburgerButton"
+                Text="☰"
+                FontSize="24"
+                BackgroundColor="Transparent"
+                TextColor="Black"
+                Clicked="OnHamburgerClicked"
+                VerticalOptions="Center"
+                HorizontalOptions="Start"
+                Grid.Column="0" />
+
+                    <!-- Welcome Text in Column 1 -->
+                    <Label Text="Welcome"
+               TextColor="Black"
+               FontSize="24"
+               FontAttributes="Bold"
+               VerticalOptions="Center"
+               HorizontalOptions="Start"
+               Grid.Column="1" />
+                </Grid>
+
             </Grid>
+
 
             <!-- Content -->
             <ScrollView Grid.Row="1" Padding="10,20">

@@ -19,5 +19,14 @@
         <Button Text="Logout" Clicked="OnLogoutClicked"
                 BackgroundColor="#ff7043" TextColor="White"
                 CornerRadius="10"/>
+        
+        <Button Text="Logout from All Devices"
+            Command="{Binding LogoutAllDevicesCommand}"
+            BackgroundColor="Red"
+            TextColor="White"
+            Margin="20"
+            CornerRadius="10"
+            HeightRequest="50"/>
+
     </VerticalStackLayout>
 </ContentPage>

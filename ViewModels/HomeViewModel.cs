@@ -131,7 +131,7 @@ namespace bank_demo.ViewModels
 
             SettingsCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync("Settings");
+                await Shell.Current.GoToAsync($"Settings?CustomerId={customerId}");
             });
 
             QRCommand = new Command(async () =>

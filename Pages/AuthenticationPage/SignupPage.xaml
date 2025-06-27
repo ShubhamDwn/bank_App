@@ -9,19 +9,32 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label Text="Customer ID" />
-            <Entry Text="{Binding CustomerId}" Keyboard="Numeric" MaxLength="12"/>
+            <Label Text="Customer ID" FontAttributes="Bold" />
+            <Entry Text="{Binding CustomerId}" 
+                   Keyboard="Numeric" 
+                   MaxLength="10"
+                   Placeholder="Enter Customer ID" />
 
-            <Label Text="Username" />
-            <Entry Text="{Binding Username}" />
+            <Label Text="4-Digit PIN" FontAttributes="Bold" />
+            <Entry Text="{Binding Pin}" 
+                   Keyboard="Numeric" 
+                   MaxLength="4"
+                   IsPassword="True"
+                   Placeholder="Enter 4-digit PIN" />
 
-            <Label Text="Password" />
-            <Entry Text="{Binding Password}" IsPassword="True" />
+            <Label Text="Confirm PIN" FontAttributes="Bold" />
+            <Entry Text="{Binding ConfirmPin}" 
+                   Keyboard="Numeric" 
+                   MaxLength="4"
+                   IsPassword="True"
+                   Placeholder="Re-enter PIN to confirm" />
 
-            <Label Text="Confirm Password" />
-            <Entry Text="{Binding ConfirmPassword}" IsPassword="True" />
-
-            <Button Text="Signup" Command="{Binding SignupCommand}" />
+            <Button Text="Signup"
+                    Command="{Binding SignupCommand}"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="45" />
 
         </VerticalStackLayout>
     </ScrollView>

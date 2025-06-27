@@ -7,35 +7,27 @@
              BackgroundColor="White"
              Shell.NavBarIsVisible="False">
 
-    <ContentPage.BindingContext>
-        <viewModels:LoginViewModel />
-    </ContentPage.BindingContext>
 
-    <VerticalStackLayout Padding="30" Spacing="20"
+
+    <VerticalStackLayout Padding="30" Spacing="25"
                          VerticalOptions="Center">
 
         <!-- App Logo -->
         <Image Source="bank_logo.png"
-               HeightRequest="200" WidthRequest="200"
-               HorizontalOptions="Center"/>
+               HeightRequest="150"
+               HorizontalOptions="Center" />
 
-        <!-- Username Field -->
-        <Border Stroke="Gray" StrokeThickness="2" 
-                HeightRequest="50" WidthRequest="300" Padding="5">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10"/>
-            </Border.StrokeShape>
-            <HorizontalStackLayout Spacing="10">
-                <Image Source="user_icon.png" HeightRequest="24" WidthRequest="24"/>
-                <Entry Placeholder="Enter Username"
-                       Text="{Binding Username}" TextColor="Black"
-                       WidthRequest="250" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
-        </Border>
+        <!-- Greeting with Customer Name -->
+        <Label Text="{Binding CustomerName, StringFormat='Hi, {0}'}"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="Black"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center" />
 
-        <!-- Password Field -->
+        <!-- PIN Field -->
         <Border Stroke="Gray" StrokeThickness="2" BackgroundColor="White"
-        HeightRequest="50" WidthRequest="300" Padding="5">
+                HeightRequest="50" WidthRequest="300" Padding="5">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10"/>
             </Border.StrokeShape>
@@ -49,26 +41,26 @@
 
                 <!-- Lock Icon -->
                 <Image Source="lock_icon.png"
-               HeightRequest="24" WidthRequest="24"
-               Margin="5,0" />
+                       HeightRequest="24" WidthRequest="24"
+                       Margin="5,0" />
 
-                <!-- Password Entry -->
-                <Entry x:Name="PasswordEntry"
-                    Grid.Column="1"
-                   Placeholder="Enter Password"
-                   Text="{Binding Password}"
-                   IsPassword="True"
-                   TextColor="Black"
-                   VerticalOptions="Center"/>
+                <!-- PIN Entry -->
+                <Entry x:Name="PinEntry"
+                       Grid.Column="1"
+                       Placeholder="Enter 4-digit PIN"
+                       Text="{Binding Pin}"
+                       IsPassword="True"
+                       Keyboard="Numeric"
+                       MaxLength="4"
+                       VerticalOptions="Center"
+                       TextColor="Black" />
 
-
-                <!-- Eye Toggle Button -->
+                <!-- Eye Toggle -->
                 <Image x:Name="PasswordToggleButton"
                        Grid.Column="2"
                        Source="eye_icon.png"
                        WidthRequest="30"
                        HeightRequest="30"
-                       Aspect="AspectFill"
                        Margin="0,0,5,0"
                        HorizontalOptions="Center"
                        VerticalOptions="Center">
@@ -76,31 +68,8 @@
                         <TapGestureRecognizer Tapped="OnPasswordToggleClicked"/>
                     </Image.GestureRecognizers>
                 </Image>
-
             </Grid>
         </Border>
-
-
-        <!-- Remember Me & Forgot Password -->
-        <HorizontalStackLayout WidthRequest="300" HorizontalOptions="FillAndExpand" Spacing="10">
-            <!-- Remember Me -->
-            <HorizontalStackLayout Spacing="2">
-                <CheckBox IsChecked="{Binding IsRememberMe}" Color="black" />
-                <Label Text="Remember Me" VerticalOptions="Center" TextColor="Black"/>
-            </HorizontalStackLayout>
-
-            <!-- Forgot Password -->
-            <Label Text="Forgot Password?"
-                   TextColor="Blue"
-                   VerticalOptions="Center"
-                   HorizontalOptions="EndAndExpand">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
-        </HorizontalStackLayout>
-        
-        
 
         <!-- Login Button -->
         <Button Text="Login"
@@ -109,17 +78,16 @@
                 TextColor="White"
                 WidthRequest="300"
                 HeightRequest="50"
-                CornerRadius="10"/>
+                CornerRadius="10" />
 
-        <!-- Sign Up -->
+        <!-- Optional Sign Up Redirect -->
         <HorizontalStackLayout HorizontalOptions="Center">
             <Label Text="Don't have an account? " VerticalOptions="Center" TextColor="Black"/>
-            <Label Text=" Sign Up" TextColor="Blue" VerticalOptions="Center">
+            <Label Text="Sign Up" TextColor="Blue" VerticalOptions="Center">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding SignUpCommand}" />
                 </Label.GestureRecognizers>
             </Label>
         </HorizontalStackLayout>
-
     </VerticalStackLayout>
 </ContentPage>
