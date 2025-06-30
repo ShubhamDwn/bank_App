@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace bank_demo.Services
 {
-    class SecurityHelper
+    /*class SecurityHelper
     {
         public static string HashPassword(string password)
         {
@@ -19,5 +19,5 @@ namespace bank_demo.Services
                 return builder.ToString();
             }
         }
-    }
+    }*/
 }
