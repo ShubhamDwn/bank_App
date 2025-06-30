@@ -111,6 +111,18 @@ namespace bank_demo.ViewModels
         public ICommand PaymentsCommand { get; }
         public ICommand FundTransferCommand { get; }
 
+
+        public ICommand ProfileCommand { get; }
+        public ICommand TransactionHistoryCommand { get; }
+        public ICommand BeneficiaryStatusCommand { get; }
+        public ICommand ContactSupportCommand { get; }
+        public ICommand SecuritySettingsCommand { get; }
+        public ICommand TermsCommand { get; }
+        public ICommand LogoutCommand { get; }
+
+
+
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public HomeViewModel(int customerId)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -118,7 +130,7 @@ namespace bank_demo.ViewModels
             LoadCustomerData(customerId);
 
 
-
+            //bottom Navigation commands
             AboutCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync("About");
@@ -134,6 +146,8 @@ namespace bank_demo.ViewModels
                 await Shell.Current.GoToAsync($"Settings?CustomerId={customerId}");
             });
 
+
+            // Commands for main page
             QRCommand = new Command(async () =>
             {
                 await Shell.Current.GoToAsync(nameof(MyQRCodePage));
@@ -148,10 +162,9 @@ namespace bank_demo.ViewModels
             {
                 await Shell.Current.GoToAsync($"StatementPage?CustomerId={customerId}");
             });
+
             CustomerLedgerCommand = new Command(async () =>
             {
-
-                //await Shell.Current.GoToAsync($"{nameof(CustomerLedgerPage)}?CustomerId={customerId}");
                 await Shell.Current.GoToAsync($"CustomerLedgerPage?CustomerId={customerId}");
             });
             
@@ -162,8 +175,6 @@ namespace bank_demo.ViewModels
 
             AddBeneficiaryCommand = new Command(async () =>
             {
-                // Pass the account number as a query parameter
-
                 await Shell.Current.GoToAsync($"BeneficiaryStatusPage?CustomerId={customerId}");
             });
 
@@ -174,8 +185,39 @@ namespace bank_demo.ViewModels
 
             FundTransferCommand = new Command(async () =>
             {
-                // Pass the account number as a query parameter
                 await Shell.Current.GoToAsync($"FundTransferPage?account_number={customerId}");
+            });
+
+
+            // Commands for the menu drawer
+            ProfileCommand = new Command(async () =>
+            {
+                await Shell.Current.GoToAsync(nameof(ProfilePage));
+            });
+
+            TransactionHistoryCommand = new Command(async () => { 
+                await Shell.Current.GoToAsync(nameof(HistoryPage)); 
+            });
+
+            BeneficiaryStatusCommand = new Command(async () => {
+                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?CustomerId={customerId}");
+            });
+
+            ContactSupportCommand = new Command(async () => { 
+                await Shell.Current.GoToAsync(nameof(ContactSupportPage)); 
+            });
+
+            //SecuritySettingsCommand = new Command(async () => { 
+            //    await Shell.Current.GoToAsync(nameof(SecuritySettingsPage)); 
+            //});
+
+            TermsCommand = new Command(async () => { 
+                await Shell.Current.GoToAsync(nameof(TermsPage)); 
+            });
+
+            LogoutCommand = new Command(async () => {
+                Preferences.Set("IsLoggedIn", false);
+                await AppShell.RecheckDeviceAsync();
             });
         }
 

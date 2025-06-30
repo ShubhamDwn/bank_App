@@ -14,10 +14,10 @@
                    FontAttributes="Bold" TextColor="Black" />
         </HorizontalStackLayout>
 
-        <HorizontalStackLayout Spacing="10">
+        <!--<HorizontalStackLayout Spacing="10">
             <Label Text="Show Closed Accounts" VerticalOptions="Center" />
             <Switch IsToggled="{Binding ShowClosedAccounts}" />
-        </HorizontalStackLayout>
+        </HorizontalStackLayout>-->
 
         <!-- 🔹 Loading -->
         <ActivityIndicator IsRunning="{Binding IsLoading}"
