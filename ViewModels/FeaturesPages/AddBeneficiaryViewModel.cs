@@ -114,9 +114,10 @@ namespace bank_demo.ViewModels.FeaturesPages
 
         public ICommand AddCommand { get; }
 
-        public AddBeneficiaryViewModel(int customerId)
+        public AddBeneficiaryViewModel()
         {
-            CustomerId = customerId;
+            int CustomerId = Preferences.Get("CustomerId", 0);
+            
             AddCommand = new Command(async () => await AddAsync());
         }
 

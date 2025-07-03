@@ -4,7 +4,7 @@
     
     public class SignupRequest
     {
-        public string CustomerId { get; set; }
+        public int Id { get; set; }
         public string Pin { get; set; }         // 4-digit PIN
         public string DeviceId { get; set; }    // GUID from device
         public bool ForceOverride { get; set; } = false;

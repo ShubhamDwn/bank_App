@@ -8,8 +8,12 @@
         // Base
         //public static string Url() => "http://203.194.100.15:103/";
 
+        //WarnaMahila
+        public static string Url() => "http://103.86.68.199:104/";
+
+
         // Mohare
-        public static string Url() => "http://203.194.100.111:91/";
+        //public static string Url() => "http://203.194.100.111:91/";
 
         // mumbai
         //public static string Url() => "http://43.241.126.205:91/";

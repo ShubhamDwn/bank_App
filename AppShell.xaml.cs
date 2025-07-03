@@ -82,7 +82,8 @@ public partial class AppShell : Shell
 
             if (result?.Success == true)
             {
-                await GoToAsync($"//LoginPage?CustomerId={result.CustomerId}");
+                Preferences.Set("CustomerId", result.Id);
+                await GoToAsync($"//LoginPage");
             }
             else
             {

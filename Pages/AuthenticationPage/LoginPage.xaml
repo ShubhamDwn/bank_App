@@ -18,12 +18,27 @@
                HorizontalOptions="Center" />
 
         <!-- Greeting with Customer Name -->
-        <Label Text="{Binding CustomerName, StringFormat='Hi, {0}'}"
-               FontSize="24"
-               FontAttributes="Bold"
-               TextColor="Black"
-               HorizontalOptions="Center"
-               HorizontalTextAlignment="Center" />
+        <VerticalStackLayout Spacing="2"
+                     Padding="10"
+                     HorizontalOptions="Center">
+            <Label Text="Hi,"
+           FontSize="24"
+           FontAttributes="Bold"
+           TextColor="Black"
+           HorizontalTextAlignment="Center" />
+
+            <Label Text="{Binding CustomerName, StringFormat='{0}'}"
+           FontSize="24"
+           FontAttributes="Bold"
+           TextColor="Black"
+           HorizontalTextAlignment="Center" />
+
+            <Label Text="{Binding CustomerId, StringFormat='Customer ID: {0}'}"
+           FontSize="15"
+           FontAttributes="Bold"
+           TextColor="Black"
+           HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
 
         <!-- PIN Field -->
         <Border Stroke="Gray" StrokeThickness="2" BackgroundColor="White"

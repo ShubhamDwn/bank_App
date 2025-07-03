@@ -5,28 +5,16 @@ using System.Threading.Tasks;
 
 namespace bank_demo.Pages.HomePages
 {
-        [QueryProperty(nameof(CustomerId), "CustomerId")]
         public partial class HomePage : ContentPage
         {
             private const uint DrawerAnimationDuration = 250;
             private const double DrawerWidth = 300;
 
-            private int _customerId;
-
-            public int CustomerId
-            {
-                get => _customerId;
-                set
-                {
-                    _customerId = value;
-                    BindingContext = new HomeViewModel(_customerId); // Now ViewModel gets the ID
-                }
-            }
 
         public HomePage()
         {
             InitializeComponent();
-
+            BindingContext = new HomeViewModel();
             MenuDrawer.TranslationX = -DrawerWidth;
             MenuDrawer.Opacity = 0;
             MenuDrawer.InputTransparent = true;
@@ -67,8 +55,11 @@ namespace bank_demo.Pages.HomePages
         {
             base.OnAppearing();
             if (BindingContext is HomeViewModel vm)
-                vm.StartCarousel();
+               // vm.StartCarousel();
+            vm.LoadCustomerDataCommand.Execute(null);
         }
+
+
 
         protected override void OnDisappearing()
         {
@@ -96,7 +87,7 @@ namespace bank_demo.Pages.HomePages
         private async void OnBenfeciaryClicked(object sender, EventArgs e)
         {
             // Access the instance's _customerId
-            int account_number = this._customerId;
+            int account_number = Preferences.Get("CustomerId", 0); ;
 
             // Navigate to the BeneficiaryStatusPage and pass the account_number
             await Shell.Current.GoToAsync($"BeneficiaryStatusPage?account_number={account_number}");

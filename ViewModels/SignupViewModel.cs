@@ -11,8 +11,8 @@ namespace bank_demo.ViewModels
 {
     public class SignupViewModel : BaseViewModel
     {
-        private string _customerId;
-        public string CustomerId
+        private int _customerId;
+        public int CustomerId
         {
             get => _customerId;
             set => SetProperty(ref _customerId, value);
@@ -33,17 +33,31 @@ namespace bank_demo.ViewModels
         }
 
         public ICommand SignupCommand { get; }
+        public ICommand LoginCommand { get; }
         private readonly OtpService _otpService;
 
         public SignupViewModel()
         {
+            //string CustId = MyEntry.text;
             SignupCommand = new Command(async () => await ExecuteSignup(false));
+            LoginCommand = new Command(async () => await ExecuteLoginCommand());
             _otpService = new OtpService();
+        }
+  
+
+
+        private async Task ExecuteLoginCommand()
+        {
+            // 🔹 Call AppShell method
+            await AppShell.RecheckDeviceAsync();
+
+            // 🔹 Optionally navigate or handle logic after
+            // await Shell.Current.GoToAsync("//LoginPage"); 
         }
 
         private async Task ExecuteSignup(bool forceOverride)
         {
-            if (string.IsNullOrWhiteSpace(CustomerId) || string.IsNullOrWhiteSpace(Pin))
+            if (CustomerId==null || string.IsNullOrWhiteSpace(Pin))
             {
                 await Shell.Current.DisplayAlert("Error", "Customer ID and 4-digit PIN are required.", "OK");
                 return;
@@ -74,7 +88,7 @@ namespace bank_demo.ViewModels
 
             var signupRequest = new SignupRequest
             {
-                CustomerId = this.CustomerId,
+                Id = this.CustomerId,
                 Pin = this.Pin,
                 DeviceId = deviceId,
                 ForceOverride = forceOverride
@@ -135,6 +149,10 @@ namespace bank_demo.ViewModels
 
                 if (signupResponse?.Success == true)
                 {
+                    //string enteredText = MyEntry.Text;
+
+                    // Store in Preferences
+                    //Preferences.Set("MyEntryText", enteredText);
                     await Shell.Current.DisplayAlert("Success", signupResponse.Message, "OK");
                     await AppShell.RecheckDeviceAsync();
                 }

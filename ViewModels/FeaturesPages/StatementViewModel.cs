@@ -133,9 +133,10 @@ namespace bank_demo.ViewModels.FeaturesPages
         public bool IsTimePeriodVisible => IsAccountSelected;
         public bool IsViewStatementVisible => IsAccountSelected && !string.IsNullOrEmpty(SelectedTimePeriod);
 
-        public StatementViewModel(int customerId)
+        public StatementViewModel()
         {
-            _customerId = customerId;
+            _customerId = Preferences.Get("CustomerId", 0); ;
+
 
             LoadStatementCommand = new Command(async () => await LoadStatementAsync());
             LoadAccountsCommand = new Command(async () => await LoadAccountsAsync());

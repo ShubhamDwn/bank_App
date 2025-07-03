@@ -119,15 +119,18 @@ namespace bank_demo.ViewModels
         public ICommand SecuritySettingsCommand { get; }
         public ICommand TermsCommand { get; }
         public ICommand LogoutCommand { get; }
+        public ICommand LoadCustomerDataCommand { get; }
 
 
 
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        public HomeViewModel(int customerId)
+        public HomeViewModel()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
-            LoadCustomerData(customerId);
+
+            //LoadCustomerData();
+            LoadCustomerDataCommand = new Command(async () => await LoadCustomerData());
 
 
             //bottom Navigation commands
@@ -143,7 +146,7 @@ namespace bank_demo.ViewModels
 
             SettingsCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync($"Settings?CustomerId={customerId}");
+                await Shell.Current.GoToAsync($"Settings");
             });
 
 
@@ -160,12 +163,12 @@ namespace bank_demo.ViewModels
 
             StatementCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync($"StatementPage?CustomerId={customerId}");
+                await Shell.Current.GoToAsync($"StatementPage");
             });
 
             CustomerLedgerCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync($"CustomerLedgerPage?CustomerId={customerId}");
+                await Shell.Current.GoToAsync($"CustomerLedgerPage");
             });
             
             HistoryCommand = new Command(async () =>
@@ -175,7 +178,7 @@ namespace bank_demo.ViewModels
 
             AddBeneficiaryCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?CustomerId={customerId}");
+                await Shell.Current.GoToAsync($"BeneficiaryStatusPage");
             });
 
             PaymentsCommand = new Command(async () =>
@@ -185,7 +188,7 @@ namespace bank_demo.ViewModels
 
             FundTransferCommand = new Command(async () =>
             {
-                await Shell.Current.GoToAsync($"FundTransferPage?account_number={customerId}");
+                await Shell.Current.GoToAsync($"FundTransferPage");
             });
 
 
@@ -200,7 +203,7 @@ namespace bank_demo.ViewModels
             });
 
             BeneficiaryStatusCommand = new Command(async () => {
-                await Shell.Current.GoToAsync($"BeneficiaryStatusPage?CustomerId={customerId}");
+                await Shell.Current.GoToAsync($"BeneficiaryStatusPage");
             });
 
             ContactSupportCommand = new Command(async () => { 
@@ -221,10 +224,14 @@ namespace bank_demo.ViewModels
             });
         }
 
-        private async void LoadCustomerData(int customerId)
+        private async Task LoadCustomerData()
         {
             try
             {
+                int customerId = Preferences.Get("CustomerId", 0);
+                if (customerId == 0)
+                    await Shell.Current.DisplayAlert("Error", "No customer found. Please login.", "OK");
+
                 using var httpClient = new HttpClient();
                 var response = await httpClient.GetAsync($"{BaseURL.Url()}api/home/{customerId}");
 

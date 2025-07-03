@@ -2,11 +2,9 @@ using bank_demo.ViewModels.FeaturesPages;
 
 namespace bank_demo.Pages.BeneficiaryPages;
 
-[QueryProperty(nameof(CustomerId), "CustomerId")]
 [QueryProperty(nameof(AccountNumber), "AccountNumber")]
 public partial class BeneficiaryDetailPage : ContentPage
 {
-    private int _customerId;
     private string _accountNumber;
     private bool _isAccountSet = false;
     private bool _isBeneficiarySet = false;
@@ -16,17 +14,7 @@ public partial class BeneficiaryDetailPage : ContentPage
         InitializeComponent();
     }
 
-    public int CustomerId
-    {
-        get => _customerId;
-        set
-        {
-            _customerId = value;
-            _isAccountSet = true;
-            Console.WriteLine($"[DEBUG] AccountNumber received: {_customerId}");
-            TryInitializeViewModel();
-        }
-    }
+
 
     public string AccountNumber
     {
@@ -44,7 +32,7 @@ public partial class BeneficiaryDetailPage : ContentPage
     {
         if (_isAccountSet && _isBeneficiarySet)
         {
-            BindingContext = new BeneficiaryDetailPageViewModel(_customerId, _accountNumber);
+            BindingContext = new BeneficiaryDetailPageViewModel(_accountNumber);
             Console.WriteLine("[DEBUG] ViewModel initialized with both values.");
         }
     }

@@ -57,9 +57,9 @@ namespace bank_demo.ViewModels.FeaturesPages
             }
         }
 
-        public CustomerLedgerViewModel(int customerId)
+        public CustomerLedgerViewModel()
         {
-            _customerId = customerId;
+            _customerId = Preferences.Get("CustomerId", 0); ;
             SelectedDate = DateTime.Today;
 
             RefreshLedgerCommand = new Command(async () => await LoadLedgerAsync());

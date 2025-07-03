@@ -11,6 +11,7 @@
 
             <Label Text="Customer ID" FontAttributes="Bold" />
             <Entry Text="{Binding CustomerId}" 
+                   
                    Keyboard="Numeric" 
                    MaxLength="10"
                    Placeholder="Enter Customer ID" />
@@ -36,6 +37,16 @@
                     CornerRadius="8"
                     HeightRequest="45" />
 
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Label Text="Already have an account? " VerticalOptions="Center" TextColor="Black"/>
+                <Label Text=" Login here" TextColor="Blue" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LoginCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
         </VerticalStackLayout>
+        
+        
     </ScrollView>
 </ContentPage>

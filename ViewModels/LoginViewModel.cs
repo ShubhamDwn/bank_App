@@ -12,12 +12,17 @@ namespace bank_demo.ViewModels
     {
         private string _customerName;
         private string _pin;
-        private readonly int _customerId;
+        private int _customerId;
 
         public string CustomerName
         {
             get => _customerName;
             set => SetProperty(ref _customerName, value);
+        }
+        public int CustomerId
+        {
+            get => _customerId;
+            set => SetProperty(ref _customerId, value);
         }
 
         public string Pin
@@ -28,23 +33,34 @@ namespace bank_demo.ViewModels
 
         public ICommand LoginCommand { get; }
         public ICommand SignUpCommand { get; }
+        public ICommand LoadCustomerNameCommand { get; }
 
-        public LoginViewModel(int customerId)
+
+        public LoginViewModel()
         {
-            _customerId = customerId;
-
             LoginCommand = new Command(async () => await LoginAsync());
             SignUpCommand = new Command(async () => await SignUpAsync());
+            LoadCustomerNameCommand = new Command(async () => await LoadCustomerNameAsync());
 
-            _ = LoadCustomerNameAsync(); // Load customer name immediately
+
+           // _ = LoadCustomerNameAsync(); // Load customer name immediately
         }
+
+        
 
         private async Task LoadCustomerNameAsync()
         {
             try
             {
+                int customerId = Preferences.Get("CustomerId", 0);
+                CustomerId = customerId;
+                if (customerId == 0)
+                {
+                    CustomerName = "Customer";             
+                    return;
+                }
                 using var client = new HttpClient();
-                var response = await client.GetAsync($"{BaseURL.Url()}api/home/{_customerId}");
+                var response = await client.GetAsync($"{BaseURL.Url()}api/home/{customerId}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -116,8 +132,8 @@ namespace bank_demo.ViewModels
 
                 if (loginResponse.Success)
                 {
-                    Preferences.Set("CustomerId", loginResponse.CustomerId.ToString());
-                    await Shell.Current.GoToAsync($"///HomePage?CustomerId={loginResponse.CustomerId}");
+                    
+                    await Shell.Current.GoToAsync($"///HomePage");
                 }
                 else
                 {

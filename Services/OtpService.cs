@@ -15,7 +15,7 @@ namespace bank_demo.Services
         public async Task<bool> SendAndVerifyOtpAsync(string mobile)
         {
             // Generate 6-digit OTP
-            _generatedOTP = _random.Next(100000, 999999).ToString();
+            _generatedOTP = _random.Next(1000, 9999).ToString();
 
             // Display OTP sent message (for testing, includes the OTP)
             await Shell.Current.DisplayAlert(

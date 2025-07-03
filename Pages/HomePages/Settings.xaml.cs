@@ -3,20 +3,9 @@ using System.Text;
 using System.Text.Json;
 
 namespace bank_demo.Pages.HomePages;
-[QueryProperty(nameof(CustomerId), "CustomerId")]
 public partial class Settings : ContentPage
 {
-    private int _customerId;
 
-    public int CustomerId
-    {
-        get => _customerId;
-        set
-        {
-            _customerId = value;
-            //Application.Current.MainPage.DisplayAlert("Debug", $"Received CustomerId: {_customerId}", "OK");
-        }
-    }
     public Settings()
 	{
 		InitializeComponent();
@@ -24,6 +13,7 @@ public partial class Settings : ContentPage
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
         Preferences.Set("IsLoggedIn", false);
+        //Preferences.Clear();
         await AppShell.RecheckDeviceAsync();
     }
 
@@ -38,12 +28,14 @@ public partial class Settings : ContentPage
 
         try
         {
-            var customerIdStr = Preferences.Get("CustomerId", string.Empty);
-            if (!int.TryParse(customerIdStr, out int customerId))
-            {
-                await DisplayAlert("Error", "Customer ID not found.", "OK");
-                return;
-            }
+            int customerId= Preferences.Get("CustomerId", 0);
+            var customerIdStr = customerId.ToString();
+            //var customerIdStr = Preferences.Get("CustomerId", string.Empty);
+            //if (!int.TryParse(customerIdStr, out int customerId))
+            //{
+            //    await DisplayAlert("Error", "Customer ID not found.", "OK");
+            //    return;
+            //}
 
             var payload = new { CustomerId = customerId };
             var json = JsonSerializer.Serialize(payload);
@@ -58,6 +50,7 @@ public partial class Settings : ContentPage
             if (result != null && result.Success)
             {
                 await DisplayAlert("Success", result.Message, "OK");
+                Preferences.Clear();
                 await AppShell.RecheckDeviceAsync();
 
             }

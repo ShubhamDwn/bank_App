@@ -28,9 +28,9 @@ namespace bank_demo.ViewModels.FeaturesPages
             set { _selectedBeneficiary = value; OnPropertyChanged(); }
         }
 
-        public BeneficiaryDetailPageViewModel(long customerId, string accountNumber)
+        public BeneficiaryDetailPageViewModel(string accountNumber)
         {
-            _customerId = customerId;
+            _customerId = Preferences.Get("CustomerId", 0);
             _accountNumber = accountNumber;
             _httpClient = new HttpClient(); // Ideally injected/shared instance
 

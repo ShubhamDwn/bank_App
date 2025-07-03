@@ -10,7 +10,7 @@
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public int CustomerId { get; set; }
+        public int Id { get; set; }
     }
     public class DeviceCheckRequest
     {
@@ -20,13 +20,14 @@
     public class DeviceCheckResponse
     {
         public bool Success { get; set; }
-        public int CustomerId { get; set; }
+        //public int CustomerId { get; set; }
+        public int Id { get; set; }
         public string FullName { get; set; }
         public string Message { get; set; }
     }
     public class LogoutAllRequest
     {
-        public int CustomerId { get; set; }
+        public int Id { get; set; }
     }
     public class LogoutAllResponse
     {
