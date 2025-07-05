@@ -108,6 +108,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\Fund_Transfer\TransactionListPage.xaml.cs">
+	    <DependentUpon>TransactionListPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\HomePages\About.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

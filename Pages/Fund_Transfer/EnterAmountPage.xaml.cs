@@ -4,46 +4,44 @@ using bank_demo.ViewModels.FeaturesPages.FundTransfer;
 
 namespace bank_demo.Pages.Fund_Transfer;
 
-[QueryProperty(nameof(AccountNumber), "account_number")]
-[QueryProperty(nameof(BeneficiaryAccountNumber), "beneficiary_account_number")]
+[QueryProperty(nameof(CustomerId), "CustomerId")]
+[QueryProperty(nameof(AccountNumber), "AccountNumber")]
 public partial class EnterAmountPage : ContentPage
 {
-    private int _accountNumber;
-    private int _beneficiaryAccountNumber;
-    private bool _isAccountSet = false;
-    private bool _isBeneficiarySet = false;
-    public int AccountNumber
+    private string _accountNumber;
+    private int _customerId;
+    private bool _customerReady, _accountReady;
+
+    public string AccountNumber
     {
         get => _accountNumber;
         set
         {
             _accountNumber = value;
-            _isAccountSet = true;
-            Console.WriteLine($"[DEBUG] AccountNumber received: {_accountNumber}");
-            TryInitializeViewModel();
+            _accountReady = true;
+            InitViewModelIfReady();
         }
     }
 
-    public int BeneficiaryAccountNumber
+    public int CustomerId
     {
-        get => _beneficiaryAccountNumber;
+        get => _customerId;
         set
         {
-            _beneficiaryAccountNumber = value;
-            _isBeneficiarySet = true;
-            Console.WriteLine($"[DEBUG] BeneficiaryAccountNumber received: {_beneficiaryAccountNumber}");
-            TryInitializeViewModel();
+            _customerId = value;
+            _customerReady = true;
+            InitViewModelIfReady();
         }
     }
 
-    private void TryInitializeViewModel()
+    private void InitViewModelIfReady()
     {
-        if (_isAccountSet && _isBeneficiarySet)
+        if (_accountReady && _customerReady && BindingContext == null)
         {
-            BindingContext = new EnterAmountViewModel(_accountNumber, _beneficiaryAccountNumber);
-            Console.WriteLine("[DEBUG] ViewModel initialized with both values.");
+            BindingContext = new EnterAmountViewModel(_accountNumber, _customerId);
         }
     }
+
     public EnterAmountPage()
     {
         InitializeComponent();

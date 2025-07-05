@@ -1,84 +1,87 @@
-﻿using bank_demo.Services.API;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Net.Http;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
+using bank_demo.Services.API;
+using Microsoft.Maui.Controls;
 
-namespace bank_demo.ViewModels.FeaturesPages.FundTransfer
+namespace bank_demo.ViewModels.FeaturesPages
 {
     public class FundTransferViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
 
-        private int _customerId;
-        public int CustomerId
-        {
-            get => _customerId;
-            set
-            {
-                _customerId = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ICommand LoadBeneficiariesCommand { get; }
         public ICommand SelectBeneficiaryCommand { get; }
+        public ICommand LoadBeneficiariesCommand { get; }
 
-        public FundTransferViewModel(int customerId)
+        private readonly int _customerId;
+        private readonly HttpClient _httpClient;
+
+        public FundTransferViewModel()
         {
-            CustomerId = customerId;
-            LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
-            LoadBeneficiariesCommand.Execute(null);
-            SelectBeneficiaryCommand = new Command<Beneficiary>(OnBeneficiarySelected);
+            _customerId = Preferences.Get("CustomerId", 0);
+            _httpClient = new HttpClient();
+
+            SelectBeneficiaryCommand = new Command<Beneficiary>(OnSelectBeneficiary);
+            LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiaries());
+
+            LoadBeneficiariesCommand.Execute(null); // Auto-load on initialization
         }
 
-        private async Task LoadBeneficiariesAsync()
+        private async Task LoadBeneficiaries()
         {
             try
             {
-                string baseUrl = BaseURL.Url(); // From your BaseURL class
-                string url = $"{baseUrl}api/beneficiaries?customerId={CustomerId}";
+                string url = $"{BaseURL.Url()}api/beneficiaries/list";
 
-                using var client = new HttpClient();
-                var response = await client.GetAsync(url);
+                var payload = new { CustomerId = _customerId };
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(url, content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var beneficiaries = JsonSerializer.Deserialize<List<Beneficiary>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var result = await response.Content.ReadFromJsonAsync<List<Beneficiary>>();
 
                     Beneficiaries.Clear();
-                    foreach (var b in beneficiaries)
+                    if (result != null)
                     {
-                        b.CustomerId = CustomerId;
-                        Beneficiaries.Add(b);
+                        foreach (var b in result)
+                            Beneficiaries.Add(b);
                     }
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {response.StatusCode}", "OK");
+                    string error = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {error}", "OK");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Unable to load beneficiaries: " + ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", $"Exception occurred: {ex.Message}", "OK");
             }
         }
 
-        private async void OnBeneficiarySelected(Beneficiary selected)
+        private async void OnSelectBeneficiary(Beneficiary selected)
         {
             if (selected == null) return;
 
-            await Shell.Current.GoToAsync($"EnterAmountPage?account_number={CustomerId}&beneficiary_account_number={selected.AccountNumber}");
+            // Navigate to TransactionListPage with required params
+            await Shell.Current.GoToAsync(
+                    $"TransactionListPage?" +
+                    $"CustomerId={selected.CustomerId}" +
+                    $"&AccountNumber={selected.AccountNumber}" +
+                    $"&BeneficiaryCode={selected.BeneficiaryCode}" +
+                    $"&BeneficiaryName={Uri.EscapeDataString(selected.BeneficiaryName)}" +
+                    $"&BankName={Uri.EscapeDataString(selected.BankName)}");
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

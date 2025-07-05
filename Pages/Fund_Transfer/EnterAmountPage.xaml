@@ -3,38 +3,71 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:bank_demo.ViewModels.FeaturesPages.FundTransfer"
              x:Class="bank_demo.Pages.Fund_Transfer.EnterAmountPage"
-             Title="Enter Amount">
+             Title="Enter Amount"
+             x:DataType="vm:EnterAmountViewModel">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 
-        <Label Text="Beneficiary:" FontAttributes="Bold" />
-        <Label Text="{Binding BeneficiaryName}" />
 
-        <Label Text="Bank Name:" FontAttributes="Bold" />
-        <Label Text="{Binding BankName}" />
+            <!-- Header -->
+            <Label Text="Beneficiary Details"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
 
-        <Label Text="Amount:" />
-        <Entry Text="{Binding Amount}" Keyboard="Numeric" />
+            <!-- Beneficiary Info Card -->
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="15" HasShadow="True">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Name:" FontAttributes="Bold" />
+                    <Label Text="{Binding SelectedBeneficiary.BeneficiaryName}" TextColor="Black" />
 
-        <Label Text="Remarks:" />
-        <Entry Text="{Binding Remarks}" />
+                    <Label Text="Account Number:" FontAttributes="Bold" />
+                    <Label Text="{Binding SelectedBeneficiary.AccountNumber}" TextColor="Black" />
 
-        <Label Text="Transfer Mode:" FontAttributes="Bold" />
-        <Grid>
+                    <Label Text="Bank Name:" FontAttributes="Bold" />
+                    <Label Text="{Binding SelectedBeneficiary.BankName}" TextColor="Black" />
+
+                    <Label Text="Branch:" FontAttributes="Bold" />
+                    <Label Text="{Binding SelectedBeneficiary.BranchName}" TextColor="Black" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Transfer Method -->
+            <Label Text="Transfer Method:" FontAttributes="Bold" />
             <Picker ItemsSource="{Binding TransferOptions}"
                     SelectedItem="{Binding SelectedTransferOption}"
-                    HorizontalOptions="FillAndExpand"
-                    Margin="0" />
+                    Title="Select transfer method"
+                    FontSize="16"
+                    Margin="0"
+                    HorizontalOptions="FillAndExpand" />
 
-            <Image Source="down_arrow.png"
-                   HeightRequest="20"
-                   WidthRequest="20"
-                   HorizontalOptions="End"
-                   VerticalOptions="Center"
-                   Margin="0,0,10,0" />
-        </Grid>
+            <!-- Amount Input -->
+            <Label Text="Amount:" FontAttributes="Bold" />
+            <Entry Text="{Binding Amount}"
+                   Keyboard="Numeric"
+                   Placeholder="Enter amount"
+                   FontSize="16"
+                   BackgroundColor="#F2F2F2"
+                   HeightRequest="45" />
 
-        <Button Text="Submit" Command="{Binding ProceedCommand}" />
+            <!-- Remarks Input -->
+            <Label Text="Remarks:" FontAttributes="Bold" />
+            <Entry Text="{Binding Remarks}"
+                   Placeholder="Optional remarks"
+                   FontSize="16"
+                   BackgroundColor="#F2F2F2"
+                   HeightRequest="45" />
 
-    </VerticalStackLayout>
+            <!-- Pay Button -->
+            <Button Text="Pay"
+                    Command="{Binding ProceedCommand}"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="50" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

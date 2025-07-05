@@ -68,13 +68,13 @@
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="2">
-                <Label Text="City " FontAttributes="Bold" FontSize="15"/>
-                <Entry Placeholder="District" Text="{Binding District}" IsReadOnly="True" />
+                <Label Text="City" FontAttributes="Bold" FontSize="15"/>
+                <Entry Placeholder="City" Text="{Binding City}" IsReadOnly="True" />
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="2">
                 <Label Text="District" FontAttributes="Bold" FontSize="15"/>
-                <Entry Placeholder="City" Text="{Binding City}" IsReadOnly="True" />
+                <Entry Placeholder="District" Text="{Binding District}" IsReadOnly="True" />
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="2">

@@ -48,10 +48,10 @@ namespace bank_demo.ViewModels.FeaturesPages
             get => _ifsc;
             set
             {
-                _ifsc = value; OnPropertyChanged();
+                _ifsc = value;
+                OnPropertyChanged();
                 if (!string.IsNullOrWhiteSpace(_ifsc) && _ifsc.Length == 11)
                     _ = FetchBankDetailsByIFSC();
-
             }
         }
 
@@ -111,16 +111,13 @@ namespace bank_demo.ViewModels.FeaturesPages
             set { _state = value; OnPropertyChanged(); }
         }
 
-
         public ICommand AddCommand { get; }
 
         public AddBeneficiaryViewModel()
         {
-            int CustomerId = Preferences.Get("CustomerId", 0);
-            
+            CustomerId = Preferences.Get("CustomerId", 0);
             AddCommand = new Command(async () => await AddAsync());
         }
-
 
         private async Task FetchBankDetailsByIFSC()
         {
@@ -168,7 +165,8 @@ namespace bank_demo.ViewModels.FeaturesPages
 
             var beneficiary = new
             {
-                CustomerId,
+                DeviceId = Guid.NewGuid().ToString(),
+                CustomerId = CustomerId,
                 BeneficiaryName,
                 BeneficiaryNickName,
                 AccountNumber,
@@ -177,25 +175,26 @@ namespace bank_demo.ViewModels.FeaturesPages
                 MobileNo,
                 Email,
                 BankName,
-                BranchName
+                BranchName,
+                RegFrom = "Phone"
             };
-
 
             try
             {
                 string baseurl = BaseURL.Url();
-                using var client = new HttpClient();
-                client.BaseAddress = new Uri(baseurl); // ⛳ Replace with actual API base URL
+                using var client = new HttpClient { BaseAddress = new Uri(baseurl) };
 
                 var json = JsonSerializer.Serialize(beneficiary);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync("/api/beneficiaries", content);
+                var response = await client.PostAsync("/api/beneficiaries/add", content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     await Shell.Current.DisplayAlert("Success", "Beneficiary added successfully!", "OK");
-                    await Shell.Current.GoToAsync("..");
+
+                    // 🔁 Navigate to BeneficiaryDetailPage with params
+                    await Shell.Current.GoToAsync($"BeneficiaryDetailPage?CustomerId={CustomerId}&AccountNumber={AccountNumber}");
                 }
                 else
                 {
@@ -209,11 +208,7 @@ namespace bank_demo.ViewModels.FeaturesPages
             }
         }
 
-
-
         private void OnPropertyChanged([CallerMemberName] string propName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-
     }
 }

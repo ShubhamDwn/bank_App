@@ -4,8 +4,6 @@ using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using bank_demo.Services.API;
-using Microsoft.Maui.Controls;
-
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
@@ -32,7 +30,7 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             _customerId = Preferences.Get("CustomerId", 0);
             _accountNumber = accountNumber;
-            _httpClient = new HttpClient(); // Ideally injected/shared instance
+            _httpClient = new HttpClient();
 
             LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiariesAsync());
             DeleteCommand = new Command(async () => await DeleteBeneficiaryAsync());
@@ -45,25 +43,52 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             try
             {
-                string url = $"{BaseURL.Url()}api/beneficiaries?customerId={_customerId}&accountNumber={_accountNumber}";
-                var result = await _httpClient.GetFromJsonAsync<List<Beneficiary>>(url);
+                string url = $"{BaseURL.Url()}api/beneficiaries/list";
 
+                var payload = new
+                {
+                    CustomerId = _customerId
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(url, payload);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Failed to load beneficiaries.", "OK");
+                    return;
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<List<Beneficiary>>();
                 Beneficiaries.Clear();
+
                 if (result != null)
                 {
                     foreach (var beneficiary in result)
-                        Beneficiaries.Add(beneficiary);
+                    {
+                        if (beneficiary.AccountNumber == _accountNumber)
+                        {
+                            SelectedBeneficiary = beneficiary;
+                            Beneficiaries.Add(beneficiary); // Show only matched one in details page
+                            break;
+                        }
+                    }
+                }
+
+                if (SelectedBeneficiary == null)
+                {
+                    await Shell.Current.DisplayAlert("Not Found", "Beneficiary not found.", "OK");
+                    await Shell.Current.GoToAsync("..");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Unable to load beneficiaries: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Unable to load beneficiary details: {ex.Message}", "OK");
             }
         }
 
         private async Task NavigateToPaymentPageAsync()
         {
-            var beneficiary = SelectedBeneficiary ?? Beneficiaries.FirstOrDefault();
+            var beneficiary = SelectedBeneficiary;
             if (beneficiary == null)
             {
                 await Shell.Current.DisplayAlert("Error", "No beneficiary selected.", "OK");
@@ -75,7 +100,7 @@ namespace bank_demo.ViewModels.FeaturesPages
 
         private async Task DeleteBeneficiaryAsync()
         {
-            var beneficiary = SelectedBeneficiary ?? Beneficiaries.FirstOrDefault();
+            var beneficiary = SelectedBeneficiary;
             if (beneficiary == null)
             {
                 await Shell.Current.DisplayAlert("Error", "No beneficiary selected.", "OK");
@@ -91,18 +116,20 @@ namespace bank_demo.ViewModels.FeaturesPages
 
             try
             {
-                string deleteUrl = $"{BaseURL.Url()}/api/beneficiaries/delete";
-                var response = await _httpClient.PostAsJsonAsync(deleteUrl, new
+                string deleteUrl = $"{BaseURL.Url()}api/beneficiaries/delete";
+
+                var payload = new
                 {
-                    customerId = beneficiary.CustomerId,
-                    accountNumber = _accountNumber,
-                    beneficiaryAccountNumber = beneficiary.AccountNumber
-                });
+                    CustomerId = _customerId,
+                    AccountNumber = _accountNumber,
+                    BeneficiaryAccountNumber = beneficiary.AccountNumber
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(deleteUrl, payload);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Beneficiaries.Remove(beneficiary);
-                    await Shell.Current.DisplayAlert("Success", "Beneficiary deleted", "OK");
+                    await Shell.Current.DisplayAlert("Success", "Beneficiary deleted.", "OK");
                     await Shell.Current.GoToAsync("..");
                 }
                 else

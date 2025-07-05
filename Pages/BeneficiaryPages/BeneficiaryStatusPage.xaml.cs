@@ -12,6 +12,8 @@ namespace bank_demo.Pages.BeneficiaryPages
         public BeneficiaryStatusPage()
         {
             InitializeComponent();
+            BindingContext = new BeneficiaryStatusViewModel(); // ? Set the ViewModel
+
         }
     }
 }

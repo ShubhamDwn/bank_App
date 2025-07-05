@@ -2,46 +2,66 @@
 using System.ComponentModel;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.Json;
 using System.Windows.Input;
 using bank_demo.Services.API;
 using Microsoft.Maui.Controls;
-
 
 namespace bank_demo.ViewModels.FeaturesPages
 {
     public class BeneficiaryStatusViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new ObservableCollection<Beneficiary>();
+        public ObservableCollection<Beneficiary> Beneficiaries { get; set; } = new();
+
         public ICommand SelectBeneficiaryCommand { get; }
+        public ICommand LoadBeneficiariesCommand { get; }
 
         private readonly int _customerId;
         private readonly HttpClient _httpClient;
 
-        public BeneficiaryStatusViewModel(int customerId)
+        public BeneficiaryStatusViewModel()
         {
-            _customerId = customerId;
-            _httpClient = new HttpClient(); // Ideally injected or reused via DI/singleton
+            _customerId = Preferences.Get("CustomerId", 0);
+            _httpClient = new HttpClient();
+
             SelectBeneficiaryCommand = new Command<Beneficiary>(OnSelectBeneficiary);
-            LoadBeneficiaries();
+            LoadBeneficiariesCommand = new Command(async () => await LoadBeneficiaries());
+
+            LoadBeneficiariesCommand.Execute(null); // Auto-load on initialization
         }
 
-        private async void LoadBeneficiaries()
+        private async Task LoadBeneficiaries()
         {
             try
             {
-                string url = $"{BaseURL.Url()}api/beneficiaries?customerId={_customerId}";
-                var result = await _httpClient.GetFromJsonAsync<List<Beneficiary>>(url);
+                string url = $"{BaseURL.Url()}api/beneficiaries/list";
 
-                Beneficiaries.Clear();
-                if (result != null)
+                var payload = new { CustomerId = _customerId };
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(url, content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    foreach (var beneficiary in result)
-                        Beneficiaries.Add(beneficiary);
+                    var result = await response.Content.ReadFromJsonAsync<List<Beneficiary>>();
+
+                    Beneficiaries.Clear();
+                    if (result != null)
+                    {
+                        foreach (var b in result)
+                            Beneficiaries.Add(b);
+                    }
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {error}", "OK");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Failed to load beneficiaries: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Exception occurred: {ex.Message}", "OK");
             }
         }
 
@@ -49,12 +69,9 @@ namespace bank_demo.ViewModels.FeaturesPages
         {
             if (selected == null) return;
 
-            string customerId = selected.CustomerId.ToString();
-            string accountNumber = selected.AccountNumber.ToString();
-
-            await Shell.Current.GoToAsync($"BeneficiaryDetailPage?CustomerId={selected.CustomerId}&AccountNumber={selected.AccountNumber}");
+            await Shell.Current.GoToAsync(
+                $"BeneficiaryDetailPage?CustomerId={selected.CustomerId}&AccountNumber={selected.AccountNumber}");
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>

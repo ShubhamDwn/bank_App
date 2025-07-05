@@ -25,6 +25,11 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("About", typeof(About));
         Routing.RegisterRoute("Settings", typeof(Settings));
         Routing.RegisterRoute("ViewStatementPage", typeof(ViewStatementPage));
+        Routing.RegisterRoute("TransactionListPage", typeof(TransactionListPage));
+        Routing.RegisterRoute("TransactionListPage", typeof(TransactionListPage));
+        Routing.RegisterRoute("EnterAmountPage", typeof(EnterAmountPage));
+        Routing.RegisterRoute("BeneficiaryDetailPage", typeof(BeneficiaryDetailPage));
+
 
         Routing.RegisterRoute(nameof(CustomerLedgerPage), typeof(CustomerLedgerPage));
         Routing.RegisterRoute(nameof(MyQRCodePage), typeof(MyQRCodePage));
@@ -36,6 +41,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(BeneficiaryDetailPage), typeof(BeneficiaryDetailPage));
         Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
         Routing.RegisterRoute(nameof(TransactionHistoryPage), typeof(TransactionHistoryPage));
+
         Routing.RegisterRoute(nameof(BeneficiaryStatusPage), typeof(BeneficiaryStatusPage));
         Routing.RegisterRoute(nameof(ContactSupportPage), typeof(ContactSupportPage));
         Routing.RegisterRoute(nameof(TermsPage), typeof(TermsPage));
